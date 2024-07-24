@@ -29,10 +29,6 @@ const userSchema = new mongoose.Schema(
       type: Object,
       required: [true, 'Please enter a school'],
     },
-    schedule: {
-      type: Object,
-      default: {},
-    },
     interests: {
       type: Array,
       required: [true, 'Please select at least 1 club or sport interest'],
@@ -48,7 +44,6 @@ userSchema.pre('save', async function (next) {
   const salt = await bcrypt.genSalt();
   const hashedPassword = await bcrypt.hash(this.password, salt);
   this.password = hashedPassword;
-
   next();
 });
 
