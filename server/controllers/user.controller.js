@@ -24,4 +24,42 @@ const addContact = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
-module.exports = { addContact };
+const getCommonNewStudents = asyncHandler(async (req, res) => {
+  const { filter, dateQuery } = req.params; // the user can find other new students either by grade or common interests, hence the filter property
+  // filter is an object since the user can filter by higher, lower, or same grade
+
+  const user = await User.findById(req.userId);
+  let users;
+
+  if (filter === 'grade') {
+    users = await User.find({
+      grade: user.grade,
+      $and: [
+        { 'school.description': user.school.description },
+        { 'school.formattedName': user.school.formattedName },
+        { _id: { $ne: user._id } },
+        { _id: { $nin: user.contacts } },
+      ],
+      createdAt: { $lte: dateQuery },
+    })
+      .sort('-createdAt')
+      .limit(20);
+  } else {
+    users = await User.find({
+      $and: [
+        { 'school.description': user.school.description },
+        { 'school.formattedName': user.school.formattedName },
+        { _id: { $ne: user._id } },
+        { _id: { $nin: user.contacts } },
+      ],
+      createdAt: { $lte: dateQuery },
+      interests: { $in: user.interests },
+    })
+      .sort('-createdAt')
+      .limit(20);
+  }
+
+  res.status(200).json(users);
+});
+
+module.exports = { addContact, getCommonNewStudents };
