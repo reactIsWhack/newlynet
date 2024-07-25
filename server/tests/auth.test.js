@@ -3,27 +3,21 @@ const User = require('../models/user.model');
 const { initializeMongoDB, disconnectMongoDB } = require('../db/connectTestDB');
 // const { app } = require('../socket/socket');
 const app = require('../index');
+const getSchool = require('../services/schoolService');
 
 let school;
 beforeAll(async () => {
   await initializeMongoDB();
 
-  const schoolRes = await fetch(
-    `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=PrincetonHighSchool&types=school&key=${process.env.API_KEY}`
-  );
-  const { predictions } = await schoolRes.json();
-  (school = {
-    fullDescription: predictions[0].description,
-    formattedName: predictions[0].structured_formatting.main_text,
-  }),
-    await User.create({
-      fullName: 'j',
-      username: 'jest',
-      password: '123456',
-      grade: 9,
-      school,
-      interests: ['Computer Science'],
-    });
+  school = await getSchool('PrincetonHighSchool');
+  await User.create({
+    fullName: 'j',
+    username: 'jest',
+    password: '123456',
+    grade: 9,
+    school,
+    interests: ['Computer Science'],
+  });
 });
 
 describe('POST /signup', () => {
@@ -186,7 +180,7 @@ describe('AUTH /logout', () => {
 describe('AUTH /routeprotector', () => {
   it('Should block an api route if no token is sent', async () => {
     const response = await request(app)
-      .patch('/api/users/addcontact')
+      .patch('/api/users/addcontact/1')
       .expect(401)
       .expect('Content-Type', /application\/json/);
 

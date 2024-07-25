@@ -2,6 +2,7 @@ const User = require('../models/user.model');
 const { faker } = require('@faker-js/faker');
 const { config } = require('dotenv');
 const { interestOptions } = require('../db/data');
+const getSchool = require('../services/schoolService');
 config();
 
 const generateGrade = (i) => {
@@ -36,17 +37,11 @@ const generateFakeUsers = async () => {
   ];
 
   for (const schoolQuery of schoolQueries) {
-    console.log(schoolQuery);
     const numOfFakeUsers =
       process.env.NODE_ENV === 'test'
         ? 1
         : Math.floor(Math.random() * (5 - 2 + 1) + 2);
-    const response = await fetch(
-      `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${schoolQuery}&types=school&key=${process.env.API_KEY}`
-    );
-
-    const { predictions } = await response.json();
-    console.log(predictions);
+    const schoolInfo = await getSchool(schoolQuery);
     for (let i = 0; i < numOfFakeUsers; i++) {
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
@@ -55,10 +50,7 @@ const generateFakeUsers = async () => {
         username: faker.internet.displayName(),
         password: faker.internet.password(),
         profilePicture: `https://avatar.iran.liara.run/public/girld?username=${firstName}`,
-        school: {
-          fullDescription: predictions[0].description,
-          formattedName: predictions[0].structured_formatting.main_text,
-        },
+        school: schoolInfo,
         grade: generateGrade(i),
         interests: generateInterests(),
         contacts: [],
