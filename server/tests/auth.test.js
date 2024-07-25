@@ -27,9 +27,10 @@ beforeAll(async () => {
 });
 
 describe('POST /signup', () => {
+  let token;
   it('Should successfully register a user', async () => {
     const response = await request(app)
-      .post('/api/users/signup')
+      .post('/api/auth/signup')
       .send({
         fullName: 'test jest',
         username: 'test',
@@ -41,6 +42,7 @@ describe('POST /signup', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
+    token = response.headers['set-cookie'];
     expect(response.header['set-cookie']).toBeTruthy(); // ensure the jwt was sent
     expect(response.body.fullName).toBe('test jest');
     expect(response.body.username).toBe('test');
@@ -51,7 +53,7 @@ describe('POST /signup', () => {
 
   it('Should fail to register a user if their password is less than six characters', async () => {
     const response = await request(app)
-      .post('/api/users/signup')
+      .post('/api/auth/signup')
       .send({
         fullName: 'test jest',
         username: 'test',
@@ -70,7 +72,7 @@ describe('POST /signup', () => {
 
   it('Should fail to register a user if their username already exists', async () => {
     const response = await request(app)
-      .post('/api/users/signup')
+      .post('/api/auth/signup')
       .send({
         fullName: 'test jest',
         username: 'jest',
@@ -89,7 +91,7 @@ describe('POST /signup', () => {
 
   it('Should fail to register a user if they supply no interests', async () => {
     const response = await request(app)
-      .post('/api/users/signup')
+      .post('/api/auth/signup')
       .send({
         fullName: 'idk',
         username: 'cool',
@@ -110,7 +112,7 @@ describe('POST /signup', () => {
 describe('POST /login', () => {
   it('Should login a user', async () => {
     const response = await request(app)
-      .post('/api/users/login')
+      .post('/api/auth/login')
       .send({
         username: 'jest',
         password: '123456',
@@ -126,7 +128,7 @@ describe('POST /login', () => {
 
   it('Should fail to login a user with an incorrect password', async () => {
     const response = await request(app)
-      .post('/api/users/login')
+      .post('/api/auth/login')
       .send({
         username: 'jest',
         password: '12345',
@@ -139,7 +141,7 @@ describe('POST /login', () => {
 
   it('Should fail to login a user that is not registered', async () => {
     const response = await request(app)
-      .post('/api/users/login')
+      .post('/api/auth/login')
       .send({
         username: 'dafasdfasfasd',
         password: '12345',
@@ -154,7 +156,7 @@ describe('POST /login', () => {
 
   it('Should fail to login a user if no username is given', async () => {
     const response = await request(app)
-      .post('/api/users/login')
+      .post('/api/auth/login')
       .send({
         username: '',
         password: '12345',
@@ -169,7 +171,7 @@ describe('POST /login', () => {
 describe('AUTH /logout', () => {
   it('Should logout a user', async () => {
     const response = await request(app)
-      .get('/api/users/logout')
+      .get('/api/auth/logout')
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
@@ -178,6 +180,17 @@ describe('AUTH /logout', () => {
       'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
     ]);
     expect(response.body.message).toBe('Logged out successfully!');
+  });
+});
+
+describe('AUTH /routeprotector', () => {
+  it('Should block an api route if no token is sent', async () => {
+    const response = await request(app)
+      .patch('/api/users/addcontact')
+      .expect(401)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe('Unauthorized - Please login');
   });
 });
 

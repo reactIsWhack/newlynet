@@ -27,7 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const token = generateToken(user._id);
 
   if (user) {
-    res.cookie(token, 'token', {
+    res.cookie('token', token, {
       secure: true,
       httpOnly: true,
       sameSite: 'strict',
@@ -68,7 +68,7 @@ const loginUser = asyncHandler(async (req, res) => {
   }
 
   const token = generateToken(user._id);
-  res.cookie(token, 'token', {
+  res.cookie('token', token, {
     secure: true,
     httpOnly: true,
     sameSite: 'strict',
