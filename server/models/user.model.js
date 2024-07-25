@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
       type: Array,
       required: [true, 'Please select at least 1 club or sport interest'],
     },
-    contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], // list of users that the user has stored to have conversations with
+    contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], // list of users that the user has stored to keep in contact with
   },
   { timestamps: true }
 );

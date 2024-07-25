@@ -4,6 +4,6 @@ const { addContact } = require('../controllers/user.controller');
 
 const router = Router();
 
-router.patch('/addcontact', routeProtector, addContact);
+router.patch('/addcontact/:contactId', routeProtector, addContact);
 
 module.exports = router;
