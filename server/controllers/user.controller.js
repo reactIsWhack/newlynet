@@ -25,11 +25,15 @@ const addContact = asyncHandler(async (req, res) => {
 });
 
 const getCommonNewStudents = asyncHandler(async (req, res) => {
-  const { filter, dateQuery } = req.params; // the user can find other new students either by grade or common interests, hence the filter property
+  const { filter } = req.params; // the user can find other new students either by grade or common interests, hence the filter property
   // filter is an object since the user can filter by higher, lower, or same grade
+  const { cursor } = req.query;
 
   const user = await User.findById(req.userId);
   let users;
+
+  let query = {};
+  if (cursor) query._id = { $gt: cursor };
 
   if (filter === 'grade') {
     users = await User.find({
@@ -39,11 +43,10 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         { 'school.formattedName': user.school.formattedName },
         { _id: { $ne: user._id } },
         { _id: { $nin: user.contacts } },
+        query,
       ],
-      createdAt: { $lte: dateQuery },
-    })
-      .sort('-createdAt')
-      .limit(20);
+      // createdAt: { $lte: dateQuery },
+    }).limit(process.env.NODE_ENV === 'test' ? 1 : 20); // for testing pagination
   } else {
     users = await User.find({
       $and: [
@@ -51,15 +54,30 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         { 'school.formattedName': user.school.formattedName },
         { _id: { $ne: user._id } },
         { _id: { $nin: user.contacts } },
+        query,
       ],
-      createdAt: { $lte: dateQuery },
       interests: { $in: user.interests },
-    })
-      .sort('-createdAt')
-      .limit(20);
+    }).limit(process.env.NODE_ENV === 'test' ? 1 : 20);
   }
 
-  res.status(200).json(users);
+  const nextCursor = users.length ? users[users.length - 1]._id : null;
+
+  res.status(200).json({ users, nextCursor });
 });
 
-module.exports = { addContact, getCommonNewStudents };
+const getPersonalProfile = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.userId).populate({
+    path: 'contacts',
+    model: 'user',
+    select: '-password',
+  });
+
+  if (!user) {
+    res.status(404);
+    throw new Error('Cannot find your profile');
+  }
+
+  res.status(200).json(user);
+});
+
+module.exports = { addContact, getCommonNewStudents, getPersonalProfile };

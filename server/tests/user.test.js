@@ -14,10 +14,10 @@ let school;
 
 beforeAll(async () => {
   await initializeMongoDB();
-  await generateFakeUsers();
-  fakeUsers = await getFakeUsers();
-  console.log(fakeUsers, 'fakeUsers');
+  fakeUsers = await generateFakeUsers();
+  console.log(fakeUsers);
   userWithCommonInterests = fakeUsers[1];
+  console.log(userWithCommonInterests, 'common interests user');
 
   school = await getSchool('PrincetonHighSchool');
   await User.create({
@@ -26,7 +26,8 @@ beforeAll(async () => {
     password: 'test123',
     grade: 9,
     school,
-    interests: fakeUsers[1].interests.slice(0, 2),
+    interests: userWithCommonInterests.interests.slice(0, 2),
+    contacts: [],
   });
   const loginInfo = await loginUser('test', 'test123');
   token = loginInfo.token;
@@ -49,41 +50,70 @@ describe('PATCH /users', () => {
 });
 
 describe('GET /users', () => {
+  let nextCursor;
   it('Should get users in the same grade and school as the test user', async () => {
     const response = await request(app)
-      .get(`/api/users/commonstudents/grade/${new Date(Date.now())}`)
+      .get(`/api/users/commonstudents/grade`)
       .set('Cookie', [...token])
       .expect(200)
       .expect('Content-Type', /application\/json/);
-    console.log(response.body);
 
-    expect(response.body.map((user) => user._id.toString())).not.toContain(
-      fakeUsers[0]._id.toString()
-    );
-    expect(response.body.length).toBeGreaterThanOrEqual(1);
-    expect(response.body.map((user) => user.school)).toEqual(
+    console.log(response.body);
+    nextCursor = response.body.nextCursor;
+
+    expect(
+      response.body.users.map((user) => user._id.toString())
+    ).not.toContain(fakeUsers[0]._id.toString());
+    expect(response.body.users.length).toBeGreaterThanOrEqual(1);
+    expect(response.body.users.map((user) => user.school)).toEqual(
       expect.arrayContaining([expect.objectContaining(school)])
     );
   });
 
-  it('Should get users in the same school based off common interests', async () => {
+  it('Should paginate the get common students request', async () => {
     const response = await request(app)
-      .get(`/api/users/commonstudents/interests/${new Date(Date.now())}`)
+      .get(`/api/users/commonstudents/grade?cursor=${nextCursor}`)
       .set('Cookie', [...token])
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body, userWithCommonInterests, userInfo.interests);
+    console.log(response.body);
+  });
 
-    expect(response.body.map((user) => user._id.toString())).toContain(
+  it('Should get users in the same school based off common interests', async () => {
+    const response = await request(app)
+      .get(`/api/users/commonstudents/interests`)
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body, userInfo.interests);
+
+    expect(response.body.users.map((user) => user._id.toString())).toContain(
       userWithCommonInterests._id.toString()
     );
-    const interestsArr = response.body.map((item) => item.interests);
+    const interestsArr = response.body.users.map((item) => item.interests);
     for (const interestArr of interestsArr) {
       expect(
         interestArr.some((interest) => userInfo.interests.includes(interest))
       ).toBe(true);
     }
+  });
+
+  it("Should get a user's personal profile", async () => {
+    const response = await request(app)
+      .get('/api/users/personalprofile')
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.fullName).toBe('test jest');
+    expect(response.body.username).toBe('test');
+    expect(response.body.grade).toBe(9);
+    expect(response.body.contacts.length).toBe(1);
+    expect(response.body.contacts[0]._id.toString()).toBe(
+      fakeUsers[0]._id.toString()
+    );
   });
 });
 
