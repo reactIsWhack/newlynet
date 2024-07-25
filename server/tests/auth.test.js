@@ -118,7 +118,6 @@ describe('POST /login', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body);
     expect(response.headers['set-cookie']).toBeTruthy();
     expect(response.body._id).toBeTruthy();
     expect(response.body.fullName).toBe('j');
@@ -164,6 +163,21 @@ describe('POST /login', () => {
       .expect('Content-Type', /application\/json/);
 
     expect(response.body.message).toBe('Please fill in all fields');
+  });
+});
+
+describe('AUTH /logout', () => {
+  it('Should logout a user', async () => {
+    const response = await request(app)
+      .get('/api/users/logout')
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.headers['set-cookie']);
+    expect(response.headers['set-cookie']).toEqual([
+      'token=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT',
+    ]);
+    expect(response.body.message).toBe('Logged out successfully!');
   });
 });
 

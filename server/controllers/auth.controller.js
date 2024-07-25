@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 const generateToken = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '5d' });
+  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -31,7 +31,7 @@ const registerUser = asyncHandler(async (req, res) => {
       secure: true,
       httpOnly: true,
       sameSite: 'strict',
-      expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+      expires: new Date(new Date().getTime() + 168 * 60 * 60 * 1000), // 7days
     });
     res.status(201).json({
       _id: user._id,
@@ -72,7 +72,7 @@ const loginUser = asyncHandler(async (req, res) => {
     secure: true,
     httpOnly: true,
     sameSite: 'strict',
-    expires: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000),
+    expires: new Date(new Date().getTime() + 168 * 60 * 60 * 1000), // 7days
   });
 
   res.status(200).json({
@@ -86,4 +86,11 @@ const loginUser = asyncHandler(async (req, res) => {
   });
 });
 
-module.exports = { registerUser, loginUser };
+const logoutUser = asyncHandler(async (req, res) => {
+  res.cookie('token', '', {
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: 'Logged out successfully!' });
+});
+
+module.exports = { registerUser, loginUser, logoutUser };
