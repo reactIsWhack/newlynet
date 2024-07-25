@@ -107,6 +107,66 @@ describe('POST /signup', () => {
   });
 });
 
+describe('POST /login', () => {
+  it('Should login a user', async () => {
+    const response = await request(app)
+      .post('/api/users/login')
+      .send({
+        username: 'jest',
+        password: '123456',
+      })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.headers['set-cookie']).toBeTruthy();
+    expect(response.body._id).toBeTruthy();
+    expect(response.body.fullName).toBe('j');
+    expect(response.body.contacts.length).toBe(0);
+  });
+
+  it('Should fail to login a user with an incorrect password', async () => {
+    const response = await request(app)
+      .post('/api/users/login')
+      .send({
+        username: 'jest',
+        password: '12345',
+      })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe('Password incorrect');
+  });
+
+  it('Should fail to login a user that is not registered', async () => {
+    const response = await request(app)
+      .post('/api/users/login')
+      .send({
+        username: 'dafasdfasfasd',
+        password: '12345',
+      })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe(
+      'User does not exist, please create an account'
+    );
+  });
+
+  it('Should fail to login a user if no username is given', async () => {
+    const response = await request(app)
+      .post('/api/users/login')
+      .send({
+        username: '',
+        password: '12345',
+      })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe('Please fill in all fields');
+  });
+});
+
 afterAll(async () => {
   await disconnectMongoDB();
 });
