@@ -15,17 +15,18 @@ const generateGrade = (i) => {
 
 const generateInterests = () => {
   const interests = [];
+  let possibleInterests = [...interestOptions];
   for (let i = 0; i < 3; i++) {
-    const index = Math.floor(Math.random() * interestOptions.length);
-    do {
-      interests.push(interestOptions[index]);
-    } while (new Set(interests).size < interests.length);
+    const index = Math.floor(Math.random() * possibleInterests.length);
+    interests.push(possibleInterests[index]);
+    possibleInterests.splice(index, 1);
   }
 
   return interests;
 };
 
 const generateFakeUsers = async () => {
+  const fakeUsers = [];
   const schoolQueries = [
     'PrincetonHighSchool',
     'MontgomeryHighSchool',
@@ -55,12 +56,14 @@ const generateFakeUsers = async () => {
       console.log('generating...');
       try {
         const user = await User.create(fakeUser);
+        fakeUsers.push(user);
         console.log('✅');
       } catch (error) {
         console.log(error);
       }
     }
   }
+  return fakeUsers;
 };
 
 module.exports = { generateFakeUsers };
