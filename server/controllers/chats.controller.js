@@ -47,7 +47,10 @@ const getChats = asyncHandler(async (req, res) => {
   const chats = await Chat.find({
     members: { $in: [req.userId] },
     chatType,
-  }).populate([{ path: 'members', model: 'user', select: '-password' }]);
+  }).populate([
+    { path: 'members', model: 'user', select: '-password' },
+    { path: 'messages', model: 'message' },
+  ]);
 
   console.log(chats);
   res.status(200).json(chats);

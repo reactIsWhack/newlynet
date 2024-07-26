@@ -6,6 +6,7 @@ const { createTestUser, addContacts, loginUser } = require('./userHelper');
 const Chat = require('../models/chat.model');
 const app = require('../index');
 const getSchool = require('../services/schoolService');
+const { io } = require('../socket/socket');
 
 let jwt;
 let userInfo;
@@ -40,6 +41,7 @@ beforeAll(async () => {
     const contactsInfo = await addContacts(token, fakeUsers[i]._id);
     if (i === 1) contacts = contactsInfo;
   }
+
   chat = await Chat.create({
     members: contacts,
     messages: [],
@@ -48,8 +50,22 @@ beforeAll(async () => {
   }); // create a group chat for testing
 });
 
+const getRealTimeMessages = (i) => {
+  return new Promise((resolve, reject) => {
+    contactSockets[`contact${i + 1}`].on('newMessage', (arg) => {
+      console.log('Received newMessage event:', arg);
+      resolve(arg);
+    });
+  });
+};
+
 describe('POST /message', () => {
   it('Should send a message to the group chat', async () => {
+    let messagePromise;
+    for (let i = 0; i < 2; i++) {
+      messagePromise = getRealTimeMessages(i);
+    }
+
     const response = await request(app)
       .post(`/api/message/sendmessage/${chat._id}`)
       .set('Cookie', [...jwt])
@@ -65,17 +81,15 @@ describe('POST /message', () => {
     expect(response.body.author._id.toString()).toBe(userInfo._id);
     expect(updatedChat.messages.length).toBe(1);
     expect(updatedChat.messages[0]._id.toString()).toBe(response.body._id);
-  });
 
-  it('Should send the message to the receivers in real time', async () => {
-    for (let i = 0; i < 2; i++) {
-      contactSockets[`contact${i + 1}`].on('newMessage', (newMessage) => {
-        expect(newMessage.message).toBe('Hi from test user');
-      });
-    }
+    const messageEvent = await messagePromise;
+    expect(messageEvent.message).toBe('Hi from test user');
   });
 });
 
 afterAll(async () => {
+  clientSocket.disconnect();
+  contactSockets.contact1.disconnect();
+  contactSockets.contact2.disconnect();
   await disconnectMongoDB();
 });

@@ -40,25 +40,21 @@ beforeAll(async () => {
 });
 
 describe('POST /chats', () => {
-  it('Should create a group chat with one contact of the test user', async () => {
-    const response = await request(app)
-      .post('/api/chats/createchat')
-      .set('Cookie', [...jwt])
-      .send({ members: [contacts[0]] })
-      .expect(201)
-      .expect('Content-Type', /application\/json/);
-
-    expect(response.body.members.length).toBe(2);
-    expect(response.body.chatType).toBe('individual');
-    expect(
-      response.body.members.map((member) => member._id.toString())
-    ).toContain(userInfo._id.toString());
-    expect(
-      response.body.members.map((member) => member._id.toString())
-    ).toContain(contacts[0]._id.toString());
-  });
+  const getRealTimeChat = (i) => {
+    return new Promise((resolve, reject) => {
+      contactSockets[`contact${i + 1}`].on('newChat', (chat) => {
+        console.log('Chat created in real time: ', chat);
+        resolve(chat);
+      });
+    });
+  };
 
   it('Should create a group chat with three members', async () => {
+    let chatPromise;
+    for (let i = 0; i < 2; i++) {
+      chatPromise = getRealTimeChat(i);
+    }
+
     const response = await request(app)
       .post('/api/chats/createchat')
       .set('Cookie', [...jwt])
@@ -77,6 +73,27 @@ describe('POST /chats', () => {
         userInfo._id.toString(),
       ])
     );
+    const chatEvent = await chatPromise;
+    console.log(chatEvent);
+    expect(chatEvent.chatName).toBe('Test Chat');
+  });
+
+  it('Should create a group chat with one contact of the test user', async () => {
+    const response = await request(app)
+      .post('/api/chats/createchat')
+      .set('Cookie', [...jwt])
+      .send({ members: [contacts[0]] })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.members.length).toBe(2);
+    expect(response.body.chatType).toBe('individual');
+    expect(
+      response.body.members.map((member) => member._id.toString())
+    ).toContain(userInfo._id.toString());
+    expect(
+      response.body.members.map((member) => member._id.toString())
+    ).toContain(contacts[0]._id.toString());
   });
 
   it('Should receive the new chat sent to the members in real time', async () => {
