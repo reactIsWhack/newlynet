@@ -53,11 +53,9 @@ const generateFakeUsers = async () => {
         interests: generateInterests(),
         contacts: [],
       };
-      console.log('generating...');
       try {
         const user = await User.create(fakeUser);
         fakeUsers.push(user);
-        console.log('✅');
       } catch (error) {
         console.log(error);
       }

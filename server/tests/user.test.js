@@ -1,7 +1,7 @@
 const { initializeMongoDB, disconnectMongoDB } = require('../db/connectTestDB');
 const { generateFakeUsers } = require('../utils/seeds');
 const User = require('../models/user.model');
-const { loginUser, getFakeUsers } = require('./userHelper');
+const { loginUser, createTestUser } = require('./userHelper');
 const request = require('supertest');
 const app = require('../index');
 const getSchool = require('../services/schoolService');
@@ -20,15 +20,7 @@ beforeAll(async () => {
   console.log(userWithCommonInterests, 'common interests user');
 
   school = await getSchool('PrincetonHighSchool');
-  await User.create({
-    fullName: 'test jest',
-    username: 'test',
-    password: 'test123',
-    grade: 9,
-    school,
-    interests: userWithCommonInterests.interests.slice(0, 2),
-    contacts: [],
-  });
+  await createTestUser(userWithCommonInterests.interests.slice(0, 2), school);
   const loginInfo = await loginUser('test', 'test123');
   token = loginInfo.token;
   userInfo = loginInfo.user;

@@ -19,7 +19,6 @@ const addContact = asyncHandler(async (req, res) => {
     .then((item) =>
       item.populate({ path: 'contacts', model: 'user', select: '-password' })
     );
-  console.log(user);
 
   res.status(200).json(user);
 });

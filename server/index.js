@@ -9,6 +9,7 @@ const messageRouter = require('./routes/message.route');
 const express = require('express');
 const { server } = require('./socket/socket');
 const userErrorHandler = require('./middleware/userErrorHandler');
+const chatsErrorHandler = require('./controllers/chatsErrorHandler');
 config();
 
 const app = express();
@@ -21,7 +22,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRouter, userErrorHandler);
 app.use('/api/users', userRouter, userErrorHandler);
-app.use('/api/chats', chatsRouter);
+app.use('/api/chats', chatsRouter, chatsErrorHandler);
 app.use('/api/chats', messageRouter);
 
 server.listen(PORT, () => {
