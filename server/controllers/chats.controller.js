@@ -35,7 +35,7 @@ const createchat = asyncHandler(async (req, res) => {
 
   for (const member of members) {
     const socketId = getSocketId(member._id);
-    io.to(socketId).emit('newChat', chat);
+    if (socketId) io.to(socketId).emit('newChat', chat);
   }
 
   res.status(201).json(chat);

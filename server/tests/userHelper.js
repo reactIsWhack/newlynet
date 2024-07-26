@@ -1,6 +1,7 @@
 const request = require('supertest');
 const app = require('../index');
 const User = require('../models/user.model');
+const ioc = require('socket.io-client');
 
 const loginUser = async (username, password) => {
   const response = await request(app)
@@ -31,4 +32,31 @@ const addContacts = async (token, contactId) => {
   return response.body.contacts;
 };
 
-module.exports = { loginUser, createTestUser, addContacts };
+const connectClientSocket = async (userId) => {
+  clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
+    // connect logged in user to socket io
+    query: { userId },
+  });
+  console.log(clientSocket);
+
+  return clientSocket;
+};
+
+const connectContactSockets = async (contactId, i) => {
+  const contactSockets = {};
+  contactSockets[`contact${i + 1}`] = ioc(
+    `http://localhost:${process.env.PORT}`,
+    {
+      query: { userId: contactId },
+    }
+  ); // connects the two users who will be part of future chats as an object
+  return contactSockets;
+};
+
+module.exports = {
+  loginUser,
+  createTestUser,
+  addContacts,
+  connectClientSocket,
+  connectContactSockets,
+};
