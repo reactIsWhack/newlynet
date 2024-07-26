@@ -16,6 +16,9 @@ const chatSchema = new mongoose.Schema(
     chatPic: {
       type: String,
     },
+    chatType: {
+      type: String,
+    },
   },
   { timestamps: true }
 );

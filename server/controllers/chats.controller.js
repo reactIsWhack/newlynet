@@ -28,6 +28,7 @@ const createchat = asyncHandler(async (req, res) => {
       members.length > 1
         ? 'https://cdn-icons-png.flaticon.com/512/6387/6387947.png'
         : '',
+    chatType: members.length > 1 ? 'group' : 'individual',
   }).then((chat) =>
     chat.populate({ path: 'members', model: 'user', select: '-password' })
   );
@@ -40,4 +41,16 @@ const createchat = asyncHandler(async (req, res) => {
   res.status(201).json(chat);
 });
 
-module.exports = { createchat };
+const getChats = asyncHandler(async (req, res) => {
+  const { chatType } = req.params;
+
+  const chats = await Chat.find({
+    members: { $in: [req.userId] },
+    chatType,
+  }).populate([{ path: 'members', model: 'user', select: '-password' }]);
+
+  console.log(chats);
+  res.status(200).json(chats);
+});
+
+module.exports = { createchat, getChats };
