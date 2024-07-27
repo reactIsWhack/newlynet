@@ -48,11 +48,11 @@ beforeAll(async () => {
     chatType: 'group',
     chatName: 'Test Chat',
   }); // create a group chat for testing
-});
+}, 9000);
 
-const getRealTimeMessages = (i) => {
+const getRealTimeMessages = (socket) => {
   return new Promise((resolve, reject) => {
-    contactSockets[`contact${i + 1}`].on('newMessage', (arg) => {
+    socket.on('newMessage', (arg) => {
       console.log('Received newMessage event:', arg);
       resolve(arg);
     });
@@ -63,7 +63,7 @@ describe('POST /message', () => {
   it('Should send a message to the group chat', async () => {
     let messagePromise;
     for (let i = 0; i < 2; i++) {
-      messagePromise = getRealTimeMessages(i);
+      messagePromise = getRealTimeMessages(contactSockets[`contact${i + 1}`]);
     }
 
     const response = await request(app)
@@ -84,6 +84,23 @@ describe('POST /message', () => {
 
     const messageEvent = await messagePromise;
     expect(messageEvent.message).toBe('Hi from test user');
+  });
+});
+
+describe('GET /messages', () => {
+  it('Should get messages based off a chat id', async () => {
+    const response = await request(app)
+      .get(`/api/message/messages/${chat._id}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].message).toBe('Hi from test user');
+    expect(response.body[0].author._id.toString()).toBe(userInfo._id);
+    expect(response.body[0].receivers.map((item) => String(item._id))).toEqual(
+      expect.arrayContaining([contacts[0]._id, contacts[1]._id])
+    );
   });
 });
 

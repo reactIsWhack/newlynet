@@ -8,6 +8,6 @@ const {
 const router = Router();
 
 router.post('/sendmessage/:chatId', routeProtector, sendMessage);
-router.get('/messages', routeProtector, getMessages);
+router.get('/messages/:chatId', routeProtector, getMessages);
 
 module.exports = router;
