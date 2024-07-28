@@ -13,6 +13,10 @@ const messageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
     },
+    media: {
+      type: Object,
+      default: {},
+    },
   },
   { timestamps: true }
 );

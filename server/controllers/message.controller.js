@@ -3,6 +3,13 @@ const Chat = require('../models/chat.model');
 const Message = require('../models/message.model');
 const { getSocketId } = require('../socket/socket');
 const { io } = require('../socket/socket');
+const cloudinary = require('cloudinary').v2;
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_KEY,
+  api_secret: process.env.CLOUDINARY_SECRET,
+});
 
 const sendMessage = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
@@ -19,10 +26,33 @@ const sendMessage = asyncHandler(async (req, res) => {
     (member) => member._id.toString() !== req.userId.toString()
   );
 
+  let mediaInfo = {
+    src: '',
+    fileType: '',
+  };
+
+  if (req.file) {
+    try {
+      const media = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'newlynet',
+        resource_type:
+          req.file.mimetype === 'video/mp4' ||
+          req.file.mimetype === 'video/quicktime'
+            ? 'video'
+            : 'image',
+      });
+      mediaInfo.src = media.secure_url;
+      mediaInfo.fileType = req.file.mimetype;
+    } catch (error) {
+      console.log('Error uploading to cloudinary: ' + error);
+    }
+  }
+
   const newMessage = await Message.create({
     message,
     author: req.userId,
     receivers,
+    media: mediaInfo,
   }).then((msg) =>
     msg.populate([
       { path: 'author', model: 'user', select: '-password' },

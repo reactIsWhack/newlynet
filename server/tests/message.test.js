@@ -87,7 +87,7 @@ describe('POST /message', () => {
     expect(messageEvent.message).toBe('Hi from test user');
   });
 
-  it('Should send a message back to the test user', async () => {
+  it('Should send a message back to the test user with an image', async () => {
     const { token, user } = await loginUser(
       contacts[0].username,
       process.env.FAKE_USER_PASSWORD
@@ -97,11 +97,15 @@ describe('POST /message', () => {
     const response = await request(app)
       .post(`/api/message/sendmessage/${chat._id}`)
       .set('Cookie', [...token])
-      .send({ message: `Hi from ${user.fullName}` })
+      .attach('image', `${__dirname}/test-image.png`)
+      .field({ message: `Hi from ${user.fullName}` })
       .expect(201)
       .expect('Content-Type', /application\/json/);
+    console.log(response.body, 'response message');
 
-    expect(response.body).toBeTruthy();
+    expect(response.body.message).toBe(`Hi from ${user.fullName}`);
+    expect(response.body.media.src).toBeTruthy();
+    expect(response.body.media.fileType).toBe('image/png');
 
     const messageEvent = await messagePromise;
     expect(messageEvent.author._id.toString()).toBe(contacts[0]._id);
