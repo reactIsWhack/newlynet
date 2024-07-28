@@ -43,7 +43,7 @@ beforeAll(async () => {
   }
 
   chat = await Chat.create({
-    members: contacts,
+    members: [...contacts, user],
     messages: [],
     chatType: 'group',
     chatName: 'Test Chat',
@@ -51,6 +51,7 @@ beforeAll(async () => {
 }, 9000);
 
 const getRealTimeMessages = (socket) => {
+  console.log(socket);
   return new Promise((resolve, reject) => {
     socket.on('newMessage', (arg) => {
       console.log('Received newMessage event:', arg);
@@ -85,6 +86,26 @@ describe('POST /message', () => {
     const messageEvent = await messagePromise;
     expect(messageEvent.message).toBe('Hi from test user');
   });
+
+  it('Should send a message back to the test user', async () => {
+    const { token, user } = await loginUser(
+      contacts[0].username,
+      process.env.FAKE_USER_PASSWORD
+    );
+    let messagePromise = getRealTimeMessages(clientSocket);
+
+    const response = await request(app)
+      .post(`/api/message/sendmessage/${chat._id}`)
+      .set('Cookie', [...token])
+      .send({ message: `Hi from ${user.fullName}` })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body).toBeTruthy();
+
+    const messageEvent = await messagePromise;
+    expect(messageEvent.author._id.toString()).toBe(contacts[0]._id);
+  });
 });
 
 describe('GET /messages', () => {
@@ -95,11 +116,16 @@ describe('GET /messages', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body.length).toBe(1);
+    expect(response.body.length).toBe(2);
     expect(response.body[0].message).toBe('Hi from test user');
     expect(response.body[0].author._id.toString()).toBe(userInfo._id);
     expect(response.body[0].receivers.map((item) => String(item._id))).toEqual(
       expect.arrayContaining([contacts[0]._id, contacts[1]._id])
+    );
+    expect(response.body[1].message).toBe(`Hi from ${contacts[0].fullName}`);
+    expect(response.body[1].author._id.toString()).toBe(contacts[0]._id);
+    expect(response.body[1].receivers.map((item) => String(item._id))).toEqual(
+      expect.arrayContaining([contacts[1]._id, userInfo._id])
     );
   });
 });
