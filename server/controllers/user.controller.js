@@ -25,7 +25,6 @@ const addContact = asyncHandler(async (req, res) => {
 
 const getCommonNewStudents = asyncHandler(async (req, res) => {
   const { filter } = req.params; // the user can find other new students either by grade or common interests, hence the filter property
-  // filter is an object since the user can filter by higher, lower, or same grade
   const { cursor } = req.query;
 
   const user = await User.findById(req.userId);
@@ -44,7 +43,6 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         { _id: { $nin: user.contacts } },
         query,
       ],
-      // createdAt: { $lte: dateQuery },
     }).limit(process.env.NODE_ENV === 'test' ? 1 : 20); // for testing pagination
   } else {
     users = await User.find({
@@ -65,11 +63,14 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
 });
 
 const getPersonalProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.userId).populate({
-    path: 'contacts',
-    model: 'user',
-    select: '-password',
-  });
+  const user = await User.findById(req.userId).populate([
+    {
+      path: 'contacts',
+      model: 'user',
+      select: '-password',
+    },
+    { path: 'unreadChats', populate: ['chat', 'messages'] },
+  ]);
 
   if (!user) {
     res.status(404);

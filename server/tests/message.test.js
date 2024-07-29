@@ -17,6 +17,8 @@ let contactSockets = {
   contact2: null,
 };
 let chat;
+let fourthGroupMemberSocket;
+let fourthGroupMember;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -26,9 +28,13 @@ beforeAll(async () => {
   const { token, user } = await loginUser('test', 'test123');
   jwt = token;
   userInfo = user;
+  fourthGroupMember = fakeUsers[2];
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: user._id },
+  });
+  fourthGroupMemberSocket = ioc(`http://localhost:${process.env.PORT}`, {
+    query: { userId: fakeUsers[2]._id },
   });
 
   for (let i = 0; i < 2; i++) {
@@ -43,18 +49,19 @@ beforeAll(async () => {
   }
 
   chat = await Chat.create({
-    members: [...contacts, user],
+    members: [...contacts, fakeUsers[2]._id, user],
     messages: [],
     chatType: 'group',
     chatName: 'Test Chat',
   }); // create a group chat for testing
+  clientSocket.emit('joinroom', `chat-${chat._id}`);
+  contactSockets.contact1.emit('joinroom', `chat-${chat._id}`);
+  contactSockets.contact2.emit('joinroom', `chat-${chat._id}`);
 }, 9000);
 
 const getRealTimeMessages = (socket) => {
-  console.log(socket);
   return new Promise((resolve, reject) => {
     socket.on('newMessage', (arg) => {
-      console.log('Received newMessage event:', arg);
       resolve(arg);
     });
   });
@@ -93,6 +100,11 @@ describe('POST /message', () => {
       process.env.FAKE_USER_PASSWORD
     );
     let messagePromise = getRealTimeMessages(clientSocket);
+    let notificationPromise = new Promise((resolve, reject) => {
+      fourthGroupMemberSocket.on('newMessageNotify', (unreadMessages) =>
+        resolve(unreadMessages)
+      );
+    });
 
     const response = await request(app)
       .post(`/api/message/sendmessage/${chat._id}`)
@@ -101,18 +113,21 @@ describe('POST /message', () => {
       .field({ message: `Hi from ${user.fullName}` })
       .expect(201)
       .expect('Content-Type', /application\/json/);
-    console.log(response.body, 'response message');
 
     expect(response.body.message).toBe(`Hi from ${user.fullName}`);
     expect(response.body.media.src).toBeTruthy();
     expect(response.body.media.fileType).toBe('image/png');
 
     const messageEvent = await messagePromise;
+    const unreadMessagesEvent = await notificationPromise;
     expect(messageEvent.author._id.toString()).toBe(contacts[0]._id);
+    expect(unreadMessagesEvent.length).toBe(1);
+    expect(unreadMessagesEvent[0].messages.length).toBe(2);
   });
 });
 
 describe('GET /messages', () => {
+  let fourthMemberToken;
   it('Should get messages based off a chat id', async () => {
     const response = await request(app)
       .get(`/api/message/messages/${chat._id}`)
@@ -131,6 +146,46 @@ describe('GET /messages', () => {
     expect(response.body[1].receivers.map((item) => String(item._id))).toEqual(
       expect.arrayContaining([contacts[1]._id, userInfo._id])
     );
+  });
+
+  it('Should ensure the fourth member of the group chat has two unread messages', async () => {
+    const { token, user } = await loginUser(
+      fourthGroupMember.username,
+      process.env.FAKE_USER_PASSWORD
+    );
+    fourthMemberToken = token;
+    const response = await request(app)
+      .get(`/api/users/personalprofile`)
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.unreadChats.length).toBe(1);
+    expect(response.body.unreadChats[0].messages.length).toBe(2);
+    expect(response.body.unreadChats[0].chat.chatName).toBe('Test Chat');
+    expect(response.body.unreadChats[0].messages[0].message).toBe(
+      'Hi from test user'
+    );
+    expect(response.body.unreadChats[0].messages[1].message).toBe(
+      `Hi from ${contacts[0].fullName}`
+    );
+  });
+
+  it('Should clear the unread messages of the fourth member', async () => {
+    let notificationPromise = new Promise((resolve, reject) => {
+      fourthGroupMemberSocket.on('newMessageNotify', (unreadMessages) =>
+        resolve(unreadMessages)
+      );
+    });
+
+    const response = await request(app)
+      .get(`/api/message/messages/${chat._id}`)
+      .set('Cookie', [...fourthMemberToken])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const unreadMessagesEvent = await notificationPromise;
+    expect(unreadMessagesEvent.length).toBe(0);
   });
 });
 

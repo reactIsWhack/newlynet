@@ -3,6 +3,7 @@ const Chat = require('../models/chat.model');
 const Message = require('../models/message.model');
 const { getSocketId } = require('../socket/socket');
 const { io } = require('../socket/socket');
+const User = require('../models/user.model');
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -60,18 +61,45 @@ const sendMessage = asyncHandler(async (req, res) => {
     ])
   );
 
-  if (newMessage) {
-    chat.messages = [...chat.messages, newMessage];
-    await chat.save();
-
-    for (const receiver of newMessage.receivers) {
-      const socketId = getSocketId(receiver._id);
-      console.log(socketId);
-      if (socketId) io.to(socketId).emit('newMessage', newMessage);
-    }
-
-    res.status(201).json(newMessage);
+  if (!newMessage) {
+    res.status(500);
+    throw new Error('Message failed to send');
   }
+
+  chat.messages = [...chat.messages, newMessage];
+  await chat.save();
+
+  for (const receiver of newMessage.receivers) {
+    const socketId = getSocketId(receiver._id);
+    if (!socketId) return;
+
+    io.to(socketId).emit('newMessage', newMessage);
+    const room = io.sockets.adapter.rooms.get(`chat-${chat._id}`);
+
+    // if the user is not on the chat, add the new messages to their list of unread messages
+    if (!room.has(socketId)) {
+      const receiverObj = await User.findById(receiver._id);
+      const unreadChatItem = receiverObj.unreadChats.find(
+        (chatItem) => String(chatItem.chat._id) === String(chat._id)
+      );
+      if (unreadChatItem) {
+        unreadChatItem.messages = [...unreadChatItem.messages, newMessage];
+      } else {
+        receiverObj.unreadChats = [
+          ...receiverObj.unreadChats,
+          { chat: chat._id, messages: [newMessage._id] },
+        ];
+      }
+      await receiverObj.save().then((item) =>
+        item.populate({
+          path: 'unreadChats',
+          populate: ['chat', 'messages'],
+        })
+      );
+      io.to(socketId).emit('newMessageNotify', receiverObj.unreadChats);
+    }
+  }
+  res.status(201).json(newMessage);
 });
 
 const getMessages = asyncHandler(async (req, res) => {
@@ -90,6 +118,21 @@ const getMessages = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Chat not found');
   }
+
+  // mark unread messsages as read by removing the chat from the unreadChats array
+  const user = await User.findById(req.userId).populate('unreadChats');
+  const updatedUnreadChats = user.unreadChats.filter(
+    (chatItem) => String(chatItem.chat._id) !== String(chat._id)
+  );
+  user.unreadChats = updatedUnreadChats;
+  await user
+    .save()
+    .then((item) =>
+      item.populate({ path: 'unreadChats', populate: ['chat', 'messagse'] })
+    );
+
+  const socketId = getSocketId(user._id);
+  io.to(socketId).emit('newMessageNotify', user.unreadChats);
 
   res.status(200).json(chat.messages);
 });

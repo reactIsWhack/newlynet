@@ -34,6 +34,12 @@ const userSchema = new mongoose.Schema(
       required: [true, 'Please select at least 1 club or sport interest'],
     },
     contacts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }], // list of users that the user has stored to keep in contact with
+    unreadChats: [
+      {
+        chat: { type: mongoose.Schema.Types.ObjectId, ref: 'chat' },
+        messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
+      },
+    ], // an array of chats that the user has not read recent messages in
   },
   { timestamps: true }
 );

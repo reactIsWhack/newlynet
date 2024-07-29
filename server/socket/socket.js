@@ -24,6 +24,11 @@ io.on('connection', (socket) => {
     onlineUsers[userId] = socket.id;
   }
 
+  socket.on('joinroom', (roomname) => {
+    // the rooms will be used to check if a user has unread messages based on if they are in that room or not
+    socket.join(roomname); // roomname is the id of a chat with the prefix "chat"
+  });
+
   io.emit('onlineUsers', Object.keys(onlineUsers));
 
   io.on('disconnect', () => {
