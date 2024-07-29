@@ -4,6 +4,7 @@ const {
   sendMessage,
   getMessages,
   editMessage,
+  deleteMessage,
 } = require('../controllers/message.controller');
 const uploader = require('../utils/fileUpload');
 const fileErrorHandler = require('../middleware/multerErrorHandler');
@@ -19,5 +20,6 @@ router.post(
 );
 router.get('/messages/:chatId', routeProtector, getMessages);
 router.patch('/editmessage/:messageId', routeProtector, editMessage);
+router.delete('/:messageId', routeProtector, deleteMessage);
 
 module.exports = router;

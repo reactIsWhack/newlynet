@@ -168,4 +168,19 @@ const editMessage = asyncHandler(async (req, res) => {
   res.status(200).json(message);
 });
 
-module.exports = { sendMessage, getMessages, editMessage };
+const deleteMessage = asyncHandler(async (req, res) => {
+  const { messageId } = req.params;
+
+  const message = await Message.findById(messageId);
+
+  if (!message) {
+    res.status(404);
+    throw new Error('Message not found');
+  }
+
+  await message.deleteOne();
+
+  res.status(200).json(message);
+});
+
+module.exports = { sendMessage, getMessages, editMessage, deleteMessage };

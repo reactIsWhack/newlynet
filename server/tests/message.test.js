@@ -7,6 +7,7 @@ const Chat = require('../models/chat.model');
 const app = require('../index');
 const getSchool = require('../services/schoolService');
 const { io } = require('../socket/socket');
+const Message = require('../models/message.model');
 
 let jwt;
 let userInfo;
@@ -202,6 +203,19 @@ describe('PATCH /messages', () => {
 
     expect(response.body.message).toBe('Hi from test user, 2.0');
     expect(response.body.author._id.toString()).toBe(userInfo._id);
+  });
+});
+
+describe('DELETE /messages', () => {
+  it('Should delete the initial message sent by the test user', async () => {
+    const response = await request(app)
+      .delete(`/api/message/${initialMessage._id}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const deletedMessage = await Message.findById(response.body._id);
+    expect(deletedMessage).toBe(null);
   });
 });
 
