@@ -62,7 +62,6 @@ const updateChatSettings = asyncHandler(async (req, res) => {
   const { chatName } = req.body;
 
   const chat = await Chat.findById(chatId);
-  console.log(chat, chatName);
 
   if (!chat) {
     res.status(404);
@@ -85,7 +84,17 @@ const updateChatSettings = asyncHandler(async (req, res) => {
   chat.chatName = chatName || chat.chatName;
   chat.chatPic = newChatPic || chat.chatPic;
 
-  await chat.save();
+  await chat.save().then((item) => item.populate(['members', 'messages']));
+  const chatMembers = chat.members.filter(
+    (member) => String(member._id) !== String(req.userId)
+  );
+
+  for (const chatMember of chatMembers) {
+    const socketId = getSocketId(chatMember._id);
+    if (socketId) {
+      io.to(socketId).emit('updatedChat', chat);
+    }
+  }
 
   res.status(200).json(chat);
 });
@@ -114,7 +123,15 @@ const leaveGroupChat = asyncHandler(async (req, res) => {
 
   chat.members = updatedChatMembers;
 
-  await chat.save();
+  await chat.save().then((item) => item.populate(['members', 'messages']));
+
+  for (const member of chat.members) {
+    const socketId = getSocketId(member._id);
+    if (socketId) {
+      io.to(socketId).emit('memberChange', chat);
+    }
+  }
+
   res.status(200).json(chat);
 });
 

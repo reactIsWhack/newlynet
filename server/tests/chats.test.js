@@ -40,20 +40,20 @@ beforeAll(async () => {
   }
 });
 
-describe('POST /chats', () => {
-  const getRealTimeChat = (i) => {
-    return new Promise((resolve, reject) => {
-      contactSockets[`contact${i + 1}`].on('newChat', (chat) => {
-        console.log('Chat created in real time: ', chat);
-        resolve(chat);
-      });
+const getRealTimeChat = (i, event) => {
+  return new Promise((resolve, reject) => {
+    contactSockets[`contact${i + 1}`].on(event, (chat) => {
+      console.log('Chat created in real time: ', chat);
+      resolve(chat);
     });
-  };
+  });
+};
 
+describe('POST /chats', () => {
   it('Should create a group chat with three members', async () => {
     let chatPromise;
     for (let i = 0; i < 2; i++) {
-      chatPromise = getRealTimeChat(i);
+      chatPromise = getRealTimeChat(i, 'newChat');
     }
 
     const response = await request(app)
@@ -156,6 +156,11 @@ describe('GET /chats', () => {
 
 describe('PATCH /chats', () => {
   it('Should update the chat name and picture', async () => {
+    let chatPromise;
+    for (let i = 0; i < 2; i++) {
+      chatPromise = getRealTimeChat(i, 'updatedChat');
+    }
+
     const response = await request(app)
       .patch(`/api/chats/updatechat/${chat._id}`)
       .set('Cookie', [...jwt])
@@ -167,9 +172,17 @@ describe('PATCH /chats', () => {
     console.log(response.body);
     expect(response.body._id).toBe(chat._id.toString());
     expect(response.body.chatName).toBe('Test Chat 2.0');
+
+    const chatEvent = await chatPromise;
+    expect(chatEvent.chatName).toBe('Test Chat 2.0');
   });
 
   it('Should have the test user leave the test group chat', async () => {
+    let chatPromise;
+    for (let i = 0; i < 2; i++) {
+      chatPromise = getRealTimeChat(i, 'memberChange');
+    }
+
     const response = await request(app)
       .patch(`/api/chats/leavechat/${chat._id}`)
       .set('Cookie', [...jwt])
@@ -178,6 +191,12 @@ describe('PATCH /chats', () => {
 
     console.log(response.body);
     expect(response.body.members.length).toBe(2);
+    expect(
+      response.body.members.map((member) => String(member._id))
+    ).not.toContain(userInfo._id);
+
+    const chatEvent = await chatPromise;
+    expect(chatEvent.members.length).toBe(2);
     expect(
       response.body.members.map((member) => String(member._id))
     ).not.toContain(userInfo._id);
