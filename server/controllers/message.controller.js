@@ -163,7 +163,12 @@ const editMessage = asyncHandler(async (req, res) => {
   }
 
   message.message = messageText;
-  await message.save();
+  await message.save().then((msg) => msg.populate(['author', 'receivers']));
+
+  for (const receiver of message.receivers) {
+    const socketId = getSocketId(receiver._id);
+    if (socketId) io.to(socketId).emit('editMessage', message);
+  }
 
   res.status(200).json(message);
 });
@@ -179,6 +184,13 @@ const deleteMessage = asyncHandler(async (req, res) => {
   }
 
   await message.deleteOne();
+
+  for (const receiver of message.receivers) {
+    const socketId = getSocketId(receiver);
+    if (socketId) {
+      io.to(socketId).emit('deletedMessage', message);
+    }
+  }
 
   res.status(200).json(message);
 });

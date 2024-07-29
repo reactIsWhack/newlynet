@@ -61,9 +61,9 @@ beforeAll(async () => {
   contactSockets.contact2.emit('joinroom', `chat-${chat._id}`);
 }, 9000);
 
-const getRealTimeMessages = (socket) => {
+const getRealTimeMessages = (socket, event) => {
   return new Promise((resolve, reject) => {
-    socket.on('newMessage', (arg) => {
+    socket.on(event, (arg) => {
       resolve(arg);
     });
   });
@@ -73,7 +73,10 @@ describe('POST /message', () => {
   it('Should send a message to the group chat', async () => {
     let messagePromise;
     for (let i = 0; i < 2; i++) {
-      messagePromise = getRealTimeMessages(contactSockets[`contact${i + 1}`]);
+      messagePromise = getRealTimeMessages(
+        contactSockets[`contact${i + 1}`],
+        'newMessage'
+      );
     }
 
     const response = await request(app)
@@ -102,7 +105,7 @@ describe('POST /message', () => {
       contacts[0].username,
       process.env.FAKE_USER_PASSWORD
     );
-    let messagePromise = getRealTimeMessages(clientSocket);
+    let messagePromise = getRealTimeMessages(clientSocket, 'newMessage');
     let notificationPromise = new Promise((resolve, reject) => {
       fourthGroupMemberSocket.on('newMessageNotify', (unreadMessages) =>
         resolve(unreadMessages)
@@ -194,6 +197,14 @@ describe('GET /messages', () => {
 
 describe('PATCH /messages', () => {
   it('Should update the text of the initial message sent by the test user', async () => {
+    let messagePromise;
+    for (let i = 0; i < 2; i++) {
+      messagePromise = getRealTimeMessages(
+        contactSockets[`contact${i + 1}`],
+        'editMessage'
+      );
+    }
+
     const response = await request(app)
       .patch(`/api/message/editmessage/${initialMessage._id}`)
       .set('Cookie', [...jwt])
@@ -203,11 +214,22 @@ describe('PATCH /messages', () => {
 
     expect(response.body.message).toBe('Hi from test user, 2.0');
     expect(response.body.author._id.toString()).toBe(userInfo._id);
+
+    const messageEvent = await messagePromise;
+    expect(messageEvent.message).toBe('Hi from test user, 2.0');
   });
 });
 
 describe('DELETE /messages', () => {
   it('Should delete the initial message sent by the test user', async () => {
+    let messagePromise;
+    for (let i = 0; i < 2; i++) {
+      messagePromise = getRealTimeMessages(
+        contactSockets[`contact${i + 1}`],
+        'deletedMessage'
+      );
+    }
+
     const response = await request(app)
       .delete(`/api/message/${initialMessage._id}`)
       .set('Cookie', [...jwt])
@@ -216,6 +238,8 @@ describe('DELETE /messages', () => {
 
     const deletedMessage = await Message.findById(response.body._id);
     expect(deletedMessage).toBe(null);
+    const messageEvent = await messagePromise;
+    expect(messageEvent._id.toString()).toBe(response.body._id.toString());
   });
 });
 
