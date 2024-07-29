@@ -90,4 +90,32 @@ const updateChatSettings = asyncHandler(async (req, res) => {
   res.status(200).json(chat);
 });
 
-module.exports = { createchat, getChats, updateChatSettings };
+const leaveGroupChat = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+
+  const chat = await Chat.findById(chatId).then((item) =>
+    item.populate('members')
+  );
+
+  if (!chat) {
+    res.status(404);
+    throw new Error('Chat not found');
+  }
+
+  const updatedChatMembers = chat.members.filter(
+    (member) => String(member._id) !== String(req.userId)
+  );
+
+  if (!updatedChatMembers.length) {
+    // if all members leave the chat, delete the chat entirely
+    await chat.deleteOne();
+    return res.status(200).json(chat);
+  }
+
+  chat.members = updatedChatMembers;
+
+  await chat.save();
+  res.status(200).json(chat);
+});
+
+module.exports = { createchat, getChats, updateChatSettings, leaveGroupChat };

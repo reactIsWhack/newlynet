@@ -4,6 +4,7 @@ const {
   createchat,
   getChats,
   updateChatSettings,
+  leaveGroupChat,
 } = require('../controllers/chats.controller');
 const uploader = require('../utils/fileUpload');
 const fileErrorHandler = require('../middleware/multerErrorHandler');
@@ -19,5 +20,6 @@ router.patch(
   fileErrorHandler,
   updateChatSettings
 );
+router.patch('/leavechat/:chatId', routeProtector, leaveGroupChat);
 
 module.exports = router;

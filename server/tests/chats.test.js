@@ -168,6 +168,20 @@ describe('PATCH /chats', () => {
     expect(response.body._id).toBe(chat._id.toString());
     expect(response.body.chatName).toBe('Test Chat 2.0');
   });
+
+  it('Should have the test user leave the test group chat', async () => {
+    const response = await request(app)
+      .patch(`/api/chats/leavechat/${chat._id}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.members.length).toBe(2);
+    expect(
+      response.body.members.map((member) => String(member._id))
+    ).not.toContain(userInfo._id);
+  });
 });
 
 afterAll(async () => {
