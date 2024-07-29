@@ -12,6 +12,7 @@ let jwt;
 let userInfo;
 let clientSocket;
 let contactSockets = {};
+let chat;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -61,6 +62,7 @@ describe('POST /chats', () => {
       .send({ members: contacts, chatName: 'Test Chat' })
       .expect(201)
       .expect('Content-Type', /application\/json/);
+    chat = response.body;
 
     expect(response.body.chatName).toBe('Test Chat');
     expect(response.body.chatType).toBe('group');
@@ -149,6 +151,22 @@ describe('GET /chats', () => {
         userInfo._id.toString(),
       ])
     );
+  });
+});
+
+describe('PATCH /chats', () => {
+  it('Should update the chat name and picture', async () => {
+    const response = await request(app)
+      .patch(`/api/chats/updatechat/${chat._id}`)
+      .set('Cookie', [...jwt])
+      .attach('photo', `${__dirname}/test-pfp.jpg`)
+      .field({ chatName: 'Test Chat 2.0' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body._id).toBe(chat._id.toString());
+    expect(response.body.chatName).toBe('Test Chat 2.0');
   });
 });
 

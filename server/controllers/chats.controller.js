@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Chat = require('../models/chat.model');
 const { io, getSocketId } = require('../socket/socket');
+const cloudinary = require('cloudinary').v2;
 
 const createchat = asyncHandler(async (req, res) => {
   const { members, chatName } = req.body; // an array of users that will be part of the chat
@@ -56,4 +57,37 @@ const getChats = asyncHandler(async (req, res) => {
   res.status(200).json(chats);
 });
 
-module.exports = { createchat, getChats };
+const updateChatSettings = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+  const { chatName } = req.body;
+
+  const chat = await Chat.findById(chatId);
+  console.log(chat, chatName);
+
+  if (!chat) {
+    res.status(404);
+    throw new Error('Chat not found');
+  }
+
+  let newChatPic;
+  if (req.file) {
+    try {
+      const { secure_url } = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'newlynet',
+        resource_type: 'image',
+      });
+      newChatPic = secure_url;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  chat.chatName = chatName || chat.chatName;
+  chat.chatPic = newChatPic || chat.chatPic;
+
+  await chat.save();
+
+  res.status(200).json(chat);
+});
+
+module.exports = { createchat, getChats, updateChatSettings };

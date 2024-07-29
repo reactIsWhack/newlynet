@@ -1,10 +1,23 @@
 const { Router } = require('express');
 const routeProtector = require('../middleware/routeProtector');
-const { createchat, getChats } = require('../controllers/chats.controller');
+const {
+  createchat,
+  getChats,
+  updateChatSettings,
+} = require('../controllers/chats.controller');
+const uploader = require('../utils/fileUpload');
+const fileErrorHandler = require('../middleware/multerErrorHandler');
 
 const router = Router();
 
 router.post('/createchat', routeProtector, createchat);
 router.get('/getchats/:chatType', routeProtector, getChats);
+router.patch(
+  '/updatechat/:chatId',
+  routeProtector,
+  uploader.single('photo'),
+  fileErrorHandler,
+  updateChatSettings
+);
 
 module.exports = router;
