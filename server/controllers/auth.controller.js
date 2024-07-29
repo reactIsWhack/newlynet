@@ -93,4 +93,22 @@ const logoutUser = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Logged out successfully!' });
 });
 
-module.exports = { registerUser, loginUser, logoutUser };
+const getLoginStatus = asyncHandler(async (req, res) => {
+  const { token } = req.cookies;
+
+  if (!token) {
+    return res.json(false);
+  }
+
+  const verified = jwt.verify(token, process.env.JWT_SECRET);
+
+  const user = await User.findById(verified.userId);
+
+  if (verified) {
+    res.json(true);
+  } else {
+    res.json(false);
+  }
+});
+
+module.exports = { registerUser, loginUser, logoutUser, getLoginStatus };

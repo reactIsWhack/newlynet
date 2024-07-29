@@ -6,6 +6,7 @@ const app = require('../index');
 const getSchool = require('../services/schoolService');
 
 let school;
+let token;
 beforeAll(async () => {
   await initializeMongoDB();
 
@@ -114,10 +115,21 @@ describe('POST /login', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
+    token = response.headers['set-cookie'];
     expect(response.headers['set-cookie']).toBeTruthy();
     expect(response.body._id).toBeTruthy();
     expect(response.body.fullName).toBe('j');
     expect(response.body.contacts.length).toBe(0);
+  });
+
+  it('Should verify that the user is logged in', async () => {
+    const response = await request(app)
+      .get('/api/auth/loginstatus')
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body).toBe(true);
   });
 
   it('Should fail to login a user with an incorrect password', async () => {
