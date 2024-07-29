@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.model');
+const cloudinary = require('cloudinary').v2;
 
 const addContact = asyncHandler(async (req, res) => {
   const { contactId } = req.params;
@@ -80,4 +81,47 @@ const getPersonalProfile = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
-module.exports = { addContact, getCommonNewStudents, getPersonalProfile };
+const updateProfile = asyncHandler(async (req, res) => {
+  const { grade, school, interests, replacedInterests } = req.body;
+
+  if (!grade && !school && !interests && !req.file) {
+    res.status(400);
+    throw new Error('Please provide a field to be updated');
+  }
+
+  const user = await User.findById(req.userId);
+
+  let profilePicture = '';
+  if (req.file) {
+    try {
+      const { secure_url } = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'newlynet',
+        resource_type: 'image',
+      });
+      profilePicture = secure_url;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  user.grade = grade || user.grade;
+  user.school = school || user.school;
+  user.profilePicture = profilePicture || user.profilePicture;
+  if (interests.length === 3) user.interests = interests;
+  else {
+    const filteredInterests = user.interests.filter(
+      (interest) => !replacedInterests.includes(interest)
+    );
+    user.interests = [...filteredInterests, ...interests];
+  }
+  await user.save();
+
+  res.status(200).json(user);
+});
+
+module.exports = {
+  addContact,
+  getCommonNewStudents,
+  getPersonalProfile,
+  updateProfile,
+};

@@ -15,12 +15,14 @@ let school;
 beforeAll(async () => {
   await initializeMongoDB();
   fakeUsers = await generateFakeUsers();
-  console.log(fakeUsers);
   userWithCommonInterests = fakeUsers[1];
   console.log(userWithCommonInterests, 'common interests user');
 
   school = await getSchool('PrincetonHighSchool');
-  await createTestUser(userWithCommonInterests.interests.slice(0, 2), school);
+  await createTestUser(
+    [...userWithCommonInterests.interests.slice(0, 2), 'Tennis'],
+    school
+  );
   const loginInfo = await loginUser('test', 'test123');
   token = loginInfo.token;
   userInfo = loginInfo.user;
@@ -106,6 +108,29 @@ describe('GET /users', () => {
     expect(response.body.contacts[0]._id.toString()).toBe(
       fakeUsers[0]._id.toString()
     );
+  });
+});
+
+describe('UPDATE /users', () => {
+  it("Should update the user's grade, profile picture, and interests", async () => {
+    const response = await request(app)
+      .patch('/api/users/updateprofile')
+      .set('Cookie', [...token])
+      .attach('pfp', `${__dirname}/test-pfp.jpg`)
+      .field({
+        grade: 10,
+        interests: ['Computer Science', 'Golf'],
+        replacedInterests: userWithCommonInterests.interests.slice(0, 2),
+      })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.grade).toBe(10);
+    expect(response.body.interests).toEqual(
+      expect.arrayContaining(['Computer Science', 'Golf', 'Tennis'])
+    );
+    expect(response.body.school.formattedName).toBe('Princeton High School');
   });
 });
 
