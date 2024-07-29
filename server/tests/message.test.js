@@ -19,6 +19,7 @@ let contactSockets = {
 let chat;
 let fourthGroupMemberSocket;
 let fourthGroupMember;
+let initialMessage;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -81,6 +82,7 @@ describe('POST /message', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
+    initialMessage = response.body;
     const updatedChat = await Chat.findById(chat._id);
     expect(response.body.message).toBe('Hi from test user');
     expect(response.body.receivers.map((item) => String(item._id))).toEqual(
@@ -186,6 +188,20 @@ describe('GET /messages', () => {
 
     const unreadMessagesEvent = await notificationPromise;
     expect(unreadMessagesEvent.length).toBe(0);
+  });
+});
+
+describe('PATCH /messages', () => {
+  it('Should update the text of the initial message sent by the test user', async () => {
+    const response = await request(app)
+      .patch(`/api/message/editmessage/${initialMessage._id}`)
+      .set('Cookie', [...jwt])
+      .send({ messageText: 'Hi from test user, 2.0' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe('Hi from test user, 2.0');
+    expect(response.body.author._id.toString()).toBe(userInfo._id);
   });
 });
 

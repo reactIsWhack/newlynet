@@ -1,4 +1,5 @@
 const messageErrorHandler = (err, req, res) => {
+  // console.log(err.message);
   if (err.errors && err.errors.message) {
     return res.status(400).json({
       message: err.errors.message.properties.message,

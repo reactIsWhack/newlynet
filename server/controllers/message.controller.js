@@ -137,4 +137,35 @@ const getMessages = asyncHandler(async (req, res) => {
   res.status(200).json(chat.messages);
 });
 
-module.exports = { sendMessage, getMessages };
+const editMessage = asyncHandler(async (req, res) => {
+  const { messageId } = req.params;
+  const { messageText } = req.body;
+
+  const message = await Message.findById(messageId).populate([
+    { path: 'author', select: '-password' },
+    { path: 'receivers', select: '-password' },
+  ]);
+
+  if (!message) {
+    res.status(404);
+    throw new Error('Message not found');
+  }
+
+  if (!messageText) {
+    res.status(400);
+    throw new Error('Please provide a message');
+  }
+
+  if (messageText == message.message) {
+    // if the updated message text is the same as the old message, throw an error
+    res.status(400);
+    throw new Error('Please provide a new message');
+  }
+
+  message.message = messageText;
+  await message.save();
+
+  res.status(200).json(message);
+});
+
+module.exports = { sendMessage, getMessages, editMessage };
