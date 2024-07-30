@@ -1,0 +1,13 @@
+@media screen and (max-width: 550px) {
+  .interest-btn-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    column-gap: 0.5em;
+    row-gap: 0.5em;
+  }
+
+  .interest-btn-container button {
+    margin: 0;
+    height: 40px;
+  }
+}

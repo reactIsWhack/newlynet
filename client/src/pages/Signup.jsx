@@ -2,7 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import SchoolSelect from '../components/ui/SchoolSelect';
 
-const Signup = () => {
+const Signup = ({ formData, setFormData }) => {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: value,
+    }));
+  };
+
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col items-center justify-center h-lvh">
@@ -22,6 +30,9 @@ const Signup = () => {
                   type="text"
                   placeholder="Enter fullname"
                   className="w-full input input-bordered h-10"
+                  name="fullName"
+                  value={formData.fullName}
+                  onChange={handleChange}
                 />
               </div>
               <div className="max-[550px]:px-3">
@@ -32,6 +43,9 @@ const Signup = () => {
                   type="text"
                   placeholder="Enter username"
                   className="w-full input input-bordered h-10"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
                 />
               </div>
             </div>
@@ -43,6 +57,9 @@ const Signup = () => {
                 type="password"
                 placeholder="Enter password"
                 className="w-full input input-bordered h-10"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
               />
             </div>
             <SchoolSelect />
@@ -54,7 +71,7 @@ const Signup = () => {
                 Already have an account?
               </Link>
               <Link
-                to="/login"
+                to="/select-interests"
                 className="text-sm hover:underline hover:text-blue-600 mt-4 inline-block max-[550px]:px-3"
               >
                 Select your interests {`-->`}
