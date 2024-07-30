@@ -62,7 +62,7 @@ const Signup = ({ formData, setFormData }) => {
                 onChange={handleChange}
               />
             </div>
-            <SchoolSelect />
+            <SchoolSelect setFormData={setFormData} />
             <div className="flex items-center justify-between mb-2">
               <Link
                 to="/login"

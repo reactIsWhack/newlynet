@@ -38,8 +38,7 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
     users = await User.find({
       grade: user.grade,
       $and: [
-        { 'school.description': user.school.description },
-        { 'school.formattedName': user.school.formattedName },
+        { 'school.schoolId': user.school.schoolId },
         { _id: { $ne: user._id } },
         { _id: { $nin: user.contacts } },
         query,
@@ -48,8 +47,7 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
   } else {
     users = await User.find({
       $and: [
-        { 'school.description': user.school.description },
-        { 'school.formattedName': user.school.formattedName },
+        { 'school.schoolId': user.school.schoolId },
         { _id: { $ne: user._id } },
         { _id: { $nin: user.contacts } },
         query,

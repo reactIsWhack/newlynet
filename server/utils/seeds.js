@@ -26,6 +26,9 @@ const generateInterests = () => {
 };
 
 const generateFakeUsers = async () => {
+  // return User.deleteMany();
+  console.log('Generating fake users...');
+
   const fakeUsers = [];
   const schoolQueries = [
     'PrincetonHighSchool',
@@ -61,6 +64,7 @@ const generateFakeUsers = async () => {
       }
     }
   }
+  console.log('Fake users generated ✅');
   return fakeUsers;
 };
 
