@@ -1,6 +1,8 @@
 const { Server } = require('socket.io');
 const http = require('http');
-const app = require('../index');
+const express = require('express');
+// const app = require('../index');
+const app = express();
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -25,7 +27,7 @@ io.on('connection', (socket) => {
   }
 
   socket.on('joinroom', (roomname) => {
-    // the rooms will be used to check if a user has unread messages based on if they are in that room or not
+    // the rooms will be used to check if a user has unread messages based on if they are in the room or not
     socket.join(roomname); // roomname is the id of a chat with the prefix "chat"
   });
 
@@ -36,4 +38,4 @@ io.on('connection', (socket) => {
   });
 });
 
-module.exports = { server, io, getSocketId };
+module.exports = { server, io, getSocketId, app };
