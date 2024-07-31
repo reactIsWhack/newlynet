@@ -1,4 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
+import toast from 'react-hot-toast';
+const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 const initialState = {
   userId: '',
@@ -12,6 +15,21 @@ const initialState = {
   isLoggedIn: false,
 };
 
+export const signup = createAsyncThunk(
+  'user/signup',
+  async ({ formData, navigate }, thunkAPI) => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/auth/signup`, formData);
+      console.log(response);
+      if (response.status === 201) navigate('/');
+      toast.success('Registered successfully!');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -20,6 +38,27 @@ const userSlice = createSlice({
       console.log(action.payload);
       state.isLoggedIn = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(signup.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isLoggedIn = true;
+        state.userId = action.payload._id;
+        state.interests = action.payload.interests;
+        state.fullName = action.payload.fullName;
+        state.contacts = action.payload.contacts;
+        state.profilePicture = action.payload.profilePicture;
+        state.grade = action.payload.grade;
+        state.school = action.payload.school;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload);
+      });
   },
 });
 

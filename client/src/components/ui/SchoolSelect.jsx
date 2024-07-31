@@ -50,6 +50,7 @@ const SchoolSelect = ({
           min={5}
           max={12}
           onChange={handleChange}
+          value={formData.grade}
         />
       </div>
     </div>

@@ -15,12 +15,29 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Please provide at least one club or sport interest');
   }
 
+  if (!school.description || !school.schoolId) {
+    res.status(400);
+    throw new Error('Please provide a valid school');
+  }
+
+  const response = await fetch(
+    `https://places.googleapis.com/v1/places/${school.schoolId}?fields=id,displayName&key=${process.env.API_KEY}`
+  );
+  const verifiedSchool = await response.json();
+  if (response.status !== 200) {
+    res.status(400);
+    throw new Error('Please provide a valid school');
+  }
+
   const user = await User.create({
     fullName,
     username,
     password,
     grade,
-    school,
+    school: {
+      ...school,
+      formattedName: verifiedSchool.displayName.text,
+    },
     interests,
     contacts: [],
   });
@@ -104,7 +121,7 @@ const getLoginStatus = asyncHandler(async (req, res) => {
 
   const user = await User.findById(verified.userId);
 
-  if (verified) {
+  if (verified && user) {
     res.json(true);
   } else {
     res.json(false);

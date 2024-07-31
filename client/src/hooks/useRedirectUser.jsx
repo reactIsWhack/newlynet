@@ -20,11 +20,12 @@ const useRedirectUser = () => {
 
     dispatch(setIsLoggedIn(response.data));
 
-    if (!response.data) {
+    if (!response.data && pathname !== '/signup') {
       navigate('/login');
     }
 
-    if (pathname === '/login' && response.data) navigate('/');
+    if ((pathname === '/login' || pathname === '/signup') && response.data)
+      navigate('/');
   };
 
   useEffect(() => {

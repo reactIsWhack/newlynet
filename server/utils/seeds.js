@@ -26,7 +26,7 @@ const generateInterests = () => {
 };
 
 const generateFakeUsers = async () => {
-  // return User.deleteMany();
+  return User.deleteMany();
   console.log('Generating fake users...');
 
   const fakeUsers = [];

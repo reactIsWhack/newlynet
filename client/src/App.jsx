@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import axios from 'axios';
 import InterestsSelect from './pages/InterestsSelect';
 import { useState } from 'react';
+import { Toaster } from 'react-hot-toast';
 
 axios.defaults.withCredentials = true;
 
@@ -50,6 +51,7 @@ function App() {
           }
         ></Route>
       </Routes>
+      <Toaster />
     </>
   );
 }
