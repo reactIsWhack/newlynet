@@ -56,6 +56,18 @@ export const getUserProfile = createAsyncThunk(
   }
 );
 
+export const logoutUser = createAsyncThunk(
+  'user/logout',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/auth/logout`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -118,6 +130,12 @@ const userSlice = createSlice({
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.isLoggedIn = false;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
         toast.error(action.payload);
       });
   },

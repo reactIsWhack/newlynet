@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../app/features/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { logoutUser, selectUser } from '../app/features/user/userSlice';
 import NavLinks from './ui/NavLinks';
 import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const { profilePicture } = useSelector(selectUser);
-
+  const dispatch = useDispatch();
   const [mobile, setMobile] = useState(window.innerWidth <= 550);
 
   const handleWindowSizeChange = () => {
@@ -60,7 +60,13 @@ const Navbar = () => {
               <a className="text-gray-200">Settings</a>
             </li>
             <li>
-              <a className="text-gray-200">Logout</a>
+              <Link
+                onClick={() => dispatch(logoutUser())}
+                className="text-gray-200"
+                to="/"
+              >
+                Logout
+              </Link>
             </li>
           </ul>
         </div>
