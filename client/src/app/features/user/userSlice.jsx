@@ -20,9 +20,23 @@ export const signup = createAsyncThunk(
   async ({ formData, navigate }, thunkAPI) => {
     try {
       const response = await axios.post(`${baseUrl}/api/auth/signup`, formData);
-      console.log(response);
       if (response.status === 201) navigate('/');
       toast.success('Registered successfully!');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  'user/login',
+  async ({ formData, navigate }, thunkAPI) => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/auth/login`, formData);
+      console.log(response);
+      if (response.status === 200) navigate('/');
+      toast.success('Logged in successfully!');
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -56,6 +70,24 @@ const userSlice = createSlice({
         state.school = action.payload.school;
       })
       .addCase(signup.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isLoggedIn = true;
+        state.userId = action.payload._id;
+        state.interests = action.payload.interests;
+        state.fullName = action.payload.fullName;
+        state.contacts = action.payload.contacts;
+        state.profilePicture = action.payload.profilePicture;
+        state.grade = action.payload.grade;
+        state.school = action.payload.school;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
         toast.error(action.payload);
       });
