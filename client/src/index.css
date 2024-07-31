@@ -9,6 +9,7 @@ html {
 
 body {
   background: #1a202c;
+  min-height: 100vh;
 }
 
 .nav-link-active svg {
@@ -29,13 +30,10 @@ body {
   width: 18rem;
   position: sticky;
   top: 100px;
-  overflow: overlay;
 }
 
 .home-main-content {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 @media screen and (max-width: 550px) {

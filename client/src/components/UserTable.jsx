@@ -6,7 +6,7 @@ import UserTableCard from './ui/UserTableCard';
 const UserTable = () => {
   const { commonNewStudents } = useSelector(selectUser);
 
-  const userTableCard = commonNewStudents.map((student) => {
+  const userTableCard = commonNewStudents.slice(0, 20).map((student) => {
     return <UserTableCard key={student._id} {...student} />;
   });
 
