@@ -1,6 +1,7 @@
 import React from 'react';
 import useRedirectUser from '../hooks/useRedirectUser';
 import Navbar from '../components/Navbar';
+import PrimaryUserCard from '../components/PrimaryUserCard';
 
 const Home = () => {
   useRedirectUser();
@@ -8,7 +9,10 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <h1>Home</h1>
+      <div className="py-8 px-12">
+        <PrimaryUserCard />
+      </div>{' '}
+      {/* home page container */}
     </div>
   );
 };
