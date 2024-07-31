@@ -8,7 +8,7 @@ const HomeMainContent = () => {
   const { isLoading } = useSelector(selectUser);
 
   return (
-    <div className="home-main-content flex-1 pb-6">
+    <div className="home-main-content flex-1 py-4 px-1">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">New Students in your School</h3>
         <Dropdown />

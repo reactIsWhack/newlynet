@@ -11,7 +11,7 @@ const UserTable = () => {
   });
 
   return (
-    <div className="overflow-x-auto">
+    <div>
       <table className="table">
         {/* head */}
         <thead>

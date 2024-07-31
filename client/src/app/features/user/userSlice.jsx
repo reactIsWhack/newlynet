@@ -71,10 +71,10 @@ export const logoutUser = createAsyncThunk(
 
 export const getCommonNewStudents = createAsyncThunk(
   'user/commonStudents',
-  async (_, thunkAPI) => {
+  async (filter, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${baseUrl}/api/users/commonstudents/grade`
+        `${baseUrl}/api/users/commonstudents/${filter}`
       );
       console.log(response, 'getcommonstudents');
       return response.data;
@@ -91,6 +91,9 @@ const userSlice = createSlice({
     setIsLoggedIn(state, action) {
       console.log(action.payload);
       state.isLoggedIn = action.payload;
+    },
+    resetStudents(state, action) {
+      state.commonNewStudents = [];
     },
   },
   extraReducers: (builder) => {
@@ -175,6 +178,6 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { setIsLoggedIn } = userSlice.actions;
+export const { setIsLoggedIn, resetStudents } = userSlice.actions;
 
 export const selectUser = (state) => state.user;

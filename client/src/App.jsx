@@ -31,7 +31,7 @@ function App() {
 
   const getData = async () => {
     await dispatch(getUserProfile());
-    await dispatch(getCommonNewStudents());
+    await dispatch(getCommonNewStudents('grade'));
   };
 
   useEffect(() => {
