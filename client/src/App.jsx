@@ -13,19 +13,30 @@ function App() {
     fullName: '',
     username: '',
     password: '',
-    school: null,
+    school: { description: '', placeId: '' },
     grade: null,
     interests: [],
   });
+  const [schoolQuery, setSchoolQuery] = useState('');
   console.log(formData);
 
   return (
     <>
       <Routes>
-        <Route path="/login" element={<Login />}></Route>
+        <Route
+          path="/login"
+          element={<Login setFormData={setFormData} />}
+        ></Route>
         <Route
           path="/signup"
-          element={<Signup formData={formData} setFormData={setFormData} />}
+          element={
+            <Signup
+              formData={formData}
+              setFormData={setFormData}
+              schoolQuery={schoolQuery}
+              setSchoolQuery={setSchoolQuery}
+            />
+          }
         ></Route>
         <Route path="/" element={<Home />}></Route>
         <Route

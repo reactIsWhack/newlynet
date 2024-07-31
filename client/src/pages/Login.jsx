@@ -1,8 +1,19 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import landingImage from '../assets/landing-image.png';
 
-const Login = () => {
+const Login = ({ setFormData }) => {
+  useEffect(() => {
+    setFormData({
+      fullName: '',
+      username: '',
+      password: '',
+      school: { description: '', placeId: '' },
+      grade: null,
+      interests: [],
+    });
+  }, []);
+
   return (
     <div className="flex items-center justify-center w-lvw">
       <div className="flex items-center justify-center h-lvh">

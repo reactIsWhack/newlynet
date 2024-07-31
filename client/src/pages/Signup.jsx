@@ -1,8 +1,8 @@
-import React from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import SchoolSelect from '../components/ui/SchoolSelect';
 
-const Signup = ({ formData, setFormData }) => {
+const Signup = ({ formData, setFormData, schoolQuery, setSchoolQuery }) => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -62,7 +62,12 @@ const Signup = ({ formData, setFormData }) => {
                 onChange={handleChange}
               />
             </div>
-            <SchoolSelect setFormData={setFormData} />
+            <SchoolSelect
+              setFormData={setFormData}
+              formData={formData}
+              schoolQuery={schoolQuery}
+              setSchoolQuery={setSchoolQuery}
+            />
             <div className="flex items-center justify-between mb-2">
               <Link
                 to="/login"
