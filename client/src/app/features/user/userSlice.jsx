@@ -13,6 +13,8 @@ const initialState = {
   school: null,
   isLoading: false,
   isLoggedIn: false,
+  commonNewStudents: [],
+  cursor: null, // for pagination, tells which document to start querying from
 };
 
 export const signup = createAsyncThunk(
@@ -34,7 +36,6 @@ export const loginUser = createAsyncThunk(
   async ({ formData, navigate }, thunkAPI) => {
     try {
       const response = await axios.post(`${baseUrl}/api/auth/login`, formData);
-      console.log(response);
       if (response.status === 200) navigate('/');
       toast.success('Logged in successfully!');
       return response.data;
@@ -61,6 +62,21 @@ export const logoutUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(`${baseUrl}/api/auth/logout`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getCommonNewStudents = createAsyncThunk(
+  'user/commonStudents',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/users/commonstudents/grade`
+      );
+      console.log(response, 'getcommonstudents');
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -133,9 +149,25 @@ const userSlice = createSlice({
         toast.error(action.payload);
       })
       .addCase(logoutUser.fulfilled, (state, action) => {
+        state.commonNewStudents = [];
         state.isLoggedIn = false;
       })
       .addCase(logoutUser.rejected, (state, action) => {
+        toast.error(action.payload);
+      })
+      .addCase(getCommonNewStudents.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(getCommonNewStudents.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.commonNewStudents = [
+          ...state.commonNewStudents,
+          ...action.payload.users,
+        ];
+        state.cursor = action.payload.nextCursor;
+      })
+      .addCase(getCommonNewStudents.rejected, (state, action) => {
+        state.isLoading = false;
         toast.error(action.payload);
       });
   },

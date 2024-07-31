@@ -32,14 +32,14 @@ const generateFakeUsers = async () => {
   const schoolQueries = [
     'PrincetonHighSchool',
     'MontgomeryHighSchool',
-    'SouthBrunswickHighSchool',
+    // 'SouthBrunswickHighSchool',
   ];
 
   for (const schoolQuery of schoolQueries) {
     const numOfFakeUsers =
       process.env.NODE_ENV === 'test'
         ? 3
-        : Math.floor(Math.random() * (15 - 5 + 1) + 5);
+        : Math.floor(Math.random() * (50 - 15 + 1) + 15);
     const schoolInfo = await getSchool(schoolQuery);
 
     for (let i = 0; i < numOfFakeUsers; i++) {

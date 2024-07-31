@@ -7,7 +7,11 @@ import InterestsSelect from './pages/InterestsSelect';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
-import { getUserProfile, selectUser } from './app/features/user/userSlice';
+import {
+  getCommonNewStudents,
+  getUserProfile,
+  selectUser,
+} from './app/features/user/userSlice';
 import Chats from './pages/Chats';
 
 axios.defaults.withCredentials = true;
@@ -25,9 +29,14 @@ function App() {
   const { isLoggedIn } = useSelector(selectUser);
   const dispatch = useDispatch();
 
+  const getData = async () => {
+    await dispatch(getUserProfile());
+    await dispatch(getCommonNewStudents());
+  };
+
   useEffect(() => {
     if (isLoggedIn) {
-      dispatch(getUserProfile());
+      getData();
     }
   }, [isLoggedIn]);
 
