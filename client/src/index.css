@@ -1,3 +1,33 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+html {
+  height: 100%;
+}
+
+body {
+  background: #1a202c;
+  height: 100vh;
+}
+
+.nav-link-active svg {
+  fill: #60a5fa;
+  stroke: #60a5fa;
+  stroke-width: 0;
+}
+
+.nav-link-inactive .home-icon {
+  fill: none;
+}
+
+.nav-links {
+  gap: 4rem;
+}
+
+@media screen and (max-width: 550px) {
+  .nav-links {
+    gap: 1.5rem;
+    margin-right: 2em;
+  }
+}

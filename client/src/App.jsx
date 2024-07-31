@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { getUserProfile, selectUser } from './app/features/user/userSlice';
+import Chats from './pages/Chats';
 
 axios.defaults.withCredentials = true;
 
@@ -28,7 +29,7 @@ function App() {
     if (isLoggedIn) {
       dispatch(getUserProfile());
     }
-  }, []);
+  }, [isLoggedIn]);
 
   return (
     <>
@@ -59,6 +60,7 @@ function App() {
             />
           }
         ></Route>
+        <Route path="/chats" element={<Chats />}></Route>
       </Routes>
       <Toaster />
     </>
