@@ -44,6 +44,18 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const getUserProfile = createAsyncThunk(
+  'user/getProfile',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(`${baseUrl}/api/users/personalprofile`);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -88,6 +100,23 @@ const userSlice = createSlice({
         state.school = action.payload.school;
       })
       .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(getUserProfile.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUserProfile.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userId = action.payload._id;
+        state.interests = action.payload.interests;
+        state.fullName = action.payload.fullName;
+        state.contacts = action.payload.contacts;
+        state.profilePicture = action.payload.profilePicture;
+        state.grade = action.payload.grade;
+        state.school = action.payload.school;
+      })
+      .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;
         toast.error(action.payload);
       });

@@ -4,8 +4,10 @@ import Signup from './pages/Signup';
 import Home from './pages/Home';
 import axios from 'axios';
 import InterestsSelect from './pages/InterestsSelect';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserProfile, selectUser } from './app/features/user/userSlice';
 
 axios.defaults.withCredentials = true;
 
@@ -19,7 +21,14 @@ function App() {
     interests: [],
   });
   const [schoolQuery, setSchoolQuery] = useState('');
-  console.log(formData);
+  const { isLoggedIn } = useSelector(selectUser);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      dispatch(getUserProfile());
+    }
+  }, []);
 
   return (
     <>
