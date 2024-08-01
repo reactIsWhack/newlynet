@@ -13,6 +13,7 @@ import {
   selectUser,
 } from './app/features/user/userSlice';
 import Chats from './pages/Chats';
+import { useSocket } from './context/SocketContext';
 
 axios.defaults.withCredentials = true;
 
@@ -28,6 +29,7 @@ function App() {
   const [schoolQuery, setSchoolQuery] = useState('');
   const { isLoggedIn } = useSelector(selectUser);
   const dispatch = useDispatch();
+  const { socket } = useSocket();
 
   const getData = async () => {
     await dispatch(getUserProfile());

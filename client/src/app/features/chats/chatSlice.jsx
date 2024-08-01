@@ -18,7 +18,23 @@ export const getConversations = createAsyncThunk(
       const response = await axios.get(
         `${baseUrl}/api/chats/getchats/${chatType}`
       );
-      console.log(response);
+      console.log(response, 'conversations');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const createChat = createAsyncThunk(
+  'user/createChat',
+  async (chatData, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/chats/createchat`,
+        chatData
+      );
+      console.log(response, 'new chat');
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -39,6 +55,17 @@ const chatsSlice = createSlice({
         state.conversations = action.payload;
       })
       .addCase(getConversations.rejected, (state, action) => {
+        state.chatsLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(createChat.pending, (state, action) => {
+        state.chatsLoading = true;
+      })
+      .addCase(createChat.fulfilled, (state, action) => {
+        state.chatsLoading = false;
+        state.conversations = [action.payload, ...state.conversations];
+      })
+      .addCase(createChat.rejected, (state, action) => {
         state.chatsLoading = false;
         toast.error(action.payload);
       });
