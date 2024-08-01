@@ -5,10 +5,12 @@ import useRedirectUser from '../hooks/useRedirectUser';
 import Messages from '../components/Messages';
 import { useDispatch } from 'react-redux';
 import { getConversations } from '../app/features/chats/chatSlice';
+import useDetectMobile from '../hooks/useDetectMobile';
 
 const Chats = () => {
   useRedirectUser();
   const dispatch = useDispatch();
+  const mobile = useDetectMobile();
 
   useEffect(() => {
     // remove the scroll effect created by the body by default
@@ -23,7 +25,7 @@ const Chats = () => {
       <Navbar />
       <div className="flex">
         <ChatSidebar />
-        <Messages />
+        {!mobile && <Messages />}
       </div>
     </div>
   );
