@@ -3,13 +3,16 @@
 @tailwind utilities;
 
 html {
-  height: 100vh;
   background: #1a202c;
 }
 
 body {
   background: #1a202c;
   min-height: 100vh;
+}
+
+.remove-scroll-sidebar::-webkit-scrollbar {
+  width: 0 !important;
 }
 
 .nav-link-active svg {
@@ -34,6 +37,12 @@ body {
 
 .home-main-content {
   flex: 1;
+}
+
+@layer utilities {
+  .scrollbar-medium::-webkit-scrollbar {
+    width: 4px;
+  }
 }
 
 @media screen and (max-width: 550px) {
