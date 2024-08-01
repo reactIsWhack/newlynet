@@ -12,7 +12,7 @@ const initialState = {
 };
 
 export const getConversations = createAsyncThunk(
-  'user/getConversations',
+  'chats/getConversations',
   async (chatType, thunkAPI) => {
     try {
       const response = await axios.get(
@@ -27,7 +27,7 @@ export const getConversations = createAsyncThunk(
 );
 
 export const createChat = createAsyncThunk(
-  'user/createChat',
+  'chats/createChat',
   async ({ chatData, navigate }, thunkAPI) => {
     try {
       const response = await axios.post(
@@ -35,6 +35,21 @@ export const createChat = createAsyncThunk(
         chatData
       );
       return { data: response.data, navigate };
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const sendMessage = createAsyncThunk(
+  'chats/sendMessage',
+  async ({ chatId, message }, thunkAPI) => {
+    try {
+      const response = await axios.post(
+        `${baseUrl}/api/message/sendmessage/${chatId}`,
+        { message }
+      );
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }

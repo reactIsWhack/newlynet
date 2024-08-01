@@ -15,7 +15,7 @@ const MessageInput = () => {
 
   console.log(message);
   return (
-    <form className="px-4 my-3 absolute bottom-0 w-full left-0 right-0">
+    <form className="px-4 my-3">
       <div className="w-full relative flex items-center">
         <div class="absolute left-3">
           <label for="file-input">

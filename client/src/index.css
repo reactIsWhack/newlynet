@@ -44,10 +44,8 @@ body {
   height: 90vh;
 }
 
-@layer utilities {
-  .scrollbar-medium::-webkit-scrollbar {
-    width: 4px;
-  }
+.message-container {
+  height: 80vh;
 }
 
 @media screen and (max-width: 550px) {
