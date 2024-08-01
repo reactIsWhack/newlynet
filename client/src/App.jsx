@@ -16,11 +16,7 @@ import Chats from './pages/Chats';
 import { useSocket } from './context/SocketContext';
 import NoChatSelected from './components/ui/NoChatSelected';
 import Messages from './components/Messages';
-import {
-  getConversations,
-  selectChats,
-  setSelectedChat,
-} from './app/features/chats/chatSlice';
+import { getConversations, selectChats } from './app/features/chats/chatSlice';
 
 axios.defaults.withCredentials = true;
 
