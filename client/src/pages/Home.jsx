@@ -25,11 +25,7 @@ const Home = () => {
   return (
     <div>
       <Navbar />
-      <div
-        className={`py-8 px-12 flex gap-12 items-start ${
-          isLoading ? 'h-screen' : ''
-        }`}
-      >
+      <div className={`py-8 px-12 flex gap-12 items-start`}>
         <div className="sticky primary-user-card">
           {!mobile && <PrimaryUserCard />}
         </div>

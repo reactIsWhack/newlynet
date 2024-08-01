@@ -36,7 +36,7 @@ server.listen(process.env.PORT, async () => {
   console.log(`Server started on port ${PORT}`);
   if (process.env.NODE_ENV !== 'test') {
     await connectToDB();
-    await generateFakeUsers();
+    // await generateFakeUsers();
   }
 });
 

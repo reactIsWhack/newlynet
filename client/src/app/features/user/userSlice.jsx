@@ -14,7 +14,7 @@ const initialState = {
   isLoading: false,
   isLoggedIn: false,
   commonNewStudents: [],
-  cursor: null, // for pagination, tells which document to start querying from
+  cursor: '',
 };
 
 export const signup = createAsyncThunk(
@@ -71,10 +71,10 @@ export const logoutUser = createAsyncThunk(
 
 export const getCommonNewStudents = createAsyncThunk(
   'user/commonStudents',
-  async (filter, thunkAPI) => {
+  async ({ filter, cursor }, thunkAPI) => {
     try {
       const response = await axios.get(
-        `${baseUrl}/api/users/commonstudents/${filter}`
+        `${baseUrl}/api/users/commonstudents/${filter}?cursor=${cursor}`
       );
       console.log(response, 'getcommonstudents');
       return response.data;
@@ -93,7 +93,11 @@ const userSlice = createSlice({
       state.isLoggedIn = action.payload;
     },
     resetStudents(state, action) {
+      state.cursor = '';
       state.commonNewStudents = [];
+    },
+    setCursor(state, action) {
+      state.isLoading = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -165,9 +169,8 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.commonNewStudents = [
           ...state.commonNewStudents,
-          ...action.payload.users,
+          ...action.payload,
         ];
-        state.cursor = action.payload.nextCursor;
       })
       .addCase(getCommonNewStudents.rejected, (state, action) => {
         state.isLoading = false;
@@ -178,6 +181,6 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { setIsLoggedIn, resetStudents } = userSlice.actions;
+export const { setIsLoggedIn, resetStudents, setCursor } = userSlice.actions;
 
 export const selectUser = (state) => state.user;

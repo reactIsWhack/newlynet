@@ -31,6 +31,7 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
   const user = await User.findById(req.userId);
   let users;
 
+  console.log(cursor);
   let query = {};
   if (cursor) query._id = { $gt: cursor };
 
@@ -56,9 +57,7 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
     }).limit(process.env.NODE_ENV === 'test' ? 1 : 20);
   }
 
-  const nextCursor = users.length ? users[users.length - 1]._id : null;
-
-  res.status(200).json({ users, nextCursor });
+  res.status(200).json(users);
 });
 
 const getPersonalProfile = asyncHandler(async (req, res) => {

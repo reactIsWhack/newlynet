@@ -5,14 +5,13 @@ import {
   resetStudents,
 } from '../../app/features/user/userSlice';
 
-const Dropdown = () => {
-  const [filter, setFilter] = useState('grade');
+const Dropdown = ({ filter, setFilter }) => {
   const dispatch = useDispatch();
 
   const handleChange = async (e) => {
     await setFilter(e.target.value);
     dispatch(resetStudents());
-    dispatch(getCommonNewStudents(filter));
+    dispatch(getCommonNewStudents({ filter, cursor: '' }));
   };
 
   return (

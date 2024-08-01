@@ -1,14 +1,48 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../app/features/user/userSlice';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getCommonNewStudents,
+  selectUser,
+  setCursor,
+} from '../app/features/user/userSlice';
 import UserTableCard from './ui/UserTableCard';
 
-const UserTable = () => {
-  const { commonNewStudents } = useSelector(selectUser);
+const UserTable = ({ filter }) => {
+  const { commonNewStudents, isLoading } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const [requestPending, setRequestPending] = useState(false);
 
-  const userTableCard = commonNewStudents.slice(0, 20).map((student) => {
+  const userTableCard = commonNewStudents.map((student) => {
     return <UserTableCard key={student._id} {...student} />;
   });
+
+  const handleScroll = async () => {
+    const bottom =
+      Math.ceil(window.innerHeight + window.scrollY) >=
+      document.documentElement.scrollHeight;
+    if (bottom) {
+      window.removeEventListener('scroll', handleScroll);
+      await setRequestPending(true);
+      const cursor = commonNewStudents[commonNewStudents.length - 1]._id;
+      if (!cursor) return;
+      await dispatch(
+        getCommonNewStudents({
+          filter,
+          cursor,
+        })
+      );
+      setRequestPending(false);
+    }
+  };
+  useEffect(() => {
+    if (requestPending) {
+      return window.removeEventListener('scroll', handleScroll);
+    }
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [commonNewStudents]);
 
   return (
     <div>
@@ -24,6 +58,11 @@ const UserTable = () => {
         </thead>
         <tbody>{userTableCard}</tbody>
       </table>
+      {isLoading && (
+        <div className="flex justify-center mt-4">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      )}
     </div>
   );
 };

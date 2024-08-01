@@ -1,25 +1,25 @@
-import React from 'react';
+import { useEffect, useState } from 'react';
 import Dropdown from './ui/Dropdown';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../app/features/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getCommonNewStudents,
+  resetStudents,
+  selectUser,
+} from '../app/features/user/userSlice';
 import UserTable from './UserTable';
 
 const HomeMainContent = () => {
-  const { isLoading } = useSelector(selectUser);
+  const { isLoading, cursor, commonNewStudents } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const [filter, setFilter] = useState('grade');
 
   return (
-    <div className="home-main-content flex-1 py-4 px-1">
+    <div className="home-main-content flex-1 py-4 px-1 overflow-hidden">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">New Students in your School</h3>
-        <Dropdown />
+        <Dropdown filter={filter} setFilter={setFilter} />
       </div>
-      {isLoading ? (
-        <div className="flex justify-center mt-4">
-          <span className="loading loading-spinner loading-lg"></span>
-        </div>
-      ) : (
-        <UserTable />
-      )}
+      <UserTable filter={filter} />
     </div>
   );
 };
