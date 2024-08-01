@@ -16,6 +16,11 @@ import Chats from './pages/Chats';
 import { useSocket } from './context/SocketContext';
 import NoChatSelected from './components/ui/NoChatSelected';
 import Messages from './components/Messages';
+import {
+  getConversations,
+  selectChats,
+  setSelectedChat,
+} from './app/features/chats/chatSlice';
 
 axios.defaults.withCredentials = true;
 
@@ -30,12 +35,13 @@ function App() {
   });
   const [schoolQuery, setSchoolQuery] = useState('');
   const { isLoggedIn } = useSelector(selectUser);
+  const { selectedConversation } = useSelector(selectChats);
   const dispatch = useDispatch();
-  const { socket } = useSocket();
 
   const getData = async () => {
     await dispatch(getUserProfile());
     await dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' }));
+    await dispatch(getConversations('individual'));
   };
 
   useEffect(() => {
@@ -74,7 +80,10 @@ function App() {
           }
         ></Route>
         <Route path="/chats" element={<Chats />}>
-          <Route index element={<NoChatSelected />}></Route>
+          <Route
+            index
+            element={!selectedConversation ? <NoChatSelected /> : null}
+          ></Route>
           <Route path=":id" element={<Messages />} />
         </Route>
       </Routes>

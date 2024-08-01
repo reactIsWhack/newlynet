@@ -39,6 +39,11 @@ body {
   flex: 1;
 }
 
+.sidebar {
+  max-height: 90vh;
+  height: 90vh;
+}
+
 @layer utilities {
   .scrollbar-medium::-webkit-scrollbar {
     width: 4px;

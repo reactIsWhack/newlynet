@@ -14,10 +14,9 @@ const UserTable = ({ filter }) => {
   const dispatch = useDispatch();
   const [requestPending, setRequestPending] = useState(false);
   const { onlineUsers } = useSocket();
-  console.log(onlineUsers);
 
   const userTableCard = commonNewStudents.map((student) => {
-    return <UserTableCard key={student._id} {...student} />;
+    return <UserTableCard key={student._id} {...student} student={student} />;
   });
   const mobile = useDetectMobile();
 

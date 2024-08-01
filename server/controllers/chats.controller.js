@@ -30,8 +30,12 @@ const createchat = asyncHandler(async (req, res) => {
         ? 'https://cdn-icons-png.flaticon.com/512/6387/6387947.png'
         : '',
     chatType: members.length > 1 ? 'group' : 'individual',
+    creator: req.userId,
   }).then((chat) =>
-    chat.populate({ path: 'members', model: 'user', select: '-password' })
+    chat.populate([
+      { path: 'members', model: 'user', select: '-password' },
+      { path: 'creator' },
+    ])
   );
 
   for (const member of members) {

@@ -28,14 +28,13 @@ export const getConversations = createAsyncThunk(
 
 export const createChat = createAsyncThunk(
   'user/createChat',
-  async (chatData, thunkAPI) => {
+  async ({ chatData, navigate }, thunkAPI) => {
     try {
-      const response = await axios.get(
+      const response = await axios.post(
         `${baseUrl}/api/chats/createchat`,
         chatData
       );
-      console.log(response, 'new chat');
-      return response.data;
+      return { data: response.data, navigate };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -45,6 +44,14 @@ export const createChat = createAsyncThunk(
 const chatsSlice = createSlice({
   name: 'chats',
   initialState,
+  reducers: {
+    setSelectedChat(state, action) {
+      state.selectedConversation = action.payload;
+    },
+    setConversations(state, action) {
+      state.conversations = [action.payload, ...state.conversations];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getConversations.pending, (state, action) => {
@@ -63,7 +70,9 @@ const chatsSlice = createSlice({
       })
       .addCase(createChat.fulfilled, (state, action) => {
         state.chatsLoading = false;
-        state.conversations = [action.payload, ...state.conversations];
+        state.conversations = [action.payload.data, ...state.conversations];
+        state.selectedConversation = action.payload.data;
+        action.payload.navigate(`/chats/${action.payload.data._id}`);
       })
       .addCase(createChat.rejected, (state, action) => {
         state.chatsLoading = false;
@@ -73,5 +82,7 @@ const chatsSlice = createSlice({
 });
 
 export default chatsSlice.reducer;
+
+export const { setSelectedChat, setConversations } = chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;

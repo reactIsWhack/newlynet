@@ -13,6 +13,7 @@ const Conversations = () => {
       <Conversation
         key={conversation._id}
         {...conversation}
+        conversation={conversation}
         lastIdx={index === conversations.length - 1}
       />
     );

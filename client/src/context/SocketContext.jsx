@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import { io } from 'socket.io-client';
+import { setConversations } from '../app/features/chats/chatSlice';
+import toast from 'react-hot-toast';
 
 const SocketContext = createContext();
 
@@ -11,6 +13,7 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const { isLoggedIn, userId } = useSelector(selectUser);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -20,6 +23,18 @@ export const SocketContextProvider = ({ children }) => {
       socketVal.on('onlineUsers', (users) => {
         // listens for the getAllOnlineUsers event
         setOnlineUsers(users);
+      });
+
+      socketVal.on('newChat', (chat) => {
+        console.log(chat);
+        dispatch(setConversations(chat));
+        const toastMsg =
+          chat.members.length < 3
+            ? `${chat.creator.fullName} created a chat with you!`
+            : `${chat.creator.fullName} created a chat with you and ${
+                chat.members.length - 2
+              } others`;
+        toast(toastMsg);
       });
 
       return () => {

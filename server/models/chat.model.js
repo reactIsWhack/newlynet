@@ -19,6 +19,10 @@ const chatSchema = new mongoose.Schema(
     chatType: {
       type: String,
     },
+    creator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+    },
   },
   { timestamps: true }
 );

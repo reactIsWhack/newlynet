@@ -1,11 +1,13 @@
 import React from 'react';
 import InterestDisplayBtn from './InterestDisplayBtn';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import { IoPersonAdd } from 'react-icons/io5';
 import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import { useSocket } from '../../context/SocketContext';
 import useDetectMobile from '../../hooks/useDetectMobile';
+import { createChat, selectChats } from '../../app/features/chats/chatSlice';
+import { useNavigate } from 'react-router-dom';
 
 const UserTableCard = ({
   profilePicture,
@@ -14,12 +16,17 @@ const UserTableCard = ({
   grade,
   interests,
   _id,
+  student,
 }) => {
   const user = useSelector(selectUser);
+  const { selectedConversation, chatsLoading, conversations } =
+    useSelector(selectChats);
   const similarInterest = interests.find((interest) =>
     user.interests.includes(interest)
   );
   const { onlineUsers } = useSocket();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   let interest = similarInterest ? similarInterest : interests[0];
   if (interest.length > 16) {
@@ -28,6 +35,12 @@ const UserTableCard = ({
 
   const isOnline = checkOnlineStatus(onlineUsers, _id);
   const mobile = useDetectMobile();
+
+  const startChat = async () => {
+    document.getElementById(student._id).style.opacity = 0.4;
+    await dispatch(createChat({ chatData: { members: [student] }, navigate }));
+    document.getElementById(student._id).style.opacity = 1;
+  };
 
   return (
     <tr>
@@ -51,7 +64,14 @@ const UserTableCard = ({
       )}
       <td>
         <div className="flex items-center gap-3">
-          <button className="btn btn-sm btn-outline">Chat</button>
+          <button
+            className="btn btn-sm btn-outline"
+            onClick={startChat}
+            disabled={chatsLoading}
+            id={_id}
+          >
+            Chat
+          </button>
           <IoPersonAdd size={20} cursor="pointer" />
         </div>
       </td>
