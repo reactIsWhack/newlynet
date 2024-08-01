@@ -10,8 +10,8 @@ const Dropdown = ({ filter, setFilter }) => {
 
   const handleChange = async (e) => {
     await setFilter(e.target.value);
-    dispatch(resetStudents());
-    dispatch(getCommonNewStudents({ filter, cursor: '' }));
+    await dispatch(resetStudents());
+    dispatch(getCommonNewStudents({ filter: e.target.value, cursor: '' }));
   };
 
   return (

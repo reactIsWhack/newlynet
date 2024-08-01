@@ -13,7 +13,6 @@ const Navbar = () => {
     setMobile(window.innerWidth <= 500);
   };
 
-  console.log('navbar rendered');
   useEffect(() => {
     window.addEventListener('resize', handleWindowSizeChange);
     return () => {
