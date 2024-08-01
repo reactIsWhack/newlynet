@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 
-const Conversation = () => {
+const Conversation = ({ lastIdx }) => {
   const { profilePicture } = useSelector(selectUser);
 
   return (
@@ -23,7 +23,7 @@ const Conversation = () => {
         </div>
       </div>
 
-      {/* {!lastIdx && <div className="divider my-0 py-0 h-1" />} */}
+      {!lastIdx && <div className="divider my-0 py-0 h-1" />}
     </>
   );
 };

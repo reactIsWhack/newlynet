@@ -76,7 +76,6 @@ export const getCommonNewStudents = createAsyncThunk(
       const response = await axios.get(
         `${baseUrl}/api/users/commonstudents/${filter}?cursor=${cursor}`
       );
-      console.log(response, filter, 'getcommonstudents');
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
