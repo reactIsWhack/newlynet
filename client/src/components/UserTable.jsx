@@ -6,15 +6,20 @@ import {
   setCursor,
 } from '../app/features/user/userSlice';
 import UserTableCard from './ui/UserTableCard';
+import { useSocket } from '../context/SocketContext';
+import useDetectMobile from '../hooks/useDetectMobile';
 
 const UserTable = ({ filter }) => {
   const { commonNewStudents, isLoading } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [requestPending, setRequestPending] = useState(false);
+  const { onlineUsers } = useSocket();
+  console.log(onlineUsers);
 
   const userTableCard = commonNewStudents.map((student) => {
     return <UserTableCard key={student._id} {...student} />;
   });
+  const mobile = useDetectMobile();
 
   const handleScroll = async () => {
     const bottom =
@@ -51,7 +56,7 @@ const UserTable = ({ filter }) => {
         <thead>
           <tr>
             <th>Name</th>
-            <th>One Interest</th>
+            {!mobile && <th>One Interest</th>}
             <th>Connect</th>
             <th></th>
           </tr>

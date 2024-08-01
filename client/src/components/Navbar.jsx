@@ -3,25 +3,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { logoutUser, selectUser } from '../app/features/user/userSlice';
 import NavLinks from './ui/NavLinks';
 import { Link } from 'react-router-dom';
+import useDetectMobile from '../hooks/useDetectMobile';
 
 const Navbar = () => {
   const { profilePicture } = useSelector(selectUser);
   const dispatch = useDispatch();
-  const [mobile, setMobile] = useState(window.innerWidth <= 550);
-
-  const handleWindowSizeChange = () => {
-    setMobile(window.innerWidth <= 500);
-  };
-
-  useEffect(() => {
-    window.addEventListener('resize', handleWindowSizeChange);
-    return () => {
-      window.removeEventListener('resize', handleWindowSizeChange);
-    };
-  }, []);
+  const mobile = useDetectMobile();
 
   return (
-    <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-10">
+    <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-20">
       <div className="flex-1">
         <Link to="/" className="btn btn-ghost text-xl text-white">
           {mobile ? 'N' : 'NewlyNet'}
