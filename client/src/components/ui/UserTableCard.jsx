@@ -77,7 +77,7 @@ const UserTableCard = ({
       </td>
       {!mobile && (
         <td className="w-2/5">
-          <InterestDisplayBtn interest={interest} />
+          <InterestDisplayBtn interest={truncateInterest(interest, 16)} />
         </td>
       )}
       <td>
