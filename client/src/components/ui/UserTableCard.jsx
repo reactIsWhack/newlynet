@@ -1,7 +1,12 @@
 import React from 'react';
 import InterestDisplayBtn from './InterestDisplayBtn';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../../app/features/user/userSlice';
+import {
+  addContact,
+  getCommonNewStudents,
+  resetStudents,
+  selectUser,
+} from '../../app/features/user/userSlice';
 import { IoPersonAdd } from 'react-icons/io5';
 import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import { useSocket } from '../../context/SocketContext';
@@ -17,6 +22,7 @@ const UserTableCard = ({
   interests,
   _id,
   student,
+  filter,
 }) => {
   const user = useSelector(selectUser);
   const { selectedConversation, chatsLoading, conversations } =
@@ -36,10 +42,24 @@ const UserTableCard = ({
   const isOnline = checkOnlineStatus(onlineUsers, _id);
   const mobile = useDetectMobile();
 
+  const disableBtns = (id) => {
+    console.log(id);
+    const element = document.getElementById(id);
+    console.log(element);
+    element.style.opacity = 0.4;
+    element.classList.add('disabled');
+  };
+
   const startChat = async (e) => {
-    e.target.style.opacity = 0.4;
+    disableBtns(e.target.id);
     await dispatch(createChat({ chatData: { members: [student] }, navigate }));
-    e.target.style.opacity = 1;
+  };
+
+  const contactAdd = async (e) => {
+    e.target.classList.add('disabled');
+    await dispatch(addContact({ id: _id, filter }));
+    await dispatch(resetStudents());
+    await dispatch(getCommonNewStudents({ filter, cursor: '' }));
   };
 
   return (
@@ -67,12 +87,11 @@ const UserTableCard = ({
           <button
             className="btn btn-sm btn-outline"
             onClick={startChat}
-            disabled={chatsLoading}
-            id={_id}
+            id={`chat-${_id}`}
           >
             Chat
           </button>
-          <IoPersonAdd size={20} cursor="pointer" />
+          <IoPersonAdd size={20} cursor="pointer" onClick={contactAdd} />
         </div>
       </td>
       <th>

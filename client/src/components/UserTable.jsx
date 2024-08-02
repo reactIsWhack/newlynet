@@ -16,7 +16,14 @@ const UserTable = ({ filter }) => {
   const { onlineUsers } = useSocket();
 
   const userTableCard = commonNewStudents.map((student) => {
-    return <UserTableCard key={student._id} {...student} student={student} />;
+    return (
+      <UserTableCard
+        key={student._id}
+        {...student}
+        student={student}
+        filter={filter}
+      />
+    );
   });
   const mobile = useDetectMobile();
 

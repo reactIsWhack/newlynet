@@ -84,7 +84,19 @@ export const getCommonNewStudents = createAsyncThunk(
   }
 );
 
-// export const addContact = createAs;
+export const addContact = createAsyncThunk(
+  'user/addContact',
+  async ({ id, filter }, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `${baseUrl}/api/users/addcontact/${id}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 
 const userSlice = createSlice({
   name: 'user',
@@ -177,6 +189,18 @@ const userSlice = createSlice({
         ];
       })
       .addCase(getCommonNewStudents.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(addContact.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(addContact.fulfilled, (state, action) => {
+        toast.success('Contact added!');
+        state.isLoading = false;
+        state.contacts = action.payload.contacts;
+      })
+      .addCase(addContact.rejected, (state, action) => {
         state.isLoading = false;
         toast.error(action.payload);
       });
