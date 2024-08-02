@@ -3,6 +3,7 @@ import { BsSend } from 'react-icons/bs';
 import { AiOutlineLink } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectChats, sendMessage } from '../../app/features/chats/chatSlice';
+import toast from 'react-hot-toast';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
@@ -25,6 +26,10 @@ const MessageInput = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!message) {
+      return toast.error('Please enter a message');
+    }
 
     dispatch(sendMessage({ message, chatId: selectedConversation._id }));
 

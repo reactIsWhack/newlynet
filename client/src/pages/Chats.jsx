@@ -5,12 +5,14 @@ import useRedirectUser from '../hooks/useRedirectUser';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectChats, setSelectedChat } from '../app/features/chats/chatSlice';
 import { Outlet, useParams } from 'react-router-dom';
+import useDetectMobile from '../hooks/useDetectMobile';
 
 const Chats = () => {
   useRedirectUser();
   const dispatch = useDispatch();
   const { conversations } = useSelector(selectChats);
   const { id } = useParams();
+  const mobile = useDetectMobile();
 
   useEffect(() => {
     dispatch(
@@ -25,8 +27,8 @@ const Chats = () => {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
-      <div className="flex flex-1 overflow-hidden">
-        <ChatSidebar />
+      <div className="flex flex-1 overflow-hidden sidebar-container">
+        {((mobile && !id) || !mobile) && <ChatSidebar />}
         <div className="flex-1 overflow-auto">
           <Outlet />
         </div>
