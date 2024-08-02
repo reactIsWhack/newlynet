@@ -3,6 +3,14 @@ import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import { useSocket } from '../../context/SocketContext';
 import InterestDisplayBtn from './InterestDisplayBtn';
 import truncateInterest from '../../utils/truncateInterest';
+import useCheckConversation from '../../hooks/useCheckConversation';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  createChat,
+  selectChats,
+  setSelectedChat,
+} from '../../app/features/chats/chatSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Contact = ({
   fullName,
@@ -11,9 +19,14 @@ const Contact = ({
   school,
   grade,
   interests,
+  contact,
 }) => {
+  const { hasConversation, conversation } = useCheckConversation(_id);
   const { onlineUsers } = useSocket();
+  const { chatsLoading } = useSelector(selectChats);
   const online = checkOnlineStatus(onlineUsers, _id);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const interestBtn = interests.map((interest, index) => {
     return (
@@ -23,6 +36,17 @@ const Contact = ({
       />
     );
   });
+
+  const handleResumeChatting = async () => {
+    await dispatch(setSelectedChat(conversation));
+    navigate(`/chats/${conversation._id}`);
+  };
+
+  const handleStartChatting = async (e) => {
+    e.target.classList.add('disabled');
+    await dispatch(createChat({ chatData: { members: [contact] }, navigate }));
+    e.target.classList.remove('disabled');
+  };
 
   return (
     <div className="card bg-base-100 w-96 shadow-xl">
@@ -43,10 +67,19 @@ const Contact = ({
         <div className="flex flex-wrap mb-4 gap-2 justify-center px-3">
           {interestBtn}
         </div>
-        <div className="card-actions justify-center">
-          <button className="btn btn-primary min-h-10 h-10">
-            Resume Chatting
-          </button>
+        <div className="card-actions justify-center h-full items-end">
+          {hasConversation ? (
+            <button
+              className="btn btn-primary min-h-10 h-10"
+              onClick={handleResumeChatting}
+            >
+              Resume Chatting
+            </button>
+          ) : (
+            <button className="btn btn-neutral" onClick={handleStartChatting}>
+              Start Chatting
+            </button>
+          )}
         </div>
       </div>
     </div>

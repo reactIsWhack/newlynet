@@ -5,6 +5,7 @@ const {
   getChats,
   updateChatSettings,
   leaveGroupChat,
+  checkOngoingConversation,
 } = require('../controllers/chats.controller');
 const uploader = require('../utils/fileUpload');
 const fileErrorHandler = require('../middleware/multerErrorHandler');
@@ -21,5 +22,10 @@ router.patch(
   updateChatSettings
 );
 router.patch('/leavechat/:chatId', routeProtector, leaveGroupChat);
+router.get(
+  '/checkconversation/:contactId',
+  routeProtector,
+  checkOngoingConversation
+);
 
 module.exports = router;

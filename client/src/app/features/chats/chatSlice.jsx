@@ -40,7 +40,8 @@ export const createChat = createAsyncThunk(
       await thunkAPI.dispatch(
         getCommonNewStudents({ filter: 'grade', cursor: '' })
       );
-      return { data: response.data, navigate };
+      const cb = (path) => navigate(path);
+      return { data: response.data, cb };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -115,7 +116,7 @@ const chatsSlice = createSlice({
         state.chatsLoading = false;
         state.conversations = [action.payload.data, ...state.conversations];
         state.selectedConversation = action.payload.data;
-        action.payload.navigate(`/chats/${action.payload.data._id}`);
+        action.payload.cb(`/chats/${action.payload.data._id}`);
       })
       .addCase(createChat.rejected, (state, action) => {
         state.chatsLoading = false;

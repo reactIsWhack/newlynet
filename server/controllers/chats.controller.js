@@ -156,4 +156,26 @@ const leaveGroupChat = asyncHandler(async (req, res) => {
   res.status(200).json(chat);
 });
 
-module.exports = { createchat, getChats, updateChatSettings, leaveGroupChat };
+const checkOngoingConversation = asyncHandler(async (req, res) => {
+  const { contactId } = req.params;
+
+  const chat = await Chat.findOne({
+    members: { $all: [req.userId, contactId] },
+    chatType: 'individual',
+  });
+  console.log(chat, 'chat');
+
+  if (chat) {
+    res.status(200).json(chat);
+  } else {
+    res.status(200).json(false);
+  }
+});
+
+module.exports = {
+  createchat,
+  getChats,
+  updateChatSettings,
+  leaveGroupChat,
+  checkOngoingConversation,
+};
