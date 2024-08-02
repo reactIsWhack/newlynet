@@ -14,6 +14,7 @@ import useDetectMobile from '../../hooks/useDetectMobile';
 import { createChat, selectChats } from '../../app/features/chats/chatSlice';
 import { useNavigate } from 'react-router-dom';
 import truncateInterest from '../../utils/truncateInterest';
+import { FaCheck } from 'react-icons/fa6';
 
 const UserTableCard = ({
   profilePicture,
@@ -26,8 +27,6 @@ const UserTableCard = ({
   filter,
 }) => {
   const user = useSelector(selectUser);
-  const { selectedConversation, chatsLoading, conversations } =
-    useSelector(selectChats);
   const similarInterest = interests.find((interest) =>
     user.interests.includes(interest)
   );
@@ -56,9 +55,8 @@ const UserTableCard = ({
   const contactAdd = async (e) => {
     e.target.classList.add('disabled');
     await dispatch(addContact({ id: _id, filter }));
-    await dispatch(resetStudents());
-    await dispatch(getCommonNewStudents({ filter, cursor: '' }));
   };
+  const isInContacts = user.contacts.find((c) => c._id === _id);
 
   return (
     <tr>
@@ -89,7 +87,11 @@ const UserTableCard = ({
           >
             Chat
           </button>
-          <IoPersonAdd size={20} cursor="pointer" onClick={contactAdd} />
+          {!isInContacts ? (
+            <IoPersonAdd size={20} cursor="pointer" onClick={contactAdd} />
+          ) : (
+            <FaCheck fill="green" size={18} />
+          )}
         </div>
       </td>
       <th>
