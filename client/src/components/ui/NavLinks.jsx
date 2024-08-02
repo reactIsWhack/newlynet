@@ -2,6 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiFillHome } from 'react-icons/ai';
 import { PiChatsFill } from 'react-icons/pi';
+import { FaUserFriends } from 'react-icons/fa';
 
 const NavLinks = () => {
   const setActiveClassName = ({ isActive }) =>
@@ -23,6 +24,12 @@ const NavLinks = () => {
           <NavLink to={`/chats`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
             <PiChatsFill size={35} className="stroke-gray" />
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={`/contacts`} className={setActiveClassName}>
+            <div className="profile-link-border"></div>
+            <FaUserFriends size={35} className="stroke-gray" />
           </NavLink>
         </li>
       </ul>

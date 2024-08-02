@@ -17,6 +17,7 @@ import { useSocket } from './context/SocketContext';
 import NoChatSelected from './components/ui/NoChatSelected';
 import Messages from './components/Messages';
 import { getConversations, selectChats } from './app/features/chats/chatSlice';
+import Contacts from './pages/Contacts';
 
 axios.defaults.withCredentials = true;
 
@@ -82,6 +83,7 @@ function App() {
           ></Route>
           <Route path=":id" element={<Messages />} />
         </Route>
+        <Route path="/contacts" element={<Contacts />}></Route>
       </Routes>
       <Toaster />
     </>

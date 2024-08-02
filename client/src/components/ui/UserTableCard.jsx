@@ -13,6 +13,7 @@ import { useSocket } from '../../context/SocketContext';
 import useDetectMobile from '../../hooks/useDetectMobile';
 import { createChat, selectChats } from '../../app/features/chats/chatSlice';
 import { useNavigate } from 'react-router-dom';
+import truncateInterest from '../../utils/truncateInterest';
 
 const UserTableCard = ({
   profilePicture,
@@ -35,9 +36,6 @@ const UserTableCard = ({
   const navigate = useNavigate();
 
   let interest = similarInterest ? similarInterest : interests[0];
-  if (interest.length > 16) {
-    interest = interest.substring(0, 16) + '...';
-  }
 
   const isOnline = checkOnlineStatus(onlineUsers, _id);
   const mobile = useDetectMobile();
