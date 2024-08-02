@@ -1,20 +1,26 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../app/features/user/userSlice';
 
-const ChatBubble = () => {
+const ChatBubble = ({ message, author, createdAt }) => {
+  const { userId } = useSelector(selectUser);
+
+  const myMessage = author._id === userId;
+
   return (
     <>
-      <div className="chat chat-end">
+      <div className={`chat ${myMessage ? 'chat-end' : 'chat-start'}`}>
         <div className="chat-image avatar">
           <div className="w-10 rounded-full">
             <img
               alt="Tailwind CSS chat bubble component"
-              src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+              src={author.profilePicture}
             />
           </div>
         </div>
-        <div className="chat-header">Obi-Wan Kenobi</div>
-        <div className="chat-bubble">You were the Chosen One!</div>
-        <time className="text-xs opacity-50 chat-footer">12:45</time>
+        <div className="chat-header">{author.fullName}</div>
+        <div className="chat-bubble">{message}</div>
+        <time className="text-xs opacity-50 chat-footer">{createdAt}</time>
       </div>
     </>
   );

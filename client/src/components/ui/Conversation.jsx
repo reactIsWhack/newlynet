@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import { useSocket } from '../../context/SocketContext';
 import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import {
+  getMessages,
+  resetMessages,
   selectChats,
   setSelectedChat,
 } from '../../app/features/chats/chatSlice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const Conversation = ({ lastIdx, _id, members, conversation }) => {
   const { onlineUsers } = useSocket();
@@ -20,11 +22,18 @@ const Conversation = ({ lastIdx, _id, members, conversation }) => {
   const isOnline = checkOnlineStatus(onlineUsers, receivingMember?._id);
 
   const isSelected = selectedConversation?._id === _id;
+  const { id } = useParams();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     dispatch(setSelectedChat(conversation));
     navigate(`/chats/${_id}`);
+    await dispatch(resetMessages());
+    dispatch(getMessages(_id));
   };
+
+  useEffect(() => {
+    if (id) dispatch(getMessages(id));
+  }, []);
 
   return (
     <>

@@ -1,11 +1,20 @@
 import { useState, useEffect } from 'react';
 import { BsSend } from 'react-icons/bs';
 import { AiOutlineLink } from 'react-icons/ai';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectChats, sendMessage } from '../../app/features/chats/chatSlice';
 
 const MessageInput = () => {
   const [message, setMessage] = useState('');
+  const dispatch = useDispatch();
+  const { selectedConversation } = useSelector(selectChats);
 
   const handleChange = (e) => setMessage(e.target.value);
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
+  };
 
   useEffect(() => {
     const element = document.getElementById('message-textarea');
@@ -13,12 +22,19 @@ const MessageInput = () => {
     element.style.height = element.scrollHeight + 'px';
   }, [message]);
 
-  console.log(message);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    dispatch(sendMessage({ message, chatId: selectedConversation._id }));
+
+    setMessage('');
+  };
+
   return (
-    <form className="px-4 my-3">
+    <form className="px-4 my-3" onSubmit={handleSubmit}>
       <div className="w-full relative flex items-center">
-        <div class="absolute left-3">
-          <label for="file-input">
+        <div className="absolute left-3">
+          <label htmlFor="file-input">
             <AiOutlineLink cursor="pointer" size={15} />
           </label>
 
@@ -30,6 +46,7 @@ const MessageInput = () => {
           placeholder="Send a message"
           value={message}
           onChange={handleChange}
+          onKeyDown={handleKeyDown}
           maxLength={1000}
           rows={1}
         />

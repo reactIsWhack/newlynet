@@ -49,6 +49,22 @@ export const sendMessage = createAsyncThunk(
         `${baseUrl}/api/message/sendmessage/${chatId}`,
         { message }
       );
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getMessages = createAsyncThunk(
+  'chats/getMessages',
+  async (chatId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/message/messages/${chatId}`
+      );
+      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -65,6 +81,9 @@ const chatsSlice = createSlice({
     },
     setConversations(state, action) {
       state.conversations = [action.payload, ...state.conversations];
+    },
+    resetMessages(state) {
+      state.messages = [];
     },
   },
   extraReducers: (builder) => {
@@ -92,12 +111,35 @@ const chatsSlice = createSlice({
       .addCase(createChat.rejected, (state, action) => {
         state.chatsLoading = false;
         toast.error(action.payload);
+      })
+      .addCase(sendMessage.pending, (state, action) => {
+        state.chatsLoading = true;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.chatsLoading = false;
+        state.messages = [...state.messages, action.payload];
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        state.chatsLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(getMessages.pending, (state, action) => {
+        state.chatsLoading = true;
+      })
+      .addCase(getMessages.fulfilled, (state, action) => {
+        state.chatsLoading = false;
+        state.messages = action.payload;
+      })
+      .addCase(getMessages.rejected, (state, action) => {
+        state.chatsLoading = false;
+        toast.error(action.payload);
       });
   },
 });
 
 export default chatsSlice.reducer;
 
-export const { setSelectedChat, setConversations } = chatsSlice.actions;
+export const { setSelectedChat, setConversations, resetMessages } =
+  chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;
