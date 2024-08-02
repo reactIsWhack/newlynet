@@ -2,23 +2,14 @@ import React, { useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import ChatSidebar from '../components/ChatSidebar';
 import useRedirectUser from '../hooks/useRedirectUser';
-import Messages from '../components/Messages';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  getConversations,
-  getMessages,
-  selectChats,
-  setSelectedChat,
-} from '../app/features/chats/chatSlice';
-import useDetectMobile from '../hooks/useDetectMobile';
+import { selectChats, setSelectedChat } from '../app/features/chats/chatSlice';
 import { Outlet, useParams } from 'react-router-dom';
 
 const Chats = () => {
   useRedirectUser();
   const dispatch = useDispatch();
-  const mobile = useDetectMobile();
-  const { selectedConversation, conversations, createMsgLoading } =
-    useSelector(selectChats);
+  const { conversations } = useSelector(selectChats);
   const { id } = useParams();
 
   useEffect(() => {
@@ -29,14 +20,16 @@ const Chats = () => {
     );
 
     return () => dispatch(setSelectedChat(null));
-  }, [id, conversations]);
+  }, [id, conversations, dispatch]);
 
   return (
-    <div>
+    <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
-      <div className="flex">
+      <div className="flex flex-1 overflow-hidden">
         <ChatSidebar />
-        <Outlet />
+        <div className="flex-1 overflow-auto">
+          <Outlet />
+        </div>
       </div>
     </div>
   );

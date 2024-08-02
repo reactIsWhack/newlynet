@@ -26,8 +26,8 @@ const Messages = () => {
   });
 
   return (
-    <div className="px-4 flex-1 relative overflow-x-hidden">
-      <div className="message-container overflow-auto pt-4 px-8">
+    <div className="px-4 flex-1 relative overflow-x-hidden h-full overflow-hidden pt-12">
+      <div className="message-container overflow-auto pt-4 px-8 h-full">
         {chatsLoading &&
           [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
 

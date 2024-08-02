@@ -32,7 +32,7 @@ const MessageInput = () => {
   };
 
   return (
-    <form className="px-4 my-3" onSubmit={handleSubmit}>
+    <form className="px-4 my-3 sticky bottom-4 h-8" onSubmit={handleSubmit}>
       <div className="w-full relative flex items-center">
         <div className="absolute left-3">
           <label htmlFor="file-input">
