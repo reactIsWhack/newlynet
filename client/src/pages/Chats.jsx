@@ -6,6 +6,7 @@ import Messages from '../components/Messages';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getConversations,
+  getMessages,
   selectChats,
   setSelectedChat,
 } from '../app/features/chats/chatSlice';
@@ -16,7 +17,8 @@ const Chats = () => {
   useRedirectUser();
   const dispatch = useDispatch();
   const mobile = useDetectMobile();
-  const { selectedConversation, conversations } = useSelector(selectChats);
+  const { selectedConversation, conversations, createMsgLoading } =
+    useSelector(selectChats);
   const { id } = useParams();
 
   useEffect(() => {

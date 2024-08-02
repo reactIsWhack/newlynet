@@ -9,6 +9,7 @@ const initialState = {
   messages: [],
   selectedConversation: null,
   chatsLoading: false,
+  createMsgLoading: false,
 };
 
 export const getConversations = createAsyncThunk(
@@ -85,6 +86,9 @@ const chatsSlice = createSlice({
     resetMessages(state) {
       state.messages = [];
     },
+    setMessages(state, action) {
+      state.messages = [...state.messages, action.payload];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -113,14 +117,14 @@ const chatsSlice = createSlice({
         toast.error(action.payload);
       })
       .addCase(sendMessage.pending, (state, action) => {
-        state.chatsLoading = true;
+        state.createMsgLoading = true;
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
-        state.chatsLoading = false;
+        state.createMsgLoading = false;
         state.messages = [...state.messages, action.payload];
       })
       .addCase(sendMessage.rejected, (state, action) => {
-        state.chatsLoading = false;
+        state.createMsgLoading = false;
         toast.error(action.payload);
       })
       .addCase(getMessages.pending, (state, action) => {
@@ -139,7 +143,7 @@ const chatsSlice = createSlice({
 
 export default chatsSlice.reducer;
 
-export const { setSelectedChat, setConversations, resetMessages } =
+export const { setSelectedChat, setConversations, resetMessages, setMessages } =
   chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;

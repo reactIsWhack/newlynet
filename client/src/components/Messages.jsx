@@ -4,11 +4,25 @@ import ChatBubble from './ui/ChatBubble';
 import { useSelector } from 'react-redux';
 import { selectChats } from '../app/features/chats/chatSlice';
 import MessageSkeleton from './ui/MessageSkeleton';
+import useListenMessages from '../hooks/useListenMessages';
 
 const Messages = () => {
   const { messages, chatsLoading } = useSelector(selectChats);
+  const lastMessageRef = useRef(null);
+  useListenMessages();
+
+  useEffect(() => {
+    setTimeout(() => {
+      lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }, [messages]);
+
   const chatBubble = messages.map((message) => {
-    return <ChatBubble key={message._id} {...message} />;
+    return (
+      <div key={message._id} ref={lastMessageRef}>
+        <ChatBubble {...message} />
+      </div>
+    );
   });
 
   return (

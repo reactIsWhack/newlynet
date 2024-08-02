@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import { io } from 'socket.io-client';
-import { setConversations } from '../app/features/chats/chatSlice';
+import { setConversations, setMessages } from '../app/features/chats/chatSlice';
 import toast from 'react-hot-toast';
 
 const SocketContext = createContext();
@@ -26,7 +26,6 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       socketVal.on('newChat', (chat) => {
-        console.log(chat);
         dispatch(setConversations(chat));
         const toastMsg =
           chat.members.length < 3

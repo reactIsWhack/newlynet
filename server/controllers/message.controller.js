@@ -71,10 +71,11 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   for (const receiver of newMessage.receivers) {
     const socketId = getSocketId(receiver._id);
-    if (!socketId) return;
+    if (!socketId) break;
 
     io.to(socketId).emit('newMessage', newMessage);
     const room = io.sockets.adapter.rooms.get(`chat-${chat._id}`);
+    if (!room) break;
 
     // if the user is not on the chat, add the new messages to their list of unread messages
     if (!room.has(socketId)) {
