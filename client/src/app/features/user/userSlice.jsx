@@ -11,6 +11,7 @@ const initialState = {
   grade: null,
   interests: [],
   school: null,
+  chattingWith: [],
   isLoading: false,
   isLoggedIn: false,
   commonNewStudents: [],
@@ -83,6 +84,8 @@ export const getCommonNewStudents = createAsyncThunk(
   }
 );
 
+// export const addContact = createAs;
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -132,6 +135,7 @@ const userSlice = createSlice({
         state.profilePicture = action.payload.profilePicture;
         state.grade = action.payload.grade;
         state.school = action.payload.school;
+        state.chattingWith = action.payload.chattingWith;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -149,6 +153,7 @@ const userSlice = createSlice({
         state.profilePicture = action.payload.profilePicture;
         state.grade = action.payload.grade;
         state.school = action.payload.school;
+        state.chattingWith = action.payload.chattingWith;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;

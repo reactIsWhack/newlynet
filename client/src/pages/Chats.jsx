@@ -6,6 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectChats, setSelectedChat } from '../app/features/chats/chatSlice';
 import { Outlet, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
+import Modal from '../components/ui/Modal';
+import CreateChatForm from '../components/CreateChatForm';
 
 const Chats = () => {
   useRedirectUser();
@@ -33,6 +35,7 @@ const Chats = () => {
           <Outlet />
         </div>
       </div>
+      <CreateChatForm /> {/* a modal that is toggled in the chat sidebar */}
     </div>
   );
 };

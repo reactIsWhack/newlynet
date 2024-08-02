@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const Chat = require('../models/chat.model');
 const { io, getSocketId } = require('../socket/socket');
+const User = require('../models/user.model');
 const cloudinary = require('cloudinary').v2;
 
 const createchat = asyncHandler(async (req, res) => {
@@ -21,22 +22,38 @@ const createchat = asyncHandler(async (req, res) => {
     throw new Error('Please provide a chat name for the group');
   }
 
-  const chat = await Chat.create({
-    members: [...members, req.userId],
-    messages: [],
-    chatName,
-    chatPic:
-      members.length > 1
-        ? 'https://cdn-icons-png.flaticon.com/512/6387/6387947.png'
-        : '',
-    chatType: members.length > 1 ? 'group' : 'individual',
-    creator: req.userId,
-  }).then((chat) =>
-    chat.populate([
-      { path: 'members', model: 'user', select: '-password' },
-      { path: 'creator' },
-    ])
-  );
+  const user = await User.findById(req.userId);
+  user.chattingWith = [...user.chattingWith, ...members];
+
+  for (const member of members) {
+    const obj = await User.findById(member._id);
+    obj.chattingWith = [
+      ...obj.chattingWith,
+      req.userId,
+      ...members.filter((m) => String(m._id) !== String(member._id)),
+    ];
+    await obj.save();
+  }
+
+  const [chat, updatedUser] = await Promise.all([
+    Chat.create({
+      members: [...members, req.userId],
+      messages: [],
+      chatName,
+      chatPic:
+        members.length > 1
+          ? 'https://cdn-icons-png.flaticon.com/512/6387/6387947.png'
+          : '',
+      chatType: members.length > 1 ? 'group' : 'individual',
+      creator: req.userId,
+    }).then((chat) =>
+      chat.populate([
+        { path: 'members', model: 'user', select: '-password' },
+        { path: 'creator' },
+      ])
+    ),
+    user.save(),
+  ]);
 
   for (const member of members) {
     const socketId = getSocketId(member._id);

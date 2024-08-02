@@ -36,10 +36,10 @@ const UserTableCard = ({
   const isOnline = checkOnlineStatus(onlineUsers, _id);
   const mobile = useDetectMobile();
 
-  const startChat = async () => {
-    document.getElementById(student._id).style.opacity = 0.4;
+  const startChat = async (e) => {
+    e.target.style.opacity = 0.4;
     await dispatch(createChat({ chatData: { members: [student] }, navigate }));
-    document.getElementById(student._id).style.opacity = 1;
+    e.target.style.opacity = 1;
   };
 
   return (

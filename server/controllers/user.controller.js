@@ -42,6 +42,7 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         { 'school.schoolId': user.school.schoolId },
         { _id: { $ne: user._id } },
         { _id: { $nin: user.contacts } },
+        { _id: { $nin: user.chattingWith } },
         query,
       ],
     }).limit(process.env.NODE_ENV === 'test' ? 1 : 20); // for testing pagination
@@ -51,6 +52,7 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         { 'school.schoolId': user.school.schoolId },
         { _id: { $ne: user._id } },
         { _id: { $nin: user.contacts } },
+        { _id: { $nin: user.chattingWith } },
         query,
       ],
       interests: { $in: user.interests },

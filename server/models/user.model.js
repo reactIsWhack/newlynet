@@ -40,6 +40,7 @@ const userSchema = new mongoose.Schema(
         messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
       },
     ], // an array of chats that the user has not read recent messages in
+    chattingWith: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   },
   { timestamps: true }
 );

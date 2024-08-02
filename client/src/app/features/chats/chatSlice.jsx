@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { getCommonNewStudents, resetStudents } from '../user/userSlice';
 
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -34,6 +35,10 @@ export const createChat = createAsyncThunk(
       const response = await axios.post(
         `${baseUrl}/api/chats/createchat`,
         chatData
+      );
+      thunkAPI.dispatch(resetStudents());
+      await thunkAPI.dispatch(
+        getCommonNewStudents({ filter: 'grade', cursor: '' })
       );
       return { data: response.data, navigate };
     } catch (error) {

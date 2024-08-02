@@ -54,6 +54,7 @@ const generateFakeUsers = async () => {
         grade: generateGrade(i),
         interests: generateInterests(),
         contacts: [],
+        chattingWith: [],
       };
       try {
         const user = await User.create(fakeUser);

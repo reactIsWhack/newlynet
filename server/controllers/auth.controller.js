@@ -41,6 +41,7 @@ const registerUser = asyncHandler(async (req, res) => {
     interests,
     contacts: [],
     profilePicture: `https://avatar.iran.liara.run/public/?username=${fullName.trim()}`,
+    chattingWith: [],
   });
   const token = generateToken(user._id);
 
@@ -103,6 +104,7 @@ const loginUser = asyncHandler(async (req, res) => {
     interests: user.interests,
     contacts: user.contacts,
     profilePicture: user.profilePicture,
+    chattingWith: user.chattingWith,
   });
 });
 

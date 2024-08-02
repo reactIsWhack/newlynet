@@ -2,6 +2,8 @@ import React from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
 const SearchChat = () => {
+  const handleClick = () => document.getElementById('my_modal_3').showModal();
+
   return (
     <div className="flex items-center gap-4">
       <form className="flex-1">
@@ -11,7 +13,10 @@ const SearchChat = () => {
           className="input input-bordered rounded-full w-full"
         />
       </form>
-      <button className="btn btn-circle bg-sky-500 text-white">
+      <button
+        className="btn btn-circle bg-sky-500 text-white"
+        onClick={handleClick}
+      >
         <FaPlus size={20} />
       </button>
     </div>
