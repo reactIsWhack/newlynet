@@ -21,7 +21,8 @@ const Contact = ({
   interests,
   contact,
 }) => {
-  const { hasConversation, conversation } = useCheckConversation(_id);
+  const { hasConversation, conversation, isLoading } =
+    useCheckConversation(_id);
   const { onlineUsers } = useSocket();
   const { chatsLoading } = useSelector(selectChats);
   const online = checkOnlineStatus(onlineUsers, _id);
@@ -68,7 +69,9 @@ const Contact = ({
           {interestBtn}
         </div>
         <div className="card-actions justify-center h-full items-end">
-          {hasConversation ? (
+          {isLoading ? (
+            <span className="loading loading-spinner loading-lg"></span>
+          ) : hasConversation ? (
             <button
               className="btn btn-primary min-h-10 h-10"
               onClick={handleResumeChatting}
