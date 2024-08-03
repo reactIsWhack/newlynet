@@ -8,7 +8,8 @@ const generateToken = (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { fullName, username, password, grade, school, interests } = req.body;
+  const { firstName, lastName, username, password, grade, school, interests } =
+    req.body;
 
   if (!interests.length) {
     res.status(400);
@@ -30,7 +31,8 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 
   const user = await User.create({
-    fullName,
+    firstName,
+    lastName,
     username,
     password,
     grade,
@@ -40,7 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
     },
     interests,
     contacts: [],
-    profilePicture: `https://avatar.iran.liara.run/public/?username=${fullName.trim()}`,
+    profilePicture: `https://avatar.iran.liara.run/public/?username=${firstName}`,
     chattingWith: [],
   });
   const token = generateToken(user._id);
@@ -54,7 +56,8 @@ const registerUser = asyncHandler(async (req, res) => {
     });
     res.status(201).json({
       _id: user._id,
-      fullName: user.fullName,
+      firstName: user.firstName,
+      lastName: user.lastName,
       username: user.username,
       grade: user.grade,
       school: user.school,
@@ -97,7 +100,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
   res.status(200).json({
     _id: user._id,
-    fullName: user.fullName,
+    firstName: user.firstName,
+    lastName: user.lastName,
     username: user.username,
     grade: user.grade,
     school: user.school,

@@ -21,7 +21,9 @@ const ChatBubble = ({ message, author, createdAt }) => {
           <img alt="Profile" src={author.profilePicture} />
         </div>
       </div>
-      <div className="chat-header">{author.fullName}</div>
+      <div className="chat-header capitalize">
+        {author.firstName + ' ' + author.lastName}
+      </div>
       <div
         className={`chat-bubble text-white ${
           myMessage ? 'bg-blue-500' : ''

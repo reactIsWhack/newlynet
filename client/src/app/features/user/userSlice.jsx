@@ -6,7 +6,8 @@ const baseUrl = import.meta.env.VITE_SERVER_URL;
 const initialState = {
   userId: '',
   contacts: [],
-  fullName: '',
+  firstName: '',
+  lastName: '',
   profilePicture: '',
   grade: null,
   interests: [],
@@ -128,7 +129,8 @@ const userSlice = createSlice({
         state.isLoggedIn = true;
         state.userId = action.payload._id;
         state.interests = action.payload.interests;
-        state.fullName = action.payload.fullName;
+        state.firstName = action.payload.firstName;
+        state.lastName = action.payload.lastName;
         state.contacts = action.payload.contacts;
         state.profilePicture = action.payload.profilePicture;
         state.grade = action.payload.grade;
@@ -146,7 +148,8 @@ const userSlice = createSlice({
         state.isLoggedIn = true;
         state.userId = action.payload._id;
         state.interests = action.payload.interests;
-        state.fullName = action.payload.fullName;
+        state.firstName = action.payload.firstName;
+        state.lastName = action.payload.lastName;
         state.contacts = action.payload.contacts;
         state.profilePicture = action.payload.profilePicture;
         state.grade = action.payload.grade;
@@ -164,7 +167,8 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.userId = action.payload._id;
         state.interests = action.payload.interests;
-        state.fullName = action.payload.fullName;
+        state.firstName = action.payload.firstName;
+        state.lastName = action.payload.lastName;
         state.contacts = action.payload.contacts;
         state.profilePicture = action.payload.profilePicture;
         state.grade = action.payload.grade;

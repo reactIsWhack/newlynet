@@ -54,7 +54,7 @@ const Conversation = ({ lastIdx, _id, members, conversation }) => {
         <div className="flex flex-col flex-1">
           <div className="flex gap-3 justify-between">
             <p className="font-bold text-gray-200">
-              {receivingMember.fullName}
+              {receivingMember.firstName + ' ' + receivingMember.lastName}
             </p>
           </div>
         </div>

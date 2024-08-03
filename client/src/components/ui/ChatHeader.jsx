@@ -20,7 +20,7 @@ const ChatHeader = () => {
   const receiverName =
     selectedConversation?.chatType === 'group'
       ? selectedConversation?.chatName
-      : receivingMember?.fullName;
+      : receivingMember?.firstName + ' ' + receivingMember?.lastName;
   const headerPic =
     selectedConversation?.chatType === 'group'
       ? selectedConversation.chatPic
@@ -41,7 +41,7 @@ const ChatHeader = () => {
       />
       <div className="flex flex-col items-center mx-auto gap-1">
         <img src={headerPic} className="h-10" />
-        <div className="text-sm">To: {receiverName}</div>
+        <div className="text-sm capitalize">To: {receiverName}</div>
       </div>
     </div>
   );

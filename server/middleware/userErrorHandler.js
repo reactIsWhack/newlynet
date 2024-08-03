@@ -1,7 +1,14 @@
 const userErrorHandler = (err, req, res, next) => {
-  if (err.errors && err.errors.fullName) {
+  if (err.errors && err.errors.firstName) {
     return res.status(400).json({
-      message: err.errors.fullName.properties.message,
+      message: err.errors.firstName.properties.message,
+      stack: err.stack,
+    });
+  }
+
+  if (err.errors && err.errors.lastName) {
+    return res.status(400).json({
+      message: err.errors.lastName.properties.message,
       stack: err.stack,
     });
   }

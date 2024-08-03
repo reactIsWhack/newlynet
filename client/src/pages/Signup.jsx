@@ -44,17 +44,32 @@ const Signup = ({ formData, setFormData, schoolQuery, setSchoolQuery }) => {
               <div className="flex items-center gap-3 max-[550px]:px-3">
                 <div>
                   <label className="label p-2">
-                    <span className="text-base label-text">Fullname</span>
+                    <span className="text-base label-text">Firstname</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter fullname"
+                    placeholder="Enter firstname"
                     className="w-full input input-bordered h-10"
-                    name="fullName"
-                    value={formData.fullName}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
                   />
                 </div>
+                <div className="max-[550px]:px-3">
+                  <label className="label p-2">
+                    <span className="text-base label-text">Lastname</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter lastname"
+                    className="w-full input input-bordered h-10"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+              <div className="flex items-center gap-3 max-[550px]:px-3">
                 <div className="max-[550px]:px-3">
                   <label className="label p-2">
                     <span className="text-base label-text">Username</span>
@@ -68,19 +83,19 @@ const Signup = ({ formData, setFormData, schoolQuery, setSchoolQuery }) => {
                     onChange={handleChange}
                   />
                 </div>
-              </div>
-              <div className="max-[550px]:px-3">
-                <label className="label">
-                  <span className="text-base label-text">Password</span>
-                </label>
-                <input
-                  type="password"
-                  placeholder="Enter password"
-                  className="w-full input input-bordered h-10"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
+                <div>
+                  <label className="label">
+                    <span className="text-base label-text">Password</span>
+                  </label>
+                  <input
+                    type="password"
+                    placeholder="Enter password"
+                    className="w-full input input-bordered h-10"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                  />
+                </div>
               </div>
               <SchoolSelect
                 setFormData={setFormData}

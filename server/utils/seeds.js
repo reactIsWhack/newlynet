@@ -46,7 +46,8 @@ const generateFakeUsers = async () => {
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
       const fakeUser = {
-        fullName: firstName + ' ' + lastName,
+        firstName,
+        lastName,
         username: faker.internet.displayName(),
         password: process.env.FAKE_USER_PASSWORD,
         profilePicture: `https://avatar.iran.liara.run/public/?username=${firstName}`,

@@ -23,7 +23,8 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [formData, setFormData] = useState({
-    fullName: '',
+    firstName: '',
+    lastName: '',
     username: '',
     password: '',
     school: { description: '', placeId: '' },

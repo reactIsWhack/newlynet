@@ -18,7 +18,8 @@ import { FaCheck } from 'react-icons/fa6';
 
 const UserTableCard = ({
   profilePicture,
-  fullName,
+  firstName,
+  lastName,
   school,
   grade,
   interests,
@@ -68,7 +69,9 @@ const UserTableCard = ({
             </div>
           </div>
           <div>
-            <div className="font-bold">{fullName}</div>
+            <div className="font-bold capitalize">
+              {firstName + ' ' + lastName}
+            </div>
             <span className="badge badge-ghost badge-sm">Grade {grade}</span>
           </div>
         </div>

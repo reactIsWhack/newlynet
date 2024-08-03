@@ -5,7 +5,7 @@ import InterestDisplayBtn from './ui/InterestDisplayBtn';
 import editIcon from '../assets/editIcon.svg';
 
 const PrimaryUserCard = () => {
-  const { fullName, school, grade, interests, profilePicture } =
+  const { firstName, lastName, school, grade, interests, profilePicture } =
     useSelector(selectUser);
 
   const interestDisplayBtn = interests.map((interest, index) => {
@@ -25,7 +25,7 @@ const PrimaryUserCard = () => {
           src={profilePicture}
           className="h-20 w-20 -mt-14 object-cover rounded-full border-2 border-gray-300"
         />
-        <h2 className="card-title">{fullName}</h2>
+        <h2 className="card-title capitalize">{firstName + ' ' + lastName}</h2>
         {school && school.formattedName && (
           <p className="text-center">{`${school.formattedName} - ${grade}`}</p>
         )}

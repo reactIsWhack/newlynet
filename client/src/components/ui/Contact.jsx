@@ -13,7 +13,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 const Contact = ({
-  fullName,
+  firstName,
+  lastName,
   profilePicture,
   _id,
   school,
@@ -59,7 +60,9 @@ const Contact = ({
             </div>
           </div>
           <div>
-            <h2 className="card-title text-lg">{fullName}</h2>
+            <h2 className="card-title text-lg capitalize">
+              {firstName + ' ' + lastName}
+            </h2>
             <div className="text-sm">
               {school.formattedName} - Grade {grade}
             </div>
