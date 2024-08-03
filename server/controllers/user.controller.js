@@ -69,7 +69,13 @@ const getPersonalProfile = asyncHandler(async (req, res) => {
       model: 'user',
       select: '-password',
     },
-    { path: 'unreadChats', populate: ['chat', 'messages'] },
+    {
+      path: 'unreadChats',
+      populate: [
+        { path: 'chat', populate: ['members', 'messages'] },
+        'messages',
+      ],
+    },
   ]);
 
   if (!user) {
