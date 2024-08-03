@@ -16,9 +16,11 @@ const Contacts = () => {
   return (
     <>
       <Navbar />
-      <div className="p-8">
+      <div className="p-8 max-[550px]:p-0">
         <h2 className="text-xl mb-6">Contacts</h2>
-        <div className="grid grid-cols-3 gap-y-8">{contactCard}</div>
+        <div className="grid grid-cols-3 gap-x-8 gap-y-8 max-[550px]:grid-cols-1">
+          {contactCard}
+        </div>
       </div>
     </>
   );

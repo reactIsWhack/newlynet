@@ -50,7 +50,7 @@ const Contact = ({
   };
 
   return (
-    <div className="card bg-base-100 w-96 shadow-xl">
+    <div className="card bg-base-100 min-w-96 shadow-xl w-full">
       <div className="card-body py-8 px-0">
         <div className="flex items-center gap-3 mb-2 px-8">
           <div className={`avatar ${online ? 'online' : 'offline'}`}>
