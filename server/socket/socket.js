@@ -30,8 +30,15 @@ io.on('connection', (socket) => {
   }
 
   socket.on('joinroom', (roomname) => {
+    console.log(`user: ${socket.id} joined room - ${roomname}`);
     // the rooms will be used to check if a user has unread messages based on if they are in the room or not
     socket.join(roomname); // roomname is the id of a chat with the prefix "chat"
+    console.log(io.sockets.adapter.rooms.get(roomname));
+  });
+
+  socket.on('leaveroom', (roomname) => {
+    console.log(`user: ${socket.id} left room - ${roomname}`);
+    socket.leave(roomname);
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));

@@ -15,6 +15,7 @@ const initialState = {
   isLoading: false,
   isLoggedIn: false,
   commonNewStudents: [],
+  unreadChats: [],
   cursor: '',
 };
 
@@ -113,6 +114,9 @@ const userSlice = createSlice({
     setCursor(state, action) {
       state.isLoading = action.payload;
     },
+    setUnreadChats(state, action) {
+      state.unreadChats = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -166,6 +170,7 @@ const userSlice = createSlice({
         state.grade = action.payload.grade;
         state.school = action.payload.school;
         state.chattingWith = action.payload.chattingWith;
+        state.unreadChats = action.payload.unreadChats;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;
@@ -209,6 +214,7 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { setIsLoggedIn, resetStudents, setCursor } = userSlice.actions;
+export const { setIsLoggedIn, resetStudents, setCursor, setUnreadChats } =
+  userSlice.actions;
 
 export const selectUser = (state) => state.user;

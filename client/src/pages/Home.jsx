@@ -6,15 +6,15 @@ import HomeMainContent from '../components/HomeMainContent';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import useDetectMobile from '../hooks/useDetectMobile';
+import useListenMessages from '../hooks/useListenMessages';
+import useListenNotifications from '../hooks/useListenNotifications';
 
 const Home = () => {
   useRedirectUser();
+  useListenNotifications();
+
   const mobile = useDetectMobile();
   const { isLoading } = useSelector(selectUser);
-
-  const handleWindowSizeChange = () => {
-    setMobile(window.innerWidth <= 500);
-  };
 
   return (
     <div>

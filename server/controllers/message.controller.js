@@ -67,7 +67,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   chat.messages = [...chat.messages, newMessage];
-  await chat.save();
+  await chat.save().then((item) => item.populate('members'));
 
   for (const receiver of newMessage.receivers) {
     const socketId = getSocketId(receiver._id);
@@ -83,6 +83,7 @@ const sendMessage = asyncHandler(async (req, res) => {
       const unreadChatItem = receiverObj.unreadChats.find(
         (chatItem) => String(chatItem.chat._id) === String(chat._id)
       );
+      const unreadChat = await Chat.findById(unreadChatItem?._id);
       if (unreadChatItem) {
         unreadChatItem.messages = [...unreadChatItem.messages, newMessage];
       } else {
@@ -97,7 +98,12 @@ const sendMessage = asyncHandler(async (req, res) => {
           populate: ['chat', 'messages'],
         })
       );
-      io.to(socketId).emit('newMessageNotify', receiverObj.unreadChats);
+      const sendingChat = unreadChat || chat;
+      io.to(socketId).emit(
+        'newMessageNotify',
+        receiverObj.unreadChats,
+        sendingChat
+      );
     }
   }
   res.status(201).json(newMessage);

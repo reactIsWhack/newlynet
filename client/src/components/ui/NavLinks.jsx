@@ -29,7 +29,7 @@ const NavLinks = () => {
             <div className="profile-link-border"></div>
             <PiChatsFill size={35} className="stroke-gray" />
           </NavLink>
-          {unreadChats.length > 0 && <NotificationCount />}
+          {unreadChats?.length > 0 && <NotificationCount />}
         </li>
         <li>
           <NavLink to={`/contacts`} className={setActiveClassName}>

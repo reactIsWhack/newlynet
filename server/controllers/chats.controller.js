@@ -74,7 +74,6 @@ const getChats = asyncHandler(async (req, res) => {
     { path: 'messages', model: 'message' },
   ]);
 
-  console.log(chats);
   res.status(200).json(chats);
 });
 
@@ -163,7 +162,6 @@ const checkOngoingConversation = asyncHandler(async (req, res) => {
     members: { $all: [req.userId, contactId] },
     chatType: 'individual',
   });
-  console.log(chat, 'chat');
 
   if (chat) {
     res.status(200).json(chat);

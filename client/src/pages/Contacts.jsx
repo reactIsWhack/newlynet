@@ -4,9 +4,12 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import Contact from '../components/ui/Contact';
 import useRedirectUser from '../hooks/useRedirectUser';
+import useListenMessages from '../hooks/useListenMessages';
+import useListenNotifications from '../hooks/useListenNotifications';
 
 const Contacts = () => {
   useRedirectUser();
+  useListenNotifications();
 
   const { contacts } = useSelector(selectUser);
   const contactCard = contacts.map((contact) => {

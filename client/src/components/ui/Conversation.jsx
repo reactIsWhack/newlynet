@@ -12,8 +12,8 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 
 const Conversation = ({ lastIdx, _id, members, conversation }) => {
-  const { onlineUsers } = useSocket();
-  const { userId } = useSelector(selectUser);
+  const { onlineUsers, socket } = useSocket();
+  const { userId, unreadChats } = useSelector(selectUser);
   const { selectedConversation } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,6 +34,8 @@ const Conversation = ({ lastIdx, _id, members, conversation }) => {
   useEffect(() => {
     if (id) dispatch(getMessages(id));
   }, []);
+
+  const renderUnreadMark = unreadChats?.some((chat) => chat.chat._id === _id);
 
   return (
     <>
@@ -56,6 +58,9 @@ const Conversation = ({ lastIdx, _id, members, conversation }) => {
             </p>
           </div>
         </div>
+        {renderUnreadMark && (
+          <div className="w-3 h-3 rounded-full bg-sky-400 mr-4"></div>
+        )}
       </div>
 
       {!lastIdx && <div className="divider my-0 py-0 h-1" />}

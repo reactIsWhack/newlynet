@@ -8,13 +8,26 @@ import { Outlet, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 import Modal from '../components/ui/Modal';
 import CreateChatForm from '../components/CreateChatForm';
+import { useSocket } from '../context/SocketContext';
+import { selectUser, setUnreadChats } from '../app/features/user/userSlice';
+import toast from 'react-hot-toast';
+import useListenNotifications from '../hooks/useListenNotifications';
 
 const Chats = () => {
   useRedirectUser();
+  useListenNotifications();
+
   const dispatch = useDispatch();
-  const { conversations } = useSelector(selectChats);
+  const { conversations, selectedConversation, messages } =
+    useSelector(selectChats);
+  const { unreadChats, userId } = useSelector(selectUser);
   const { id } = useParams();
   const mobile = useDetectMobile();
+  const { socket } = useSocket();
+
+  useEffect(() => {
+    return () => dispatch(setSelectedChat(null));
+  }, [id, conversations, dispatch]);
 
   useEffect(() => {
     dispatch(
@@ -23,8 +36,13 @@ const Chats = () => {
       )
     );
 
-    return () => dispatch(setSelectedChat(null));
-  }, [id, conversations, dispatch]);
+    if (id) socket?.emit('joinroom', `chat-${id}`);
+
+    return () => {
+      if (selectedConversation)
+        socket.emit('leaveroom', `chat-${selectedConversation._id}`);
+    };
+  }, [selectedConversation, id]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
