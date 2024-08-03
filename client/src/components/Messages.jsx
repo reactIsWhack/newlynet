@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect } from 'react';
 import MessageInput from './ui/MessageInput';
 import ChatBubble from './ui/ChatBubble';
 import { useSelector } from 'react-redux';
@@ -6,6 +6,7 @@ import { selectChats } from '../app/features/chats/chatSlice';
 import MessageSkeleton from './ui/MessageSkeleton';
 import useListenMessages from '../hooks/useListenMessages';
 import useDetectMobile from '../hooks/useDetectMobile';
+import ChatHeader from './ui/ChatHeader';
 
 const Messages = () => {
   const { messages, chatsLoading } = useSelector(selectChats);
@@ -25,10 +26,12 @@ const Messages = () => {
       </div>
     );
   });
+
   const mobile = useDetectMobile();
 
   return (
-    <div className="px-4 flex-1 relative overflow-x-hidden h-full overflow-hidden pt-12 max-[550px]:w-full z-20">
+    <div className="flex-1 relative overflow-x-hidden h-full overflow-hidden max-[550px]:w-full z-20 pt-32">
+      <ChatHeader />
       <div className="message-container overflow-auto pt-4 px-8 h-full max-[550px]:px-1 w-full">
         {chatsLoading &&
           [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
