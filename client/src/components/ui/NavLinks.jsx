@@ -3,10 +3,14 @@ import { NavLink } from 'react-router-dom';
 import { AiFillHome } from 'react-icons/ai';
 import { PiChatsFill } from 'react-icons/pi';
 import { FaUserFriends } from 'react-icons/fa';
+import NotificationCount from './NotificationCount';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../app/features/user/userSlice';
 
 const NavLinks = () => {
   const setActiveClassName = ({ isActive }) =>
     `${isActive ? 'nav-link-active' : 'nav-link-inactive'}`;
+  const { unreadChats } = useSelector(selectUser);
 
   return (
     <div className="flex-1 justify-center">
@@ -20,11 +24,12 @@ const NavLinks = () => {
             />
           </NavLink>
         </li>
-        <li>
+        <li className="relative">
           <NavLink to={`/chats`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
             <PiChatsFill size={35} className="stroke-gray" />
           </NavLink>
+          {unreadChats.length > 0 && <NotificationCount />}
         </li>
         <li>
           <NavLink to={`/contacts`} className={setActiveClassName}>
