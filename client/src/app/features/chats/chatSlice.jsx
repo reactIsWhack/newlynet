@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { getCommonNewStudents, resetStudents } from '../user/userSlice';
+import sendMessageSound from '../../../assets/sendMessage.wav';
 
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
@@ -103,7 +104,11 @@ const chatsSlice = createSlice({
       })
       .addCase(getConversations.fulfilled, (state, action) => {
         state.chatsLoading = false;
-        state.conversations = action.payload;
+        state.conversations = action.payload.sort((a, b) => {
+          return (
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        });
       })
       .addCase(getConversations.rejected, (state, action) => {
         state.chatsLoading = false;
@@ -127,6 +132,8 @@ const chatsSlice = createSlice({
       })
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.createMsgLoading = false;
+        const audio = new Audio(sendMessageSound);
+        audio.play();
         state.messages = [...state.messages, action.payload];
       })
       .addCase(sendMessage.rejected, (state, action) => {
