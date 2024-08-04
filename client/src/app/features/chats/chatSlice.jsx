@@ -194,7 +194,7 @@ export const {
   setConversations,
   resetMessages,
   setMessages,
-  reorderChats,
+  // reorderChats,
   setChatFilter,
   resetChatState,
   resetConversations,

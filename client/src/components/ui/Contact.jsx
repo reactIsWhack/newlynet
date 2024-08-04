@@ -77,7 +77,10 @@ const Contact = ({
           {interestBtn}
         </div>
         <div className="card-actions justify-center h-full items-end">
-          {chattingWith.includes(_id) ? (
+          {chattingWith.includes(_id) &&
+          contactConversations.some((contact) =>
+            contact.members.some((member) => member._id === _id)
+          ) ? (
             <button
               className="btn btn-primary min-h-10 h-10"
               onClick={handleResumeChatting}

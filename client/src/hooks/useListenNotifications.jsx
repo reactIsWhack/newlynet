@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setUnreadChats } from '../app/features/user/userSlice';
 import {
-  reorderChats,
+  // reorderChats,
   selectChats,
   setMessages,
 } from '../app/features/chats/chatSlice';
@@ -14,7 +14,7 @@ const useListenNotifications = () => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
   const { unreadChats, userId } = useSelector(selectUser);
-  const { messages, conversations } = useSelector(selectChats);
+  const { messages, conversations, chatFilter } = useSelector(selectChats);
   const { id } = useParams();
 
   useEffect(() => {
@@ -33,7 +33,9 @@ const useListenNotifications = () => {
         const reordered = conversations.filter(
           (c) => c._id !== sendingChat?._id
         );
-        dispatch(reorderChats([sendingChat, ...reordered]));
+        if (chatFilter === sendingChat.chatType) {
+          dispatch(reorderChats([sendingChat, ...reordered]));
+        }
       }
 
       dispatch(setUnreadChats(unreadChats));

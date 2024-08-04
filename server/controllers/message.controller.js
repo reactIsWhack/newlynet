@@ -82,7 +82,7 @@ const sendMessage = asyncHandler(async (req, res) => {
       break;
     }
 
-    io.to(socketId).emit('newMessage', newMessage);
+    io.to(socketId).emit('newMessage', newMessage, chat);
     const room = io.sockets.adapter.rooms.get(`chat-${chat._id}`);
     if (!room) break;
 
