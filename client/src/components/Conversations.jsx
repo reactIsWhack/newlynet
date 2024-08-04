@@ -1,12 +1,17 @@
 import React from 'react';
 import Conversation from './ui/Conversation';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectChats } from '../app/features/chats/chatSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getConversations,
+  selectChats,
+  setChatFilter,
+} from '../app/features/chats/chatSlice';
 import checkOnlineStatus from '../utils/checkOnlineStatus';
 
 const Conversations = () => {
-  const { conversations, chatsLoading } = useSelector(selectChats);
+  const { conversations, chatsLoading, chatFilter } = useSelector(selectChats);
+  const dispatch = useDispatch();
 
   const conversation = conversations.map((conversation, index) => {
     return (
@@ -19,12 +24,21 @@ const Conversations = () => {
     );
   });
 
+  const handleChange = (e) => {
+    dispatch(setChatFilter(e.target.value));
+    dispatch(getConversations(e.target.value));
+  };
+
   return (
     <>
       <div className="mb-4 mt-2">
-        <select className="select select-bordered max-w-xs min-h-10 h-10">
-          <option>Conversations</option>
-          <option>Group Chats</option>
+        <select
+          className="select select-bordered max-w-xs min-h-10 h-10"
+          onChange={handleChange}
+          value={chatFilter}
+        >
+          <option value="individual">Conversations</option>
+          <option value="group">Group Chats</option>
         </select>
       </div>
       <div className="flex flex-col gap-2 overflow-auto  max-h-screen scrollbar scrollbar-thumb-gray-900 scrollbar-track-gray-700">

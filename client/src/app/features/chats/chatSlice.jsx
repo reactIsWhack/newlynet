@@ -17,6 +17,7 @@ const initialState = {
   selectedConversation: null,
   chatsLoading: false,
   createMsgLoading: false,
+  chatFilter: 'individual',
 };
 
 export const getConversations = createAsyncThunk(
@@ -102,6 +103,9 @@ const chatsSlice = createSlice({
     reorderChats(state, action) {
       state.conversations = action.payload;
     },
+    setChatFilter(state, action) {
+      state.chatFilter = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -173,6 +177,7 @@ export const {
   resetMessages,
   setMessages,
   reorderChats,
+  setChatFilter,
 } = chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;
