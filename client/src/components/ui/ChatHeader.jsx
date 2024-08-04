@@ -19,9 +19,22 @@ const ChatHeader = () => {
   const receivingMember = selectedConversation?.members.find(
     (m) => m._id !== userId
   );
+  const members = selectedConversation.members.map((member, index) => {
+    if (member._id === userId) return null;
+    return (
+      <span key={member._id} className="comma">
+        {
+          <span className="hover:underline cursor-pointer">
+            {member.firstName + ' ' + member.lastName}
+          </span>
+        }{' '}
+      </span>
+    );
+  });
+
   const receiverName =
     selectedConversation.chatType === 'group'
-      ? getChatName(selectedConversation.chatName, selectedConversation.members)
+      ? selectedConversation.chatName || members
       : receivingMember.firstName + ' ' + receivingMember?.lastName;
 
   const headerPic =
@@ -44,6 +57,19 @@ const ChatHeader = () => {
     (contact) => contact._id === receivingMember._id
   );
 
+  const profilePicturesHead = selectedConversation.members.map(
+    (member, index) => {
+      if (member._id === userId) return null;
+      return (
+        <img
+          src={member.profilePicture}
+          key={member._id}
+          className={`w-8 h-8 rounded-full border-2 border-gray-900 -ml-3 cursor-pointer object-cover`}
+        />
+      );
+    }
+  );
+
   return (
     <div className="h-20 fixed top-16 bg-gray-900 w-3/4 shadow-xl flex items-center px-3 max-[550px]:w-full">
       <IoIosArrowBack
@@ -52,8 +78,12 @@ const ChatHeader = () => {
         cursor="pointer"
         onClick={handleClick}
       />
-      <div className="flex flex-col items-center mx-auto gap-1">
-        <img src={headerPic} className="h-10" />
+      <div className="flex flex-col items-center mx-auto">
+        {selectedConversation.chatType === 'group' && !headerPic ? (
+          <div className="flex items-center h-10">{profilePicturesHead}</div>
+        ) : (
+          <img src={headerPic} className="h-10 rounded-full" />
+        )}
         <div className="text-sm capitalize">
           To: {receiverName || 'Loading...'}
         </div>
