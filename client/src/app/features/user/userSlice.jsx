@@ -88,7 +88,7 @@ export const getCommonNewStudents = createAsyncThunk(
 
 export const addContact = createAsyncThunk(
   'user/addContact',
-  async ({ id, filter }, thunkAPI) => {
+  async (id, thunkAPI) => {
     try {
       const response = await axios.patch(
         `${baseUrl}/api/users/addcontact/${id}`
@@ -105,7 +105,6 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setIsLoggedIn(state, action) {
-      console.log(action.payload);
       state.isLoggedIn = action.payload;
     },
     resetStudents(state, action) {

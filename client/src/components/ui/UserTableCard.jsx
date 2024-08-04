@@ -31,7 +31,6 @@ const UserTableCard = ({
   const similarInterest = interests.find((interest) =>
     user.interests.includes(interest)
   );
-  const { selectedChat, conversations } = useSelector(selectChats);
   const { onlineUsers } = useSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -42,9 +41,7 @@ const UserTableCard = ({
   const mobile = useDetectMobile();
 
   const disableBtns = (id) => {
-    console.log(id);
     const element = document.getElementById(id);
-    console.log(element);
     element.style.opacity = 0.4;
     element.classList.add('disabled');
   };
@@ -62,7 +59,7 @@ const UserTableCard = ({
 
   const contactAdd = async (e) => {
     e.target.classList.add('disabled');
-    await dispatch(addContact({ id: _id, filter }));
+    await dispatch(addContact(_id));
   };
   const isInContacts = user.contacts.find((c) => c._id === _id);
 

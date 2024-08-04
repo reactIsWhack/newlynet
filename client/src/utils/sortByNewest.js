@@ -1,5 +1,4 @@
 const sortByNewest = (array, field) => {
-  console.log(array);
   return array.sort((a, b) => {
     const aDate = a.messages.length
       ? a.messages[a.messages.length - 1].createdAt

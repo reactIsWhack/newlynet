@@ -18,7 +18,6 @@ const useListenNotifications = () => {
   const { id } = useParams();
 
   useEffect(() => {
-    console.log(socket);
     socket?.on('newMessageNotify', (unreadChats, sendingChat) => {
       if (sendingChat) {
         const receivingMember = sendingChat?.members.find(

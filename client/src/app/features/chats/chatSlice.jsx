@@ -49,7 +49,6 @@ export const createChat = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
-      console.log(error);
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -63,7 +62,6 @@ export const sendMessage = createAsyncThunk(
         `${baseUrl}/api/message/sendmessage/${chatId}`,
         { message }
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -78,7 +76,6 @@ export const getMessages = createAsyncThunk(
       const response = await axios.get(
         `${baseUrl}/api/message/messages/${chatId}`
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -121,13 +118,7 @@ const chatsSlice = createSlice({
         getConversations.fulfilled,
         (state, { payload: { data, unreadChats } }) => {
           state.chatsLoading = false;
-          console.log(unreadChats);
           const sorted = sortByNewest(data, 'read');
-          const unreadSorted = sortByNewest(unreadChats, 'messages');
-          const filtered = sorted.filter(
-            (chat) => !unreadChats.some((c) => c._id === chat._id)
-          );
-
           state.conversations = sorted;
         }
       )
@@ -147,7 +138,6 @@ const chatsSlice = createSlice({
       })
       .addCase(createChat.rejected, (state, action) => {
         state.err = action.payload;
-        console.log(action.payload);
         state.chatsLoading = false;
         toast.error(action.payload);
       })
