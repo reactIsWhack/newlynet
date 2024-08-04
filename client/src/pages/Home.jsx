@@ -20,11 +20,12 @@ const Home = () => {
     <div>
       <Navbar />
       <div className={`py-8 ${!mobile ? 'px-12' : ''} flex gap-12 items-start`}>
-        {!mobile && (
-          <div className="sticky primary-user-card">
-            <PrimaryUserCard />
-          </div>
-        )}
+        {!mobile ||
+          (window.screen.width > 1000 && (
+            <div className="sticky primary-user-card">
+              <PrimaryUserCard />
+            </div>
+          ))}
         <HomeMainContent />
         {!mobile && <div className="home-right w-1/4"></div>}
       </div>{' '}

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import ChatSidebar from '../components/ChatSidebar';
 import useRedirectUser from '../hooks/useRedirectUser';
@@ -24,6 +24,7 @@ const Chats = () => {
   const { id } = useParams();
   const mobile = useDetectMobile();
   const { socket } = useSocket();
+  const [renderModal, setRenderModal] = useState(false);
 
   useEffect(() => {
     return () => dispatch(setSelectedChat(null));
@@ -48,12 +49,15 @@ const Chats = () => {
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
       <div className="flex flex-1 overflow-hidden sidebar-container">
-        {((mobile && !id) || !mobile) && <ChatSidebar />}
+        {((mobile && !id) || !mobile) && (
+          <ChatSidebar setRenderModal={setRenderModal} />
+        )}
         <div className="flex-1 overflow-auto">
           <Outlet />
         </div>
       </div>
-      <CreateChatForm /> {/* a modal that is toggled in the chat sidebar */}
+      {renderModal && <CreateChatForm setRenderModal={setRenderModal} />}{' '}
+      {/* a modal that is toggled in the chat sidebar */}
     </div>
   );
 };

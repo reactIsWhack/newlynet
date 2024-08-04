@@ -1,8 +1,11 @@
 import React from 'react';
 import { FaPlus } from 'react-icons/fa6';
 
-const SearchChat = () => {
-  const handleClick = () => document.getElementById('my_modal_3').showModal();
+const SearchChat = ({ setRenderModal }) => {
+  const handleClick = async () => {
+    await setRenderModal(true);
+    document.getElementById('my_modal_3').showModal();
+  };
 
   return (
     <div className="flex items-center gap-4">

@@ -5,7 +5,7 @@ const User = require('../models/user.model');
 const cloudinary = require('cloudinary').v2;
 
 const createchat = asyncHandler(async (req, res) => {
-  const { members, chatName } = req.body; // an array of users that will be part of the chat
+  const { members } = req.body; // an array of users that will be part of the chat
 
   if (members.length > 20) {
     res.status(400);
@@ -15,11 +15,6 @@ const createchat = asyncHandler(async (req, res) => {
   if (!members.length) {
     res.status(400);
     throw new Error('Please add member(s) to the chat');
-  }
-
-  if (members.length > 1 && !chatName) {
-    res.status(400);
-    throw new Error('Please provide a chat name for the group');
   }
 
   const user = await User.findById(req.userId);
@@ -39,11 +34,8 @@ const createchat = asyncHandler(async (req, res) => {
     Chat.create({
       members: [...members, req.userId],
       messages: [],
-      chatName,
-      chatPic:
-        members.length > 1
-          ? 'https://cdn-icons-png.flaticon.com/512/6387/6387947.png'
-          : '',
+      chatName: '',
+      chatPic: null,
       chatType: members.length > 1 ? 'group' : 'individual',
       creator: req.userId,
     }).then((chat) =>

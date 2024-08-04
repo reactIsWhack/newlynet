@@ -59,12 +59,11 @@ describe('POST /chats', () => {
     const response = await request(app)
       .post('/api/chats/createchat')
       .set('Cookie', [...jwt])
-      .send({ members: contacts, chatName: 'Test Chat' })
+      .send({ members: contacts })
       .expect(201)
       .expect('Content-Type', /application\/json/);
     chat = response.body;
 
-    expect(response.body.chatName).toBe('Test Chat');
     expect(response.body.chatType).toBe('group');
     expect(
       response.body.members.map((member) => member._id.toString())
@@ -77,7 +76,6 @@ describe('POST /chats', () => {
     );
     const chatEvent = await chatPromise;
     console.log(chatEvent);
-    expect(chatEvent.chatName).toBe('Test Chat');
   });
 
   it('Should create a group chat with one contact of the test user', async () => {
@@ -109,7 +107,6 @@ describe('POST /chats', () => {
             userInfo._id.toString(),
           ])
         );
-        expect(chat.chatName).toBe('Test Chat');
       });
     }
   });
@@ -123,7 +120,6 @@ describe('GET /chats', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body[0].chatName).toBe('Test Chat');
     expect(response.body[0].chatType).toBe('group');
     expect(
       response.body[0].members.map((member) => member._id.toString())
