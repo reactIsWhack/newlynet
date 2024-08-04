@@ -1,14 +1,25 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logoutUser, selectUser } from '../app/features/user/userSlice';
+import {
+  logoutUser,
+  resetUserState,
+  selectUser,
+} from '../app/features/user/userSlice';
 import NavLinks from './ui/NavLinks';
 import { Link } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
+import { resetChatState } from '../app/features/chats/chatSlice';
 
 const Navbar = () => {
   const { profilePicture } = useSelector(selectUser);
   const dispatch = useDispatch();
   const mobile = useDetectMobile();
+
+  const handleLogout = () => {
+    dispatch(resetUserState());
+    dispatch(resetChatState());
+    dispatch(logoutUser());
+  };
 
   return (
     <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-20">
@@ -50,11 +61,7 @@ const Navbar = () => {
               <a className="text-gray-200">Settings</a>
             </li>
             <li>
-              <Link
-                onClick={() => dispatch(logoutUser())}
-                className="text-gray-200"
-                to="/"
-              >
+              <Link onClick={handleLogout} className="text-gray-200" to="/">
                 Logout
               </Link>
             </li>

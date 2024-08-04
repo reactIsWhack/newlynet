@@ -116,6 +116,9 @@ const chatsSlice = createSlice({
     resetConversations(state, action) {
       state.conversations = [];
     },
+    resetChatState(state, action) {
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -193,6 +196,7 @@ export const {
   setMessages,
   reorderChats,
   setChatFilter,
+  resetChatState,
   resetConversations,
 } = chatsSlice.actions;
 

@@ -125,6 +125,9 @@ const userSlice = createSlice({
       chattingWithSet.add(...action.payload);
       state.chattingWith = Array.from(chattingWithSet);
     },
+    resetUserState(state) {
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -231,6 +234,7 @@ export const {
   setCursor,
   setUnreadChats,
   setChattingWith,
+  resetUserState,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;
