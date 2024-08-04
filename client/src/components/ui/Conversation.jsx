@@ -10,8 +10,16 @@ import {
   setSelectedChat,
 } from '../../app/features/chats/chatSlice';
 import { useNavigate, useParams } from 'react-router-dom';
+import getChatName from '../../utils/getChatName';
 
-const Conversation = ({ lastIdx, _id, members, conversation }) => {
+const Conversation = ({
+  lastIdx,
+  _id,
+  members,
+  conversation,
+  chatType,
+  chatName,
+}) => {
   const { onlineUsers, socket } = useSocket();
   const { userId, unreadChats } = useSelector(selectUser);
   const { selectedConversation } = useSelector(selectChats);
@@ -45,7 +53,11 @@ const Conversation = ({ lastIdx, _id, members, conversation }) => {
         }`}
         onClick={handleClick}
       >
-        <div className={`avatar ${isOnline ? 'online' : 'offline'}`}>
+        <div
+          className={`avatar ${
+            chatType === 'group' ? '' : isOnline ? 'online' : 'offline'
+          }`}
+        >
           <div className="w-12 rounded-full">
             <img src={receivingMember.profilePicture} alt="user avatar" />
           </div>
@@ -54,7 +66,9 @@ const Conversation = ({ lastIdx, _id, members, conversation }) => {
         <div className="flex flex-col flex-1">
           <div className="flex gap-3 justify-between">
             <p className="font-bold text-gray-200">
-              {receivingMember.firstName + ' ' + receivingMember.lastName}
+              {chatType === 'group'
+                ? getChatName(chatName, members)
+                : receivingMember.firstName + ' ' + receivingMember.lastName}
             </p>
           </div>
         </div>

@@ -4,7 +4,7 @@ const { io, getSocketId } = require('../socket/socket');
 const User = require('../models/user.model');
 const cloudinary = require('cloudinary').v2;
 
-const createchat = asyncHandler(async (req, res) => {
+const createchat = asyncHandler(async (req, res, next) => {
   const { members } = req.body; // an array of users that will be part of the chat
 
   if (members.length > 20) {
@@ -15,6 +15,14 @@ const createchat = asyncHandler(async (req, res) => {
   if (!members.length) {
     res.status(400);
     throw new Error('Please add member(s) to the chat');
+  }
+
+  const chatExists = await Chat.findOne({
+    members: { $all: [...members.map((m) => m._id), req.userId] },
+  });
+  if (chatExists) {
+    res.status(400);
+    throw new Error('Chat with these contact(s) already exists');
   }
 
   const user = await User.findById(req.userId);

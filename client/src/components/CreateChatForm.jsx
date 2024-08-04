@@ -1,9 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Modal from './ui/Modal';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import MemberCard from './ui/MemberCard';
 import { IoMdAddCircleOutline } from 'react-icons/io';
+import {
+  createChat,
+  getConversations,
+  resetConversations,
+  selectChats,
+  setSelectedChat,
+} from '../app/features/chats/chatSlice';
+import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const CreateChatForm = ({ renderModal, setRenderModal }) => {
   const [memberQuery, setMemberQuery] = useState('');
@@ -11,6 +20,9 @@ const CreateChatForm = ({ renderModal, setRenderModal }) => {
   const [contactResults, setContactResults] = useState([]);
   const [addedMembers, setAddedMembers] = useState([]);
   const [renderFullList, setRenderFullList] = useState(false);
+  const { chatFilter, err } = useSelector(selectChats);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleChange = async (e) => {
     const value = e.target.value;
@@ -89,6 +101,22 @@ const CreateChatForm = ({ renderModal, setRenderModal }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!addedMembers)
+      return toast.error('Please add at least one chat member');
+
+    await dispatch(createChat({ chatData: { members: addedMembers } })).then(
+      async (result) => {
+        console.log(result.meta.rejectedWithValue);
+        if (!result.meta.rejectedWithValue) {
+          setRenderModal(false);
+          if (result.payload.chatType !== chatFilter) {
+            dispatch(resetConversations());
+            await dispatch(getConversations(result.payload.chatType));
+            navigate(`/chats/${result.payload._id}`);
+          }
+        }
+      }
+    );
   };
 
   useEffect(() => {

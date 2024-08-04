@@ -7,6 +7,7 @@ import {
 import { selectUser } from '../../app/features/user/userSlice';
 import { IoIosArrowBack } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
+import getChatName from '../../utils/getChatName';
 
 const ChatHeader = () => {
   const { selectedConversation } = useSelector(selectChats);
@@ -19,7 +20,10 @@ const ChatHeader = () => {
   );
   const receiverName =
     selectedConversation?.chatType === 'group'
-      ? selectedConversation?.chatName
+      ? getChatName(
+          selectedConversation?.chatName,
+          selectedConversation?.members
+        )
       : receivingMember?.firstName + ' ' + receivingMember?.lastName;
   const headerPic =
     selectedConversation?.chatType === 'group'

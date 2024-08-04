@@ -18,6 +18,7 @@ const initialState = {
   chatsLoading: false,
   createMsgLoading: false,
   chatFilter: 'individual',
+  err: null,
 };
 
 export const getConversations = createAsyncThunk(
@@ -48,6 +49,7 @@ export const createChat = createAsyncThunk(
       );
       return response.data;
     } catch (error) {
+      console.log(error);
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -106,6 +108,9 @@ const chatsSlice = createSlice({
     setChatFilter(state, action) {
       state.chatFilter = action.payload;
     },
+    resetConversations(state, action) {
+      state.conversations = [];
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -135,10 +140,14 @@ const chatsSlice = createSlice({
       })
       .addCase(createChat.fulfilled, (state, action) => {
         state.chatsLoading = false;
-        state.conversations = [action.payload, ...state.conversations];
-        state.selectedConversation = action.payload;
+        if (state.chatFilter === action.payload.chatType) {
+          state.conversations = [action.payload, ...state.conversations];
+          state.selectedConversation = action.payload;
+        }
       })
       .addCase(createChat.rejected, (state, action) => {
+        state.err = action.payload;
+        console.log(action.payload);
         state.chatsLoading = false;
         toast.error(action.payload);
       })
@@ -178,6 +187,7 @@ export const {
   setMessages,
   reorderChats,
   setChatFilter,
+  resetConversations,
 } = chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;

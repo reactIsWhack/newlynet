@@ -26,8 +26,10 @@ const useListenNotifications = () => {
         );
         const receiverName =
           sendingChat.chatType === 'group'
-            ? sendingChat.chatName
-            : receivingMember?.fullName;
+            ? `New message in chat with ${
+                receivingMember.firstName + ' ' + receivingMember.lastName
+              } and ${sendingChat.members.length - 2}`
+            : receivingMember?.firstName + ' ' + receivingMember?.lastName;
         toast(`New message from ${receiverName}`, { id: 'notify' });
         const reordered = conversations.filter(
           (c) => c._id !== sendingChat?._id
