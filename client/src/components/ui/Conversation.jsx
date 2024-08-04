@@ -19,6 +19,7 @@ const Conversation = ({
   conversation,
   chatType,
   chatName,
+  chatPic,
 }) => {
   const { onlineUsers, socket } = useSocket();
   const { userId, unreadChats } = useSelector(selectUser);
@@ -44,6 +45,29 @@ const Conversation = ({
   }, []);
 
   const renderUnreadMark = unreadChats?.some((chat) => chat.chat._id === _id);
+  const filteredMembers = members.filter((member) => member._id !== userId);
+
+  const memberImg = filteredMembers.map((member, index) => {
+    return (
+      <img
+        key={member._id}
+        src={member.profilePicture}
+        className={`object-cover ${
+          filteredMembers.length === 2 && index === 1 ? 'ml-8' : ''
+        }`}
+      />
+    );
+  });
+
+  const imageGrid = {
+    display: 'grid',
+    gridTemplateColumns: `repeat(${
+      filteredMembers.length === 2 ? '1' : '2'
+    }, 25px)`,
+    gridTemplateRows: `repeat(2, 25px)`,
+    gap: 0,
+    placeItems: 'center',
+  };
 
   return (
     <>
@@ -58,9 +82,17 @@ const Conversation = ({
             chatType === 'group' ? '' : isOnline ? 'online' : 'offline'
           }`}
         >
-          <div className="w-12 rounded-full">
-            <img src={receivingMember.profilePicture} alt="user avatar" />
-          </div>
+          {chatType === 'individual' ? (
+            <div className="w-12 h-12 rounded-full object-cover">
+              <img src={receivingMember.profilePicture} alt="user avatar" />
+            </div>
+          ) : !chatPic ? (
+            <div className="w-12 h-12 rounded-full overflow-hidden ">
+              <div style={imageGrid}>{memberImg}</div>
+            </div>
+          ) : (
+            <img src={chatPic} className="w-12 rounded-full object-cover" />
+          )}
         </div>
 
         <div className="flex flex-col flex-1">
