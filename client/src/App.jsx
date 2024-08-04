@@ -35,6 +35,7 @@ function App() {
   const { isLoggedIn } = useSelector(selectUser);
   const { selectedConversation } = useSelector(selectChats);
   const dispatch = useDispatch();
+  const [filter, setFilter] = useState('grade');
 
   const getData = async () => {
     await dispatch(getUserProfile());
@@ -66,7 +67,10 @@ function App() {
             />
           }
         ></Route>
-        <Route path="/" element={<Home />}></Route>
+        <Route
+          path="/"
+          element={<Home filter={filter} setFilter={setFilter} />}
+        ></Route>
         <Route
           path="/select-interests"
           element={

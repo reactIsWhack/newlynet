@@ -18,6 +18,7 @@ const Dropdown = ({ filter, setFilter }) => {
     <select
       className="select select-bordered max-w-xs min-h-10 h-10 w-28"
       onChange={handleChange}
+      value={filter}
     >
       <option value={'grade'}>Grade</option>
       <option value={'interests'}>Interests</option>
