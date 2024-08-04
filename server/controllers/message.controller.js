@@ -4,6 +4,7 @@ const Message = require('../models/message.model');
 const { getSocketId } = require('../socket/socket');
 const { io } = require('../socket/socket');
 const User = require('../models/user.model');
+const appendUnreadChat = require('../utils/appendUnreadChat');
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -71,7 +72,15 @@ const sendMessage = asyncHandler(async (req, res) => {
 
   for (const receiver of newMessage.receivers) {
     const socketId = getSocketId(receiver._id);
-    if (!socketId) break;
+    const receiverObj = await User.findById(receiver._id);
+    const unreadChatItem = receiverObj.unreadChats.find(
+      (chatItem) => String(chatItem.chat._id) === String(chat._id)
+    );
+    if (!socketId) {
+      appendUnreadChat(unreadChatItem, newMessage, receiverObj, chat);
+      await receiverObj.save();
+      break;
+    }
 
     io.to(socketId).emit('newMessage', newMessage);
     const room = io.sockets.adapter.rooms.get(`chat-${chat._id}`);
@@ -79,19 +88,8 @@ const sendMessage = asyncHandler(async (req, res) => {
 
     // if the user is not on the chat, add the new messages to their list of unread messages
     if (!room.has(socketId)) {
-      const receiverObj = await User.findById(receiver._id);
-      const unreadChatItem = receiverObj.unreadChats.find(
-        (chatItem) => String(chatItem.chat._id) === String(chat._id)
-      );
-      const unreadChat = await Chat.findById(unreadChatItem?._id);
-      if (unreadChatItem) {
-        unreadChatItem.messages = [...unreadChatItem.messages, newMessage];
-      } else {
-        receiverObj.unreadChats = [
-          ...receiverObj.unreadChats,
-          { chat: chat._id, messages: [newMessage._id] },
-        ];
-      }
+      const unreadChat = await Chat.findById(unreadChatItem?._id); // unread chat is sent to the client for notifications
+      appendUnreadChat(unreadChatItem, newMessage, receiverObj, chat);
       await receiverObj.save().then((item) =>
         item.populate({
           path: 'unreadChats',

@@ -19,16 +19,14 @@ const ChatHeader = () => {
     (m) => m._id !== userId
   );
   const receiverName =
-    selectedConversation?.chatType === 'group'
-      ? getChatName(
-          selectedConversation?.chatName,
-          selectedConversation?.members
-        )
-      : receivingMember?.firstName + ' ' + receivingMember?.lastName;
+    selectedConversation.chatType === 'group'
+      ? getChatName(selectedConversation.chatName, selectedConversation.members)
+      : receivingMember.firstName + ' ' + receivingMember?.lastName;
+
   const headerPic =
-    selectedConversation?.chatType === 'group'
+    selectedConversation.chatType === 'group'
       ? selectedConversation.chatPic
-      : receivingMember?.profilePicture;
+      : receivingMember.profilePicture;
 
   const handleClick = () => {
     dispatch(setSelectedChat(null));
@@ -45,7 +43,9 @@ const ChatHeader = () => {
       />
       <div className="flex flex-col items-center mx-auto gap-1">
         <img src={headerPic} className="h-10" />
-        <div className="text-sm capitalize">To: {receiverName}</div>
+        <div className="text-sm capitalize">
+          To: {receiverName || 'Loading...'}
+        </div>
       </div>
     </div>
   );
