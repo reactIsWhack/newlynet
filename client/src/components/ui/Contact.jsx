@@ -26,6 +26,7 @@ const Contact = ({
   const { onlineUsers } = useSocket();
   const online = checkOnlineStatus(onlineUsers, _id);
   const { chattingWith } = useSelector(selectUser);
+  const { contactConversations } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -39,6 +40,9 @@ const Contact = ({
   });
 
   const handleResumeChatting = async () => {
+    const conversation = contactConversations.find((chat) =>
+      chat.members.some((member) => member._id === _id)
+    );
     await dispatch(setSelectedChat(conversation));
     navigate(`/chats/${conversation._id}`);
   };

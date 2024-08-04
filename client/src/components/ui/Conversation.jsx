@@ -99,7 +99,7 @@ const Conversation = ({
           <div className="flex gap-3 justify-between">
             <p className="font-bold text-gray-200">
               {chatType === 'group'
-                ? getChatName(chatName, members)
+                ? getChatName(chatName, members, userId)
                 : receivingMember.firstName + ' ' + receivingMember.lastName}
             </p>
           </div>

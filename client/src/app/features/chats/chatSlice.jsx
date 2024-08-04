@@ -23,6 +23,7 @@ const initialState = {
   createMsgLoading: false,
   chatFilter: 'individual',
   err: null,
+  contactConversations: [], // an array of chats strictly for chats with a user's contacts
 };
 
 export const getConversations = createAsyncThunk(
@@ -125,6 +126,9 @@ const chatsSlice = createSlice({
           state.chatsLoading = false;
           const sorted = sortByNewest(data, 'read');
           state.conversations = sorted;
+
+          if (state.chatFilter === 'individual')
+            state.contactConversations = data;
         }
       )
       .addCase(getConversations.rejected, (state, action) => {
@@ -140,6 +144,11 @@ const chatsSlice = createSlice({
           state.conversations = [action.payload, ...state.conversations];
           state.selectedConversation = action.payload;
         }
+        if (action.payload.chatType === 'individual')
+          state.contactConversations = [
+            ...state.contactConversations,
+            action.payload,
+          ];
       })
       .addCase(createChat.rejected, (state, action) => {
         state.err = action.payload;
