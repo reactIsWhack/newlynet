@@ -26,8 +26,8 @@ const ChatBubble = ({ message, author, createdAt }) => {
       </div>
       <div
         className={`chat-bubble text-white ${
-          myMessage ? 'bg-blue-500' : ''
-        } ${shakeClass}`}
+          myMessage ? 'bg-blue-500' : 'bg-gray-700'
+        } ${shakeClass} break-words whitespace-pre-wrap max-w-96 max-[550px]:max-w-36`}
       >
         {message}
       </div>
