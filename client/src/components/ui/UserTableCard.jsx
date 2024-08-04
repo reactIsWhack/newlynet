@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import InterestDisplayBtn from './InterestDisplayBtn';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -31,6 +31,7 @@ const UserTableCard = ({
   const similarInterest = interests.find((interest) =>
     user.interests.includes(interest)
   );
+  const { selectedChat, conversations } = useSelector(selectChats);
   const { onlineUsers } = useSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -50,7 +51,13 @@ const UserTableCard = ({
 
   const startChat = async (e) => {
     disableBtns(e.target.id);
-    await dispatch(createChat({ chatData: { members: [student] }, navigate }));
+    await dispatch(createChat({ chatData: { members: [student] } })).then(
+      (result) => {
+        navigate(`/chats/${result.payload._id}`);
+        dispatch(resetStudents());
+        dispatch(getCommonNewStudents({ filter, cursor: '' }));
+      }
+    );
   };
 
   const contactAdd = async (e) => {

@@ -45,12 +45,7 @@ export const createChat = createAsyncThunk(
         `${baseUrl}/api/chats/createchat`,
         chatData
       );
-      thunkAPI.dispatch(resetStudents());
-      await thunkAPI.dispatch(
-        getCommonNewStudents({ filter: 'grade', cursor: '' })
-      );
-      const cb = (path) => navigate(path);
-      return { data: response.data, cb };
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -136,9 +131,8 @@ const chatsSlice = createSlice({
       })
       .addCase(createChat.fulfilled, (state, action) => {
         state.chatsLoading = false;
-        state.conversations = [action.payload.data, ...state.conversations];
-        state.selectedConversation = action.payload.data;
-        action.payload.cb(`/chats/${action.payload.data._id}`);
+        state.conversations = [action.payload, ...state.conversations];
+        state.selectedConversation = action.payload;
       })
       .addCase(createChat.rejected, (state, action) => {
         state.chatsLoading = false;
