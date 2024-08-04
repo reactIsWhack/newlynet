@@ -5,7 +5,11 @@ import {
 } from '@reduxjs/toolkit';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { getCommonNewStudents, resetStudents } from '../user/userSlice';
+import {
+  getCommonNewStudents,
+  resetStudents,
+  setChattingWith,
+} from '../user/userSlice';
 import sendMessageSound from '../../../assets/sendMessage.wav';
 import sortByNewest from '../../../utils/sortByNewest';
 
@@ -47,6 +51,7 @@ export const createChat = createAsyncThunk(
         `${baseUrl}/api/chats/createchat`,
         chatData
       );
+      thunkAPI.dispatch(setChattingWith(response.data.members));
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);

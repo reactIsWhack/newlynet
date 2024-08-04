@@ -11,6 +11,7 @@ import {
   setSelectedChat,
 } from '../../app/features/chats/chatSlice';
 import { useNavigate } from 'react-router-dom';
+import { selectUser } from '../../app/features/user/userSlice';
 
 const Contact = ({
   firstName,
@@ -22,11 +23,9 @@ const Contact = ({
   interests,
   contact,
 }) => {
-  const { hasConversation, conversation, isLoading } =
-    useCheckConversation(_id);
   const { onlineUsers } = useSocket();
-  const { chatsLoading } = useSelector(selectChats);
   const online = checkOnlineStatus(onlineUsers, _id);
+  const { chattingWith } = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -46,7 +45,9 @@ const Contact = ({
 
   const handleStartChatting = async (e) => {
     e.target.classList.add('disabled');
-    await dispatch(createChat({ chatData: { members: [contact] }, navigate }));
+    await dispatch(createChat({ chatData: { members: [contact] } })).then(
+      (result) => navigate(`/chats/${result.payload._id}`)
+    );
     e.target.classList.remove('disabled');
   };
 
@@ -72,9 +73,7 @@ const Contact = ({
           {interestBtn}
         </div>
         <div className="card-actions justify-center h-full items-end">
-          {isLoading ? (
-            <span className="loading loading-spinner loading-lg"></span>
-          ) : hasConversation ? (
+          {chattingWith.includes(_id) ? (
             <button
               className="btn btn-primary min-h-10 h-10"
               onClick={handleResumeChatting}
