@@ -52,7 +52,9 @@ export const createChat = createAsyncThunk(
         `${baseUrl}/api/chats/createchat`,
         chatData
       );
-      thunkAPI.dispatch(setChattingWith(response.data.members));
+      thunkAPI.dispatch(
+        setChattingWith(response.data.members.map((member) => member._id))
+      );
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);

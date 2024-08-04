@@ -30,12 +30,14 @@ const createchat = asyncHandler(async (req, res, next) => {
 
   for (const member of members) {
     const obj = await User.findById(member._id);
-    obj.chattingWith = [
-      ...obj.chattingWith,
-      req.userId,
-      ...members.filter((m) => String(m._id) !== String(member._id)),
-    ];
-    await obj.save();
+    if (!obj.chattingWith.some((user) => String(user) === String(member._id))) {
+      obj.chattingWith = [
+        ...obj.chattingWith,
+        req.userId,
+        ...members.filter((m) => String(m._id) !== String(member._id)),
+      ];
+      await obj.save();
+    }
   }
 
   const [chat, updatedUser] = await Promise.all([
@@ -73,6 +75,7 @@ const getChats = asyncHandler(async (req, res) => {
     { path: 'members', model: 'user', select: '-password' },
     { path: 'messages', model: 'message' },
   ]);
+  console.log(chats);
 
   res.status(200).json(chats);
 });

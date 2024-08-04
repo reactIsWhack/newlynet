@@ -90,9 +90,12 @@ export const addContact = createAsyncThunk(
   'user/addContact',
   async (id, thunkAPI) => {
     try {
+      const { chats } = thunkAPI.getState();
       const response = await axios.patch(
         `${baseUrl}/api/users/addcontact/${id}`
       );
+      if (chats.conversations.some((c) => c.members.some((m) => m._id === id)))
+        thunkAPI.dispatch(setChattingWith([id]));
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -116,6 +119,11 @@ const userSlice = createSlice({
     },
     setUnreadChats(state, action) {
       state.unreadChats = action.payload;
+    },
+    setChattingWith(state, action) {
+      const chattingWithSet = new Set(state.chattingWith);
+      chattingWithSet.add(...action.payload);
+      state.chattingWith = Array.from(chattingWithSet);
     },
   },
   extraReducers: (builder) => {
@@ -217,7 +225,12 @@ const userSlice = createSlice({
 
 export default userSlice.reducer;
 
-export const { setIsLoggedIn, resetStudents, setCursor, setUnreadChats } =
-  userSlice.actions;
+export const {
+  setIsLoggedIn,
+  resetStudents,
+  setCursor,
+  setUnreadChats,
+  setChattingWith,
+} = userSlice.actions;
 
 export const selectUser = (state) => state.user;

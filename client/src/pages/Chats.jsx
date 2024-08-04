@@ -41,7 +41,7 @@ const Chats = () => {
 
     return () => {
       if (selectedConversation)
-        socket.emit('leaveroom', `chat-${selectedConversation._id}`);
+        socket?.emit('leaveroom', `chat-${selectedConversation._id}`);
     };
   }, [selectedConversation, id]);
 
