@@ -1,17 +1,19 @@
 import React from 'react';
 import Conversation from './ui/Conversation';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getConversations,
   selectChats,
   setChatFilter,
+  setSelectedChat,
 } from '../app/features/chats/chatSlice';
 import checkOnlineStatus from '../utils/checkOnlineStatus';
 
 const Conversations = () => {
   const { conversations, chatsLoading, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const conversation = conversations.map((conversation, index) => {
     return (
@@ -27,6 +29,7 @@ const Conversations = () => {
   const handleChange = (e) => {
     dispatch(setChatFilter(e.target.value));
     dispatch(getConversations(e.target.value));
+    navigate('/chats');
   };
 
   return (
