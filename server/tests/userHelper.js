@@ -13,7 +13,8 @@ const loginUser = async (username, password) => {
 
 const createTestUser = async (interests, school) => {
   const user = await User.create({
-    fullName: 'test jest',
+    firstName: 'test',
+    lastName: 'jest',
     username: 'test',
     password: 'test123',
     grade: 9,

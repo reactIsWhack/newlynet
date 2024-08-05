@@ -52,14 +52,13 @@ describe('GET /users', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body);
-    nextCursor = response.body.nextCursor;
+    nextCursor = response.body[response.body.length - 1]._id;
 
-    expect(
-      response.body.users.map((user) => user._id.toString())
-    ).not.toContain(fakeUsers[0]._id.toString());
-    expect(response.body.users.length).toBeGreaterThanOrEqual(1);
-    expect(response.body.users.map((user) => user.school)).toEqual(
+    expect(response.body.map((user) => user._id.toString())).not.toContain(
+      fakeUsers[0]._id.toString()
+    );
+    expect(response.body.length).toBeGreaterThanOrEqual(1);
+    expect(response.body.map((user) => user.school)).toEqual(
       expect.arrayContaining([expect.objectContaining(school)])
     );
   });
@@ -83,10 +82,10 @@ describe('GET /users', () => {
 
     console.log(response.body, userInfo.interests);
 
-    expect(response.body.users.map((user) => user._id.toString())).toContain(
+    expect(response.body.map((user) => user._id.toString())).toContain(
       userWithCommonInterests._id.toString()
     );
-    const interestsArr = response.body.users.map((item) => item.interests);
+    const interestsArr = response.body.map((item) => item.interests);
     for (const interestArr of interestsArr) {
       expect(
         interestArr.some((interest) => userInfo.interests.includes(interest))
@@ -101,7 +100,8 @@ describe('GET /users', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body.fullName).toBe('test jest');
+    expect(response.body.firstName).toBe('test');
+    expect(response.body.lastName).toBe('jest');
     expect(response.body.username).toBe('test');
     expect(response.body.grade).toBe(9);
     expect(response.body.contacts.length).toBe(1);
@@ -131,6 +131,18 @@ describe('UPDATE /users', () => {
       expect.arrayContaining(['Computer Science', 'Golf', 'Tennis'])
     );
     expect(response.body.school.formattedName).toBe('Princeton High School');
+  });
+
+  it('Should add social media info to the test user', async () => {
+    const response = await request(app)
+      .patch('/api/users/addsocialmedia')
+      .set('Cookie', [...token])
+      .send({ snapchat: 'rnaini', instagram: 'codernaini' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.socialMediaUsernames.snapchat).toBe('rnaini');
+    expect(response.body.socialMediaUsernames.instagram).toBe('codernaini');
   });
 });
 

@@ -124,9 +124,32 @@ const updateProfile = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
+const addSocialMediaInfo = asyncHandler(async (req, res) => {
+  const { snapchat, instagram } = req.body;
+
+  if (!snapchat && !instagram) {
+    res.status(400);
+    throw new Error('Please provide at least one social media username');
+  }
+
+  const user = await User.findById(req.userId).select('-password');
+
+  user.socialMediaUsernames.snapchat =
+    snapchat || user.socialMediaUsernames.snapchat;
+  user.socialMediaUsernames.instagram =
+    instagram || user.socialMediaUsernames.instagram;
+
+  await user.save();
+
+  console.log(user);
+
+  res.status(200).json(user);
+});
+
 module.exports = {
   addContact,
   getCommonNewStudents,
   getPersonalProfile,
   updateProfile,
+  addSocialMediaInfo,
 };

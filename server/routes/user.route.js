@@ -5,6 +5,7 @@ const {
   getCommonNewStudents,
   getPersonalProfile,
   updateProfile,
+  addSocialMediaInfo,
 } = require('../controllers/user.controller');
 const uploader = require('../utils/fileUpload');
 const fileErrorHandler = require('../middleware/multerErrorHandler');
@@ -21,5 +22,6 @@ router.patch(
   fileErrorHandler,
   updateProfile
 );
+router.patch('/addsocialmedia', routeProtector, addSocialMediaInfo);
 
 module.exports = router;
