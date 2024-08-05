@@ -75,7 +75,6 @@ const getChats = asyncHandler(async (req, res) => {
     { path: 'members', model: 'user', select: '-password' },
     { path: 'messages', model: 'message' },
   ]);
-  console.log(chats);
 
   res.status(200).json(chats);
 });

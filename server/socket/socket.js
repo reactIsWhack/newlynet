@@ -24,7 +24,6 @@ io.on('connection', (socket) => {
   console.log(`user connected on socket with id of ${socket.id}`);
 
   const userId = socket.handshake.query.userId;
-  console.log(userId, 'userId\n');
   if (userId) {
     onlineUsers[userId] = socket.id;
   }
@@ -39,11 +38,11 @@ io.on('connection', (socket) => {
   socket.on('leaveroom', (roomname) => {
     console.log(`user: ${socket.id} left room - ${roomname}`);
     socket.leave(roomname);
+    console.log(io.sockets.adapter.rooms.get(roomname));
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
 
-  console.log(onlineUsers);
   socket.on('disconnect', () => {
     console.log(`user disconnected from socket with id of ${socket.id} `);
     delete onlineUsers[userId];

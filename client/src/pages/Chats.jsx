@@ -3,8 +3,12 @@ import Navbar from '../components/Navbar';
 import ChatSidebar from '../components/ChatSidebar';
 import useRedirectUser from '../hooks/useRedirectUser';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectChats, setSelectedChat } from '../app/features/chats/chatSlice';
-import { Outlet, useParams } from 'react-router-dom';
+import {
+  getMessages,
+  selectChats,
+  setSelectedChat,
+} from '../app/features/chats/chatSlice';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 import Modal from '../components/ui/Modal';
 import CreateChatForm from '../components/CreateChatForm';
@@ -18,32 +22,36 @@ const Chats = () => {
   useListenNotifications();
 
   const dispatch = useDispatch();
-  const { conversations, selectedConversation, messages } =
+  const { conversations, selectedConversation, messages, chatFilter } =
     useSelector(selectChats);
   const { unreadChats, userId } = useSelector(selectUser);
   const { id } = useParams();
   const mobile = useDetectMobile();
   const { socket } = useSocket();
   const [renderModal, setRenderModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    return () => dispatch(setSelectedChat(null));
-  }, [id, conversations, dispatch]);
-
-  useEffect(() => {
-    dispatch(
-      setSelectedChat(
-        conversations.find((conversation) => conversation._id === id)
-      )
-    );
+    // dispatch(
+    //   setSelectedChat(
+    //     conversations.find((conversation) => conversation._id === id)
+    //   )
+    // );
 
     if (id) socket?.emit('joinroom', `chat-${id}`);
 
     return () => {
-      if (selectedConversation)
+      if (selectedConversation) {
         socket?.emit('leaveroom', `chat-${selectedConversation._id}`);
+      }
     };
   }, [selectedConversation, id]);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getMessages(id));
+    }
+  }, []);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

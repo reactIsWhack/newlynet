@@ -40,10 +40,6 @@ const Conversation = ({
     dispatch(getMessages(_id));
   };
 
-  useEffect(() => {
-    if (id) dispatch(getMessages(id));
-  }, []);
-
   const renderUnreadMark = unreadChats?.some((chat) => chat.chat._id === _id);
   const filteredMembers = members.filter((member) => member._id !== userId);
 

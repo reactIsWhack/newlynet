@@ -21,7 +21,7 @@ const initialState = {
   selectedConversation: null,
   chatsLoading: false,
   createMsgLoading: false,
-  chatFilter: 'individual',
+  chatFilter: '',
   err: null,
   contactConversations: [], // an array of chats strictly for chats with a user's contacts
 };
@@ -32,7 +32,7 @@ export const getConversations = createAsyncThunk(
     try {
       const { user } = thunkAPI.getState();
       const response = await axios.get(
-        `${baseUrl}/api/chats/getchats/${chatType}`
+        `${baseUrl}/api/chats/getchats/${chatType || 'individual'}`
       );
       return {
         data: response.data,
@@ -108,7 +108,8 @@ const chatsSlice = createSlice({
       state.messages = [...state.messages, action.payload];
     },
     reorderChats(state, action) {
-      state.conversations = action.payload;
+      if (state.chatFilter === action.payload.chatFilter)
+        state.conversations = action.payload;
     },
     setChatFilter(state, action) {
       state.chatFilter = action.payload;
@@ -194,7 +195,7 @@ export const {
   setConversations,
   resetMessages,
   setMessages,
-  // reorderChats,
+  reorderChats,
   setChatFilter,
   resetChatState,
   resetConversations,

@@ -33,14 +33,14 @@ function App() {
   });
   const [schoolQuery, setSchoolQuery] = useState('');
   const { isLoggedIn } = useSelector(selectUser);
-  const { selectedConversation } = useSelector(selectChats);
+  const { selectedConversation, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('grade');
 
   const getData = async () => {
     await dispatch(getUserProfile());
     await dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' }));
-    await dispatch(getConversations('individual'));
+    await dispatch(getConversations(chatFilter));
   };
 
   useEffect(() => {

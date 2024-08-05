@@ -31,22 +31,26 @@ const Messages = () => {
   const mobile = useDetectMobile();
 
   return (
-    <div className="flex-1 relative overflow-x-hidden h-full overflow-hidden max-[550px]:w-full z-20 pt-32">
-      {selectedConversation && <ChatHeader />}
-      <div className="message-container overflow-auto pt-4 px-8 h-full max-[550px]:px-1 w-full">
-        {chatsLoading &&
-          [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
+    <>
+      {selectedConversation && (
+        <div className="flex-1 relative overflow-x-hidden h-full overflow-hidden max-[550px]:w-full z-20 pt-32">
+          {selectedConversation && <ChatHeader />}
+          <div className="message-container overflow-auto pt-4 px-8 h-full max-[550px]:px-1 w-full">
+            {chatsLoading &&
+              [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
 
-        {messages.length > 0 && !chatsLoading && chatBubble}
-        {!messages.length && !chatsLoading && (
-          <h4 className="text-center text-lg">
-            Send a message to start the conversation
-          </h4>
-        )}
-      </div>
+            {messages.length > 0 && !chatsLoading && chatBubble}
+            {!messages.length && !chatsLoading && (
+              <h4 className="text-center text-lg">
+                Send a message to start the conversation
+              </h4>
+            )}
+          </div>
 
-      <MessageInput />
-    </div>
+          <MessageInput />
+        </div>
+      )}
+    </>
   );
 };
 

@@ -71,7 +71,7 @@ const ChatHeader = () => {
   );
 
   return (
-    <div className="h-20 fixed top-16 bg-gray-900 w-3/4 shadow-xl flex items-center px-3 max-[550px]:w-full">
+    <div className="h-20 fixed top-16 bg-gray-900 w-3/4 shadow-xl flex items-center px-3 max-[550px]:w-full z-50">
       <IoIosArrowBack
         size={30}
         className="absolute fill-blue-500"
