@@ -7,7 +7,7 @@ const SearchChat = () => {
   const dispatch = useDispatch();
 
   const handleClick = async () => {
-    await dispatch(setRenderModal(true));
+    await dispatch(setRenderModal({ render: true, name: 'create-chat' }));
     document.getElementById('my_modal_3').showModal();
   };
 

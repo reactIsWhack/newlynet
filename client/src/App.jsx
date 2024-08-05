@@ -18,6 +18,8 @@ import NoChatSelected from './components/ui/NoChatSelected';
 import Messages from './components/Messages';
 import { getConversations, selectChats } from './app/features/chats/chatSlice';
 import Contacts from './pages/Contacts';
+import { selectPopup } from './app/features/popup/popupSlice';
+import UserDetails from './components/UserDetails';
 
 axios.defaults.withCredentials = true;
 
@@ -36,6 +38,9 @@ function App() {
   const { selectedConversation, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('grade');
+  const {
+    renderModal: { render, name },
+  } = useSelector(selectPopup);
 
   const getData = async () => {
     await dispatch(getUserProfile());
@@ -91,6 +96,7 @@ function App() {
         <Route path="/contacts" element={<Contacts />}></Route>
       </Routes>
       <Toaster />
+      {render && name === 'user-detail' && <UserDetails />}
     </>
   );
 }

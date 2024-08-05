@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  renderModal: false,
+  renderModal: { render: false, name: '' },
   viewingUserData: null,
 };
 

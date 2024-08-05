@@ -69,7 +69,7 @@ const UserTableCard = ({
 
   const openDetails = async () => {
     await dispatch(setViewingUserData(student));
-    await dispatch(setRenderModal(true));
+    await dispatch(setRenderModal({ render: true, name: 'user-detail' }));
     document.getElementById('my_modal_3').showModal();
   };
 

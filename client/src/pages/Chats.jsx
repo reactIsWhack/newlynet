@@ -28,7 +28,9 @@ const Chats = ({ filter }) => {
   const { id } = useParams();
   const mobile = useDetectMobile();
   const { socket } = useSocket();
-  const { renderModal } = useSelector(selectPopup);
+  const {
+    renderModal: { render, name },
+  } = useSelector(selectPopup);
   const navigate = useNavigate();
   const renderCount = useRef(0);
 
@@ -70,7 +72,7 @@ const Chats = ({ filter }) => {
           <Outlet />
         </div>
       </div>
-      {renderModal && <CreateChatForm filter={filter} />}{' '}
+      {render && name === 'create-chat' && <CreateChatForm filter={filter} />}{' '}
       {/* a modal that is toggled in the chat sidebar */}
     </div>
   );

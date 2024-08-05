@@ -34,7 +34,6 @@ const Contact = ({
   const { contactConversations, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(contactConversations);
 
   const interestBtn = interests.map((interest, index) => {
     return (

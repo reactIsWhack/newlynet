@@ -9,7 +9,7 @@ const CloseModal = () => {
     e.preventDefault();
     const element = document.getElementById('my_modal_3');
     element.open = false;
-    dispatch(setRenderModal(false));
+    dispatch(setRenderModal({ render: false, name: '' }));
   };
 
   return (

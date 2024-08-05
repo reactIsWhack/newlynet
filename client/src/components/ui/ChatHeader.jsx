@@ -9,6 +9,10 @@ import { IoIosArrowBack } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 import getChatName from '../../utils/getChatName';
 import { IoPersonAdd } from 'react-icons/io5';
+import {
+  setRenderModal,
+  setViewingUserData,
+} from '../../app/features/popup/popupSlice';
 
 const ChatHeader = () => {
   const { selectedConversation } = useSelector(selectChats);
@@ -19,12 +23,22 @@ const ChatHeader = () => {
   const receivingMember = selectedConversation?.members.find(
     (m) => m._id !== userId
   );
+
+  const viewMemberDetails = async (member) => {
+    await dispatch(setViewingUserData(member));
+    await dispatch(setRenderModal({ render: true, name: 'user-detail' }));
+    document.getElementById('my_modal_3').showModal();
+  };
+
   const members = selectedConversation.members.map((member, index) => {
     if (member._id === userId) return null;
     return (
       <span key={member._id} className="comma">
         {
-          <span className="hover:underline cursor-pointer">
+          <span
+            className="hover:underline cursor-pointer"
+            onClick={() => viewMemberDetails(member)}
+          >
             {member.firstName + ' ' + member.lastName}
           </span>
         }{' '}
@@ -65,6 +79,7 @@ const ChatHeader = () => {
           src={member.profilePicture}
           key={member._id}
           className={`w-8 h-8 rounded-full border-2 border-gray-900 -ml-3 cursor-pointer object-cover`}
+          onClick={() => viewMemberDetails(member)}
         />
       );
     }

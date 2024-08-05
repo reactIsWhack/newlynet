@@ -3,23 +3,14 @@ import useRedirectUser from '../hooks/useRedirectUser';
 import Navbar from '../components/Navbar';
 import PrimaryUserCard from '../components/PrimaryUserCard';
 import HomeMainContent from '../components/HomeMainContent';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  getCommonNewStudents,
-  selectUser,
-} from '../app/features/user/userSlice';
 import useDetectMobile from '../hooks/useDetectMobile';
-import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
-import UserDetails from '../components/UserDetails';
-import { selectPopup } from '../app/features/popup/popupSlice';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
   useListenNotifications();
 
   const mobile = useDetectMobile();
-  const { renderModal } = useSelector(selectPopup);
 
   return (
     <div>
@@ -33,7 +24,6 @@ const Home = ({ filter, setFilter }) => {
         <HomeMainContent filter={filter} setFilter={setFilter} />
         {!mobile && <div className="home-right w-1/4"></div>}
       </div>{' '}
-      {renderModal && <UserDetails />}
     </div>
   );
 };
