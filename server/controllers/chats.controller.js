@@ -18,8 +18,12 @@ const createchat = asyncHandler(async (req, res, next) => {
   }
 
   const chatExists = await Chat.findOne({
-    members: { $all: [...members.map((m) => m._id), req.userId] },
+    members: {
+      $all: [...members.map((m) => m._id), req.userId],
+      $size: members.length + 1,
+    },
   });
+  console.log(chatExists);
   if (chatExists) {
     res.status(400);
     throw new Error('Chat with these contact(s) already exists');

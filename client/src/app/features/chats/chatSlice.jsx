@@ -30,14 +30,17 @@ export const getConversations = createAsyncThunk(
   'chats/getConversations',
   async (chatType, thunkAPI) => {
     try {
-      const { user } = thunkAPI.getState();
+      const { user, chats } = thunkAPI.getState();
       const response = await axios.get(
         `${baseUrl}/api/chats/getchats/${chatType || 'individual'}`
       );
-      return {
-        data: response.data,
-        unreadChats: user.unreadChats.map((chat) => chat.chat),
-      };
+      if (
+        (chatType === '' || chatType === 'individual') &&
+        !chats.contactConversations.length // when the page first loads and the state chats are empty arrays, fill the contact conversations
+      )
+        await thunkAPI.dispatch(setContactChats(response.data));
+      console.log(response.data);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -120,23 +123,24 @@ const chatsSlice = createSlice({
     resetChatState(state, action) {
       return initialState;
     },
+    setContactChats(state, action) {
+      state.contactConversations = action.payload;
+    },
+    overideChats(state, action) {
+      state.conversations = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getConversations.pending, (state, action) => {
         state.chatsLoading = true;
       })
-      .addCase(
-        getConversations.fulfilled,
-        (state, { payload: { data, unreadChats } }) => {
-          state.chatsLoading = false;
-          const sorted = sortByNewest(data, 'read');
-          state.conversations = sorted;
-
-          if (state.chatFilter === 'individual')
-            state.contactConversations = data;
-        }
-      )
+      .addCase(getConversations.fulfilled, (state, action) => {
+        console.log(action.payload);
+        state.chatsLoading = false;
+        const sorted = sortByNewest([...action.payload], 'read');
+        state.conversations = sorted;
+      })
       .addCase(getConversations.rejected, (state, action) => {
         state.chatsLoading = false;
         toast.error(action.payload);
@@ -199,6 +203,8 @@ export const {
   setChatFilter,
   resetChatState,
   resetConversations,
+  setContactChats,
+  overideChats,
 } = chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;

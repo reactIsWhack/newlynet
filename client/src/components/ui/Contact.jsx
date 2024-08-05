@@ -7,7 +7,9 @@ import useCheckConversation from '../../hooks/useCheckConversation';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createChat,
+  overideChats,
   selectChats,
+  setChatFilter,
   setSelectedChat,
 } from '../../app/features/chats/chatSlice';
 import { useNavigate } from 'react-router-dom';
@@ -29,9 +31,10 @@ const Contact = ({
   const { onlineUsers } = useSocket();
   const online = checkOnlineStatus(onlineUsers, _id);
   const { chattingWith } = useSelector(selectUser);
-  const { contactConversations } = useSelector(selectChats);
+  const { contactConversations, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  console.log(contactConversations);
 
   const interestBtn = interests.map((interest, index) => {
     return (
@@ -52,6 +55,12 @@ const Contact = ({
 
   const handleStartChatting = async (e) => {
     e.target.classList.add('disabled');
+    if (chatFilter !== 'individual') {
+      /* if the user was previously viewing group chats, change the chats on the chat page to individual conversations
+      so the user can see their new conversation */
+      await dispatch(setChatFilter('individual'));
+      await dispatch(overideChats(contactConversations));
+    }
     await dispatch(createChat({ chatData: { members: [contact] } })).then(
       (result) => navigate(`/chats/${result.payload._id}`)
     );
