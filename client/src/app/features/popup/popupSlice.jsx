@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   renderModal: false,
+  viewingUserData: null,
 };
 
 const popupSlice = createSlice({
@@ -11,6 +12,9 @@ const popupSlice = createSlice({
     setRenderModal(state, action) {
       state.renderModal = action.payload;
     },
+    setViewingUserData(state, action) {
+      state.viewingUserData = action.payload;
+    },
   },
 });
 
@@ -18,4 +22,4 @@ export default popupSlice.reducer;
 
 export const selectPopup = (state) => state.popup;
 
-export const { setRenderModal } = popupSlice.actions;
+export const { setRenderModal, setViewingUserData } = popupSlice.actions;

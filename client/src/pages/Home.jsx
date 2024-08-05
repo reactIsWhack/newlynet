@@ -11,14 +11,15 @@ import {
 import useDetectMobile from '../hooks/useDetectMobile';
 import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
+import UserDetails from '../components/UserDetails';
+import { selectPopup } from '../app/features/popup/popupSlice';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
   useListenNotifications();
 
   const mobile = useDetectMobile();
-  const { isLoading } = useSelector(selectUser);
-  const dispatch = useDispatch();
+  const { renderModal } = useSelector(selectPopup);
 
   return (
     <div>
@@ -32,6 +33,7 @@ const Home = ({ filter, setFilter }) => {
         <HomeMainContent filter={filter} setFilter={setFilter} />
         {!mobile && <div className="home-right w-1/4"></div>}
       </div>{' '}
+      {renderModal && <UserDetails />}
     </div>
   );
 };

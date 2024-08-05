@@ -4,10 +4,7 @@ const Modal = ({ children }) => {
   return (
     <>
       <dialog id="my_modal_3" className="modal">
-        <div className="modal-box">
-          <h3 className="font-bold text-lg">Create a chat</h3>
-          {children}
-        </div>
+        <div className="modal-box">{children}</div>
       </dialog>
     </>
   );

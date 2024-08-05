@@ -12,6 +12,10 @@ import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import { useSocket } from '../../context/SocketContext';
 import useDetectMobile from '../../hooks/useDetectMobile';
 import { createChat, selectChats } from '../../app/features/chats/chatSlice';
+import {
+  setRenderModal,
+  setViewingUserData,
+} from '../../app/features/popup/popupSlice';
 import { useNavigate } from 'react-router-dom';
 import truncateInterest from '../../utils/truncateInterest';
 import { FaCheck } from 'react-icons/fa6';
@@ -63,6 +67,12 @@ const UserTableCard = ({
   };
   const isInContacts = user.contacts.find((c) => c._id === _id);
 
+  const openDetails = async () => {
+    await dispatch(setViewingUserData(student));
+    await dispatch(setRenderModal(true));
+    document.getElementById('my_modal_3').showModal();
+  };
+
   return (
     <tr>
       <td>
@@ -102,7 +112,10 @@ const UserTableCard = ({
         </div>
       </td>
       <th>
-        <button className="btn btn-ghost btn-xs max-[550px]:pr-0">
+        <button
+          className="btn btn-ghost btn-xs max-[550px]:pr-0"
+          onClick={openDetails}
+        >
           Details
         </button>
       </th>

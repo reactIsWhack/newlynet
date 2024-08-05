@@ -14,6 +14,7 @@ import {
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { setRenderModal } from '../app/features/popup/popupSlice';
+import CloseModal from './ui/CloseModal';
 
 const CreateChatForm = () => {
   const [memberQuery, setMemberQuery] = useState('');
@@ -79,13 +80,6 @@ const CreateChatForm = () => {
     );
   });
 
-  const handleClose = (e) => {
-    e.preventDefault();
-    const element = document.getElementById('my_modal_3');
-    element.open = false;
-    dispatch(setRenderModal(false));
-  };
-
   const renderAllContacts = () => {
     const contactsCopy = [
       ...contacts.filter((c) => !addedMembers.some((m) => m._id === c._id)),
@@ -136,6 +130,8 @@ const CreateChatForm = () => {
   return (
     <Modal>
       <>
+        <h3 className="font-bold text-lg">Create a chat</h3>
+
         <form className="min-h-24 max-h-72" onSubmit={handleSubmit}>
           <div className="flex items-center border-b py-3">
             <div className="flex relative flex-wrap items-center flex-1">
@@ -157,7 +153,7 @@ const CreateChatForm = () => {
               onClick={renderAllContacts}
             />
           </div>
-
+          <CloseModal />
           <div className="bg-gray-800 w-full rounded-md shadow-md z-10 mt-1 max-h-52 overflow-auto">
             {renderFullList && (
               <span
@@ -169,12 +165,7 @@ const CreateChatForm = () => {
             )}
             {resultOption}
           </div>
-          <button
-            className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            onClick={handleClose}
-          >
-            ✕
-          </button>
+
           <div className="flex justify-center mt-4">
             <button className="btn btn-active btn-primary min-h-9 h-9">
               Create

@@ -13,7 +13,15 @@ const Contacts = () => {
 
   const { contacts } = useSelector(selectUser);
   const contactCard = contacts.map((contact) => {
-    return <Contact {...contact} key={contact._id} contact={contact} />;
+    return (
+      <Contact
+        {...contact}
+        key={contact._id}
+        contact={contact}
+        renderConnectBtns={false}
+        bg="bg-base-100"
+      />
+    );
   });
 
   return (
