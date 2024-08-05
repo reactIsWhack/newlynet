@@ -3,8 +3,11 @@ import { Link, useNavigate } from 'react-router-dom';
 import landingImage from '../assets/landing-image.png';
 import { useDispatch, useSelector } from 'react-redux';
 import { loginUser, selectUser } from '../app/features/user/userSlice';
+import useRedirectUser from '../hooks/useRedirectUser';
 
 const Login = ({ setFormData }) => {
+  useRedirectUser();
+
   const dispatch = useDispatch();
   const { isLoading } = useSelector(selectUser);
   const navigate = useNavigate();
