@@ -23,7 +23,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-20">
-      <div className="flex-1">
+      <div className="flex-1 max-[550px]:-ml-2">
         <Link to="/" className="btn btn-ghost text-xl text-white">
           {mobile ? 'N' : 'NewlyNet'}
         </Link>
