@@ -150,7 +150,11 @@ const chatsSlice = createSlice({
       })
       .addCase(createChat.fulfilled, (state, action) => {
         state.chatsLoading = false;
-        if (state.chatFilter === action.payload.chatType) {
+        state.chatFilter = action.payload.chatType;
+        if (
+          state.chatFilter === action.payload.chatType ||
+          state.chatFilter === ''
+        ) {
           state.conversations = [action.payload, ...state.conversations];
           state.selectedConversation = action.payload;
         }
