@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import { selectPopup } from '../app/features/popup/popupSlice';
 import CloseModal from './ui/CloseModal';
 
-const UserDetails = () => {
+const UserDetails = ({ filter }) => {
   const { viewingUserData } = useSelector(selectPopup);
 
   return (
@@ -16,6 +16,7 @@ const UserDetails = () => {
         contact={viewingUserData}
         renderConnectBtns={true}
         bg="bg-base-300"
+        filter={filter}
       />
     </Modal>
   );

@@ -7,7 +7,7 @@ import useRedirectUser from '../hooks/useRedirectUser';
 import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
 
-const Contacts = () => {
+const Contacts = ({ filter }) => {
   useRedirectUser();
   useListenNotifications();
 
@@ -20,6 +20,7 @@ const Contacts = () => {
         contact={contact}
         renderConnectBtns={false}
         bg="bg-base-100"
+        filter={filter}
       />
     );
   });

@@ -93,10 +93,10 @@ function App() {
           ></Route>
           <Route path=":id" element={<Messages />} />
         </Route>
-        <Route path="/contacts" element={<Contacts />}></Route>
+        <Route path="/contacts" element={<Contacts filter={filter} />}></Route>
       </Routes>
       <Toaster />
-      {render && name === 'user-detail' && <UserDetails />}
+      {render && name === 'user-detail' && <UserDetails filter={filter} />}
     </>
   );
 }

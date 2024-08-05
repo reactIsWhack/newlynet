@@ -13,7 +13,11 @@ import {
   setSelectedChat,
 } from '../../app/features/chats/chatSlice';
 import { useNavigate } from 'react-router-dom';
-import { selectUser } from '../../app/features/user/userSlice';
+import {
+  getCommonNewStudents,
+  resetStudents,
+  selectUser,
+} from '../../app/features/user/userSlice';
 import ConnectBtns from './ConnectBtns';
 
 const Contact = ({
@@ -27,6 +31,7 @@ const Contact = ({
   contact,
   renderConnectBtns,
   bg,
+  filter,
 }) => {
   const { onlineUsers } = useSocket();
   const online = checkOnlineStatus(onlineUsers, _id);
@@ -61,7 +66,11 @@ const Contact = ({
       await dispatch(overideChats(contactConversations));
     }
     await dispatch(createChat({ chatData: { members: [contact] } })).then(
-      (result) => navigate(`/chats/${result.payload._id}`)
+      (result) => {
+        navigate(`/chats/${result.payload._id}`);
+        dispatch(resetStudents());
+        dispatch(getCommonNewStudents({ filter, cursor: '' }));
+      }
     );
     e.target.classList.remove('disabled');
   };
@@ -88,7 +97,10 @@ const Contact = ({
           {interestBtn}
         </div>
         {renderConnectBtns ? (
-          <ConnectBtns />
+          <ConnectBtns
+            handleResumeChatting={handleResumeChatting}
+            handleStartChatting={handleStartChatting}
+          />
         ) : (
           <div className="card-actions justify-center h-full items-end">
             {chattingWith.includes(_id) &&
