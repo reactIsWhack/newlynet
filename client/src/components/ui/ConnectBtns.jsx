@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../../app/features/user/userSlice';
+import { addContact, selectUser } from '../../app/features/user/userSlice';
 import {
   selectPopup,
   setRenderModal,
@@ -34,6 +34,11 @@ const ConnectBtns = ({ handleResumeChatting, handleStartChatting }) => {
     await handleStartChatting(e);
   };
 
+  const contactAdd = (e) => {
+    e.target.classList.add('disabled');
+    dispatch(addContact(viewingUserData._id));
+  };
+
   return (
     <div className="flex justify-center items-center gap-2 mt-4">
       {chattingWith.includes(viewingUserData._id) &&
@@ -54,7 +59,12 @@ const ConnectBtns = ({ handleResumeChatting, handleStartChatting }) => {
           Contact
         </button>
       ) : (
-        <button className="btn btn-secondary min-h-11 h-11">Add Contact</button>
+        <button
+          className="btn btn-secondary min-h-11 h-11"
+          onClick={contactAdd}
+        >
+          Add Contact
+        </button>
       )}
     </div>
   );
