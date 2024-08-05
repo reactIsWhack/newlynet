@@ -16,6 +16,7 @@ import { useSocket } from '../context/SocketContext';
 import { selectUser, setUnreadChats } from '../app/features/user/userSlice';
 import toast from 'react-hot-toast';
 import useListenNotifications from '../hooks/useListenNotifications';
+import { selectPopup } from '../app/features/popup/popupSlice';
 
 const Chats = () => {
   useRedirectUser();
@@ -24,11 +25,10 @@ const Chats = () => {
   const dispatch = useDispatch();
   const { conversations, selectedConversation, messages, chatFilter } =
     useSelector(selectChats);
-  const { unreadChats, userId } = useSelector(selectUser);
   const { id } = useParams();
   const mobile = useDetectMobile();
   const { socket } = useSocket();
-  const [renderModal, setRenderModal] = useState(false);
+  const { renderModal } = useSelector(selectPopup);
   const navigate = useNavigate();
   const renderCount = useRef(0);
 
@@ -65,14 +65,12 @@ const Chats = () => {
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
       <div className="flex flex-1 overflow-hidden sidebar-container">
-        {((mobile && !id) || !mobile) && (
-          <ChatSidebar setRenderModal={setRenderModal} />
-        )}
+        {((mobile && !id) || !mobile) && <ChatSidebar />}
         <div className="flex-1 overflow-auto">
           <Outlet />
         </div>
       </div>
-      {renderModal && <CreateChatForm setRenderModal={setRenderModal} />}{' '}
+      {renderModal && <CreateChatForm />}{' '}
       {/* a modal that is toggled in the chat sidebar */}
     </div>
   );

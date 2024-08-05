@@ -1,9 +1,13 @@
 import React from 'react';
 import { FaPlus } from 'react-icons/fa6';
+import { useDispatch } from 'react-redux';
+import { setRenderModal } from '../../app/features/popup/popupSlice';
 
-const SearchChat = ({ setRenderModal }) => {
+const SearchChat = () => {
+  const dispatch = useDispatch();
+
   const handleClick = async () => {
-    await setRenderModal(true);
+    await dispatch(setRenderModal(true));
     document.getElementById('my_modal_3').showModal();
   };
 

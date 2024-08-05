@@ -13,8 +13,9 @@ import {
 } from '../app/features/chats/chatSlice';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { setRenderModal } from '../app/features/popup/popupSlice';
 
-const CreateChatForm = ({ renderModal, setRenderModal }) => {
+const CreateChatForm = () => {
   const [memberQuery, setMemberQuery] = useState('');
   const { contacts } = useSelector(selectUser);
   const [contactResults, setContactResults] = useState([]);
@@ -82,7 +83,7 @@ const CreateChatForm = ({ renderModal, setRenderModal }) => {
     e.preventDefault();
     const element = document.getElementById('my_modal_3');
     element.open = false;
-    setRenderModal(false);
+    dispatch(setRenderModal(false));
   };
 
   const renderAllContacts = () => {
@@ -108,7 +109,7 @@ const CreateChatForm = ({ renderModal, setRenderModal }) => {
       async (result) => {
         console.log(result.meta.rejectedWithValue);
         if (!result.meta.rejectedWithValue) {
-          setRenderModal(false);
+          dispatch(setRenderModal(false));
           if (result.payload.chatType !== chatFilter) {
             dispatch(resetConversations());
             await dispatch(getConversations(result.payload.chatType));
