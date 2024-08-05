@@ -81,7 +81,7 @@ function App() {
             />
           }
         ></Route>
-        <Route path="/chats" element={<Chats />}>
+        <Route path="/chats" element={<Chats filter={filter} />}>
           <Route
             index
             element={!selectedConversation ? <NoChatSelected /> : null}

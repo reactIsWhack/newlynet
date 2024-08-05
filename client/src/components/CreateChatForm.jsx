@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Modal from './ui/Modal';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../app/features/user/userSlice';
+import {
+  getCommonNewStudents,
+  resetStudents,
+  selectUser,
+} from '../app/features/user/userSlice';
 import MemberCard from './ui/MemberCard';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import {
@@ -16,7 +20,7 @@ import { useNavigate } from 'react-router-dom';
 import { setRenderModal } from '../app/features/popup/popupSlice';
 import CloseModal from './ui/CloseModal';
 
-const CreateChatForm = () => {
+const CreateChatForm = ({ filter }) => {
   const [memberQuery, setMemberQuery] = useState('');
   const { contacts } = useSelector(selectUser);
   const [contactResults, setContactResults] = useState([]);
@@ -101,13 +105,15 @@ const CreateChatForm = () => {
 
     await dispatch(createChat({ chatData: { members: addedMembers } })).then(
       async (result) => {
-        console.log(result.meta.rejectedWithValue);
         if (!result.meta.rejectedWithValue) {
           dispatch(setRenderModal(false));
+
           if (result.payload.chatType !== chatFilter) {
             dispatch(resetConversations());
             await dispatch(getConversations(result.payload.chatType));
             navigate(`/chats/${result.payload._id}`);
+            dispatch(resetStudents());
+            dispatch(getCommonNewStudents({ filter, cursor: '' }));
           }
         }
       }

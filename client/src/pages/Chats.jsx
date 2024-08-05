@@ -18,7 +18,7 @@ import toast from 'react-hot-toast';
 import useListenNotifications from '../hooks/useListenNotifications';
 import { selectPopup } from '../app/features/popup/popupSlice';
 
-const Chats = () => {
+const Chats = ({ filter }) => {
   useRedirectUser();
   useListenNotifications();
 
@@ -70,7 +70,7 @@ const Chats = () => {
           <Outlet />
         </div>
       </div>
-      {renderModal && <CreateChatForm />}{' '}
+      {renderModal && <CreateChatForm filter={filter} />}{' '}
       {/* a modal that is toggled in the chat sidebar */}
     </div>
   );
