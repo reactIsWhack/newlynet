@@ -6,6 +6,7 @@ import { selectUser } from '../app/features/user/userSlice';
 import useRedirectUser from '../hooks/useRedirectUser';
 import InterestDisplayBtn from '../components/ui/InterestDisplayBtn';
 import { Link } from 'react-router-dom';
+import SocialMediaForm from '../components/ui/SocialMediaForm';
 
 const Settings = ({ formData, setFormData }) => {
   useRedirectUser();
@@ -13,7 +14,7 @@ const Settings = ({ formData, setFormData }) => {
   const [schoolQuery, setSchoolQuery] = useState('');
 
   useEffect(() => {
-    setSchoolQuery(school?.formattedName);
+    school && setSchoolQuery(school.formattedName);
   }, [school]);
 
   const interestDisplayBtn = interests.map((interest, index) => {
@@ -23,19 +24,21 @@ const Settings = ({ formData, setFormData }) => {
   return (
     <>
       <Navbar />
-      <div className="flex gap-6 items-start justify-center py-20 ">
-        <div className="flex-1 max-w-[500px] bg-base-200 min-h-40 rounded-lg shadow-xl pt-6 pb-8 px-5">
+      <div className="flex gap-12 items-start justify-center py-20 max-[550px]:flex-col">
+        <div className="flex-1 max-w-[500px] bg-base-200 min-h-40 rounded-lg shadow-xl pt-6 pb-8 ">
           <h1 className="text-xl font-semibold text-center mb-3">
             Personal Information
           </h1>
           <form>
-            <SchoolSelect
-              formData={formData}
-              setFormData={setFormData}
-              setSchoolQuery={setSchoolQuery}
-              schoolQuery={schoolQuery}
-            />
-            <label className="label w-full mt-2">
+            <div className="px-7 max-[550px]:px-1">
+              <SchoolSelect
+                formData={formData}
+                setFormData={setFormData}
+                setSchoolQuery={setSchoolQuery}
+                schoolQuery={schoolQuery}
+              />
+            </div>
+            <label className="label w-full mt-2 max-[550px]:px-4 px-7">
               <div className="w-full flex items-center justify-between">
                 <span className="text-base label-text">Interests</span>
                 <Link
@@ -54,7 +57,7 @@ const Settings = ({ formData, setFormData }) => {
             </div>
           </form>
         </div>
-        <div>Connect to Social Media</div>
+        <SocialMediaForm />
       </div>
     </>
   );

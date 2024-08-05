@@ -43,7 +43,8 @@ function App() {
     renderModal: { render, name },
   } = useSelector(selectPopup);
   const [updatingInterests, setUpdatingInterests] = useState(false);
-  const [settingsData, setSettingsData] = useState({ grade: grade });
+  const [settingsData, setSettingsData] = useState({ grade: 0 });
+  console.log(settingsData);
 
   const getData = async () => {
     await dispatch(getUserProfile());
@@ -56,6 +57,14 @@ function App() {
       getData();
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    grade &&
+      setSettingsData((prev) => ({
+        ...prev,
+        grade: grade,
+      }));
+  }, [grade]);
 
   return (
     <>
