@@ -42,6 +42,7 @@ io.on('connection', (socket) => {
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
+  console.log(onlineUsers);
 
   socket.on('disconnect', () => {
     console.log(`user disconnected from socket with id of ${socket.id} `);

@@ -79,7 +79,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     if (!socketId) {
       appendUnreadChat(unreadChatItem, newMessage, receiverObj, chat);
       await receiverObj.save();
-      break;
+      continue;
     }
 
     io.to(socketId).emit('newMessage', newMessage, chat);
