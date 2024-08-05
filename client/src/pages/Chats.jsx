@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import ChatSidebar from '../components/ChatSidebar';
 import useRedirectUser from '../hooks/useRedirectUser';
@@ -30,22 +30,30 @@ const Chats = () => {
   const { socket } = useSocket();
   const [renderModal, setRenderModal] = useState(false);
   const navigate = useNavigate();
+  const renderCount = useRef(0);
 
   useEffect(() => {
-    // dispatch(
-    //   setSelectedChat(
-    //     conversations.find((conversation) => conversation._id === id)
-    //   )
-    // );
+    return () => dispatch(setSelectedChat(null));
+  }, [id, conversations, dispatch]);
+
+  useEffect(() => {
+    const conversation = conversations.find(
+      (conversation) => conversation._id === id
+    );
+    if (!conversation && renderCount.current >= 3) navigate('/chats');
+
+    dispatch(setSelectedChat(conversation));
 
     if (id) socket?.emit('joinroom', `chat-${id}`);
+
+    renderCount.current++;
 
     return () => {
       if (selectedConversation) {
         socket?.emit('leaveroom', `chat-${selectedConversation._id}`);
       }
     };
-  }, [selectedConversation, id]);
+  }, [selectedConversation, id, conversations]);
 
   useEffect(() => {
     if (id) {
