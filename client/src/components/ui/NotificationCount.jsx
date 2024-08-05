@@ -5,7 +5,7 @@ import { selectUser } from '../../app/features/user/userSlice';
 const NotificationCount = () => {
   const { unreadChats } = useSelector(selectUser);
   const count = unreadChats.reduce((acc, current) => {
-    acc += current.messages.length;
+    acc += current.messages.length || 1;
     return acc;
   }, 0);
   console.log(count);

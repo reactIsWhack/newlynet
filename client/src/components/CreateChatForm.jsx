@@ -12,6 +12,7 @@ import {
   createChat,
   getConversations,
   resetConversations,
+  resetMessages,
   selectChats,
   setSelectedChat,
 } from '../app/features/chats/chatSlice';
@@ -107,14 +108,11 @@ const CreateChatForm = ({ filter }) => {
       async (result) => {
         if (!result.meta.rejectedWithValue) {
           dispatch(setRenderModal(false));
-
-          if (result.payload.chatType !== chatFilter) {
-            dispatch(resetConversations());
-            await dispatch(getConversations(result.payload.chatType));
-            navigate(`/chats/${result.payload._id}`);
-            dispatch(resetStudents());
-            dispatch(getCommonNewStudents({ filter, cursor: '' }));
-          }
+          dispatch(resetConversations());
+          await dispatch(getConversations(result.payload.chatType));
+          navigate(`/chats/${result.payload._id}`);
+          dispatch(resetStudents());
+          dispatch(getCommonNewStudents({ filter, cursor: '' }));
         }
       }
     );

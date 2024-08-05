@@ -1,6 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, setChattingWith } from '../app/features/user/userSlice';
+import {
+  selectUser,
+  setChattingWith,
+  setUnreadChats,
+} from '../app/features/user/userSlice';
 import { io } from 'socket.io-client';
 import {
   selectChats,
@@ -26,13 +30,16 @@ export const SocketContextProvider = ({ children }) => {
       setSocket(socketVal);
 
       socketVal.on('onlineUsers', (users) => {
-        // listens for the getAllOnlineUsers event
+        // listens for the onlineUsers event
         setOnlineUsers(users);
       });
 
-      socketVal.on('newChat', (chat) => {
+      socketVal.on('newChat', (chat, updatedNotifications) => {
+        console.log(chatFilter);
         if (chatFilter === chat.chatType) dispatch(setConversations(chat));
         dispatch(setChattingWith(chat.members.map((member) => member._id)));
+        dispatch(setUnreadChats(updatedNotifications));
+
         const toastMsg =
           chat.members.length < 3
             ? `${
@@ -57,7 +64,7 @@ export const SocketContextProvider = ({ children }) => {
         setSocket(null);
       }
     }
-  }, [isLoggedIn, userId]);
+  }, [isLoggedIn, userId, chatFilter]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>

@@ -13,53 +13,61 @@ import { useParams } from 'react-router-dom';
 const useListenNotifications = () => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
-  const { unreadChats, userId } = useSelector(selectUser);
-  const { messages, conversations, chatFilter } = useSelector(selectChats);
+  const { userId } = useSelector(selectUser);
+  const { conversations, chatFilter } = useSelector(selectChats);
   const { id } = useParams();
+
+  const notify = (sendingChat) => {
+    if (sendingChat) {
+      const [firstMember, secondMember] = sendingChat?.members.filter(
+        (m) => m._id !== userId
+      );
+
+      const groupChatNotif = formatMessage(
+        sendingChat,
+        firstMember,
+        secondMember
+      );
+      const receiverName =
+        sendingChat.chatType === 'group'
+          ? groupChatNotif
+          : `New message from ${
+              firstMember?.firstName + ' ' + firstMember?.lastName
+            }`;
+
+      toast(`${receiverName}`, { id: 'notify' });
+      const reordered = conversations.filter((c) => c._id !== sendingChat?._id);
+      if (chatFilter === sendingChat.chatType) {
+        dispatch(reorderChats([sendingChat, ...reordered]));
+      }
+    }
+  };
 
   useEffect(() => {
     socket?.on('newMessageNotify', (unreadChats, sendingChat) => {
       dispatch(setUnreadChats(unreadChats));
 
-      if (sendingChat) {
-        console.log(chatFilter, sendingChat.chatType);
-        console.log(chatFilter === sendingChat.chatType);
-        const [firstMember, secondMember] = sendingChat?.members.filter(
-          (m) => m._id !== userId
-        );
-        let groupChatNotif = '';
-
-        if (sendingChat.chatType === 'group') {
-          if (sendingChat.chatName)
-            groupChatNotif = `New message in ${sendingChat.chatName}`;
-          else if (sendingChat.members.length === 3)
-            groupChatNotif = `New message in chat with ${
-              firstMember.firstName + ' ' + firstMember.lastName
-            } & ${secondMember.firstName + ' ' + secondMember.lastName}`;
-          else
-            groupChatNotif = `New message in chat with ${
-              firstMember.firstName + ' ' + firstMember.lastName
-            }, and ${sendingChat.members.length - 2} others`;
-        }
-
-        const receiverName =
-          sendingChat.chatType === 'group'
-            ? groupChatNotif
-            : `New message from ${
-                firstMember?.firstName + ' ' + firstMember?.lastName
-              }`;
-
-        toast(`${receiverName}`, { id: 'notify' });
-        const reordered = conversations.filter(
-          (c) => c._id !== sendingChat?._id
-        );
-        if (chatFilter === sendingChat.chatType) {
-          console.log('ran');
-          dispatch(reorderChats([sendingChat, ...reordered]));
-        }
-      }
+      notify(sendingChat);
     });
   }, [socket, id, dispatch, chatFilter]);
+};
+
+const formatMessage = (sendingChat, firstMember, secondMember) => {
+  let groupChatNotif = '';
+
+  if (sendingChat.chatType === 'group') {
+    if (sendingChat.chatName)
+      groupChatNotif = `New message in ${sendingChat.chatName}`;
+    else if (sendingChat.members.length === 3)
+      groupChatNotif = `New message in chat with ${
+        firstMember.firstName + ' ' + firstMember.lastName
+      } & ${secondMember.firstName + ' ' + secondMember.lastName}`;
+    else
+      groupChatNotif = `New message in chat with ${
+        firstMember.firstName + ' ' + firstMember.lastName
+      }, and ${sendingChat.members.length - 2} others`;
+  }
+  return groupChatNotif;
 };
 
 export default useListenNotifications;

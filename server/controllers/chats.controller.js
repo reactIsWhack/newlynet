@@ -32,18 +32,6 @@ const createchat = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.userId);
   user.chattingWith = [...user.chattingWith, ...members];
 
-  for (const member of members) {
-    const obj = await User.findById(member._id);
-    if (!obj.chattingWith.some((user) => String(user) === String(member._id))) {
-      obj.chattingWith = [
-        ...obj.chattingWith,
-        req.userId,
-        ...members.filter((m) => String(m._id) !== String(member._id)),
-      ];
-      await obj.save();
-    }
-  }
-
   const [chat, updatedUser] = await Promise.all([
     Chat.create({
       members: [...members, req.userId],
@@ -63,7 +51,25 @@ const createchat = asyncHandler(async (req, res, next) => {
 
   for (const member of members) {
     const socketId = getSocketId(member._id);
-    if (socketId) io.to(socketId).emit('newChat', chat);
+    const obj = await User.findById(member._id);
+
+    if (!obj.chattingWith.some((user) => String(user) === String(member._id))) {
+      obj.chattingWith = [
+        ...obj.chattingWith,
+        req.userId,
+        ...members.filter((m) => String(m._id) !== String(member._id)),
+      ];
+    }
+    obj.unreadChats = [...obj.unreadChats, { chat: chat._id, messages: [] }];
+    await obj.save().then((item) =>
+      item.populate({
+        path: 'unreadChats',
+        populate: ['chat', 'messages'],
+      })
+    );
+    if (socketId) {
+      io.to(socketId).emit('newChat', chat, obj.unreadChats);
+    }
   }
 
   res.status(201).json(chat);

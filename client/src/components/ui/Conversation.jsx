@@ -31,7 +31,6 @@ const Conversation = ({
   const isOnline = checkOnlineStatus(onlineUsers, receivingMember?._id);
 
   const isSelected = selectedConversation?._id === _id;
-  const { id } = useParams();
 
   const handleClick = async () => {
     dispatch(setSelectedChat(conversation));
@@ -39,6 +38,10 @@ const Conversation = ({
     await dispatch(resetMessages());
     dispatch(getMessages(_id));
   };
+
+  useEffect(() => {
+    return () => dispatch(resetMessages());
+  }, []);
 
   const renderUnreadMark = unreadChats?.some((chat) => chat.chat._id === _id);
   const filteredMembers = members.filter((member) => member._id !== userId);
