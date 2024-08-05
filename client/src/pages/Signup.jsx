@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import SchoolSelect from '../components/ui/SchoolSelect';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, signup } from '../app/features/user/userSlice';
 import useRedirectUser from '../hooks/useRedirectUser';
 
-const Signup = ({ formData, setFormData, schoolQuery, setSchoolQuery }) => {
+const Signup = ({
+  formData,
+  setFormData,
+  schoolQuery,
+  setSchoolQuery,
+  setUpdatingInterests,
+}) => {
   useRedirectUser();
 
   const dispatch = useDispatch();
@@ -44,11 +50,11 @@ const Signup = ({ formData, setFormData, schoolQuery, setSchoolQuery }) => {
               <div className="flex items-center gap-3 max-[550px]:px-3">
                 <div>
                   <label className="label p-2">
-                    <span className="text-base label-text">Firstname</span>
+                    <span className="text-base label-text">First name</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter firstname"
+                    placeholder="Enter first name"
                     className="w-full input input-bordered h-10"
                     name="firstName"
                     value={formData.firstName}
@@ -57,11 +63,11 @@ const Signup = ({ formData, setFormData, schoolQuery, setSchoolQuery }) => {
                 </div>
                 <div className="max-[550px]:px-3">
                   <label className="label p-2">
-                    <span className="text-base label-text">Lastname</span>
+                    <span className="text-base label-text">Last name</span>
                   </label>
                   <input
                     type="text"
-                    placeholder="Enter lastname"
+                    placeholder="Enter last name"
                     className="w-full input input-bordered h-10"
                     name="lastName"
                     value={formData.lastName}

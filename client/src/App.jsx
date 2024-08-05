@@ -20,6 +20,7 @@ import { getConversations, selectChats } from './app/features/chats/chatSlice';
 import Contacts from './pages/Contacts';
 import { selectPopup } from './app/features/popup/popupSlice';
 import UserDetails from './components/UserDetails';
+import Settings from './pages/Settings';
 
 axios.defaults.withCredentials = true;
 
@@ -34,13 +35,15 @@ function App() {
     interests: [],
   });
   const [schoolQuery, setSchoolQuery] = useState('');
-  const { isLoggedIn } = useSelector(selectUser);
+  const { isLoggedIn, grade, school } = useSelector(selectUser);
   const { selectedConversation, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('grade');
   const {
     renderModal: { render, name },
   } = useSelector(selectPopup);
+  const [updatingInterests, setUpdatingInterests] = useState(false);
+  const [settingsData, setSettingsData] = useState({ grade: grade });
 
   const getData = async () => {
     await dispatch(getUserProfile());
@@ -94,6 +97,16 @@ function App() {
           <Route path=":id" element={<Messages />} />
         </Route>
         <Route path="/contacts" element={<Contacts filter={filter} />}></Route>
+        <Route
+          path="/settings"
+          element={
+            <Settings
+              setUpdatingInterests={setUpdatingInterests}
+              formData={settingsData}
+              setFormData={setSettingsData}
+            />
+          }
+        ></Route>
       </Routes>
       <Toaster />
       {render && name === 'user-detail' && <UserDetails filter={filter} />}

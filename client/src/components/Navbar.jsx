@@ -58,10 +58,16 @@ const Navbar = () => {
               </a>
             </li>
             <li>
-              <a className="text-gray-200">Settings</a>
+              <Link to="/settings" className="text-gray-200">
+                Settings
+              </Link>
             </li>
             <li>
-              <Link onClick={handleLogout} className="text-gray-200" to="/">
+              <Link
+                onClick={handleLogout}
+                className="text-gray-200"
+                to="/login"
+              >
                 Logout
               </Link>
             </li>

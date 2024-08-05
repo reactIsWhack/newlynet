@@ -83,7 +83,7 @@ const AutocompleteResults = ({
             value={schoolQuery}
           />
           {schoolQuery && (
-            <div className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-gray-700 border border-gray-600 shadow-lg z-10">
+            <div className="absolute left-0 right-0 mt-1 max-h-48 overflow-y-auto bg-gray-700 border-gray-600 shadow-lg z-10">
               {loading ? <div className="text-gray-300">Loading...</div> : null}
               {suggestions.map((suggestion) => {
                 const style = {
