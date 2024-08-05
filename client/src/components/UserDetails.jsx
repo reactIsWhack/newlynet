@@ -9,7 +9,7 @@ const UserDetails = () => {
   const { viewingUserData } = useSelector(selectPopup);
 
   return (
-    <Modal>
+    <Modal modalType="user-detail">
       <CloseModal />
       <Contact
         {...viewingUserData}

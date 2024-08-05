@@ -14,7 +14,7 @@ const CloseModal = () => {
 
   return (
     <button
-      className="btn btn-sm btn-circle btn-ghost absolute right-1 top-1 z-50"
+      className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3 z-50"
       onClick={handleClose}
     >
       ✕
