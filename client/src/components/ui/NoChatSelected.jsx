@@ -1,5 +1,6 @@
 import React from 'react';
 import streakDemo from '../../assets/streak-demo.png';
+import ChatStreakDemo from './ChatStreakDemo';
 
 const NoChatSelected = () => {
   return (
@@ -11,7 +12,7 @@ const NoChatSelected = () => {
       <h1 className="text-lg">
         Have each member send daily messages in chats to gain a streak.
       </h1>
-      <img src={streakDemo} className="h-24" />
+      <ChatStreakDemo />
     </div>
   );
 };

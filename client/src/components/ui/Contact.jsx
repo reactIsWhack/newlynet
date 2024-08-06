@@ -19,6 +19,7 @@ import {
 } from '../../app/features/user/userSlice';
 import ConnectBtns from './ConnectBtns';
 import Badge from './Badge';
+import FireStreak from './FireStreak';
 
 const Contact = ({
   firstName,
@@ -34,6 +35,7 @@ const Contact = ({
   filter,
   contacts,
   socialMediaUsernames,
+  chats,
 }) => {
   const { onlineUsers } = useSocket();
   const online = checkOnlineStatus(onlineUsers, _id);
@@ -93,9 +95,11 @@ const Contact = ({
         );
     });
   }
+  const streakArr = chats.map((chat) => chat.highestStreak);
+  const highestStreak = Math.max(...streakArr);
 
   return (
-    <div className={`card shadow-xl w-full ${bg}`}>
+    <div className={`card shadow-xl w-full ${bg} relative`}>
       <div className="card-body py-8 px-0">
         <div className="flex items-center gap-3 mb-2 px-8">
           <div className={`avatar ${online ? 'online' : 'offline'}`}>
@@ -145,6 +149,14 @@ const Contact = ({
           </div>
         )}
       </div>
+      {highestStreak > 0 && (
+        <div className="absolute bottom-4 left-4 flex flex-col items-center">
+          <span className="flex items-center gap-2">
+            <FireStreak streak={highestStreak} />
+          </span>
+          <div className="text-[13.5px] italic">Max Streak</div>
+        </div>
+      )}
     </div>
   );
 };

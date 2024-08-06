@@ -4,6 +4,7 @@ const { faker } = require('@faker-js/faker');
 const { config } = require('dotenv');
 const { interestOptions } = require('../db/data');
 const getSchool = require('../services/schoolService');
+const Message = require('../models/message.model');
 config();
 
 const generateGrade = (i) => {
@@ -49,7 +50,7 @@ const generateFakeUsers = async () => {
       const fakeUser = {
         firstName,
         lastName,
-        username: faker.internet.displayName(),
+        username: firstName,
         password: process.env.FAKE_USER_PASSWORD,
         profilePicture: `https://avatar.iran.liara.run/public/?username=${firstName}`,
         school: schoolInfo,

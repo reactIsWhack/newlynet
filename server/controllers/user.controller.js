@@ -18,7 +18,14 @@ const addContact = asyncHandler(async (req, res) => {
   await user
     .save()
     .then((item) =>
-      item.populate({ path: 'contacts', model: 'user', select: '-password' })
+      item.populate([
+        {
+          path: 'contacts',
+          model: 'user',
+          select: '-password',
+          populate: { path: 'chats' },
+        },
+      ])
     );
 
   res.status(200).json(user);
@@ -45,7 +52,9 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         { _id: { $nin: user.chattingWith } },
         query,
       ],
-    }).limit(process.env.NODE_ENV === 'test' ? 1 : 20); // for testing pagination
+    })
+      .limit(process.env.NODE_ENV === 'test' ? 1 : 20)
+      .populate('chats'); // for testing pagination
   } else {
     users = await User.find({
       $and: [
@@ -56,7 +65,9 @@ const getCommonNewStudents = asyncHandler(async (req, res) => {
         query,
       ],
       interests: { $in: user.interests },
-    }).limit(process.env.NODE_ENV === 'test' ? 1 : 20);
+    })
+      .limit(process.env.NODE_ENV === 'test' ? 1 : 20)
+      .populate('chats');
   }
 
   res.status(200).json(users);
@@ -68,6 +79,7 @@ const getPersonalProfile = asyncHandler(async (req, res) => {
       path: 'contacts',
       model: 'user',
       select: '-password',
+      populate: { path: 'chats' },
     },
     {
       path: 'unreadChats',

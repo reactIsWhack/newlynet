@@ -49,6 +49,7 @@ const userSchema = new mongoose.Schema(
       snapchat: { type: String, default: '' },
       instagram: { type: String, default: '' },
     },
+    chats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'chat', default: [] }],
   },
   { timestamps: true }
 );

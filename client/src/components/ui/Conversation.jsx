@@ -12,6 +12,8 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import getChatName from '../../utils/getChatName';
 import { FaFire } from 'react-icons/fa';
+import styleChatStreak from '../../utils/styleChatStreak';
+import FireStreak from './FireStreak';
 
 const Conversation = ({
   lastIdx,
@@ -66,21 +68,7 @@ const Conversation = ({
     placeItems: 'center',
   };
 
-  let fireStyles = {
-    size: 16,
-    color: { first: '#FF6F00', second: '#D32F2F' },
-    textColor: 'text-red-500',
-  };
-  if (streak > 10) {
-    fireStyles.size = 10;
-    fireStyles.color = { first: '#4A90E2', second: '#0033A0' };
-    fireStyles.color = 'text-blue-500';
-  }
-  if (streak > 20) {
-    fireStyles.size = 25;
-    fireStyles.color = { first: '#7a6ded', second: '#591885' };
-    fireStyles.color = 'text-purple-500';
-  }
+  const fireStyles = styleChatStreak(streak);
 
   return (
     <>
@@ -119,24 +107,7 @@ const Conversation = ({
         </div>
         {streak > 0 && (
           <div className="flex items-center gap-2 font-medium text-lg">
-            <svg width="0" height="0">
-              <linearGradient
-                id="blue-gradient"
-                x1="100%"
-                y1="100%"
-                x2="0%"
-                y2="0%"
-              >
-                <stop stopColor={fireStyles.color.first} offset="0%" />
-                <stop stopColor={fireStyles.color.second} offset="100%" />
-              </linearGradient>
-            </svg>
-
-            <FaFire
-              style={{ fill: 'url(#blue-gradient)' }}
-              size={fireStyles.size}
-            />
-            <span className={`${fireStyles.textColor}`}>{streak}</span>
+            <FireStreak streak={streak} />
           </div>
         )}
         {renderUnreadMark && (
