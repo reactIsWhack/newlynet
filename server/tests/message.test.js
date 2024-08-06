@@ -162,6 +162,7 @@ describe('POST /message', () => {
   it('Should ensure the chat streak is increased by 1', async () => {
     const chatItem = await Chat.findById(chat._id);
     expect(chatItem.streak).toBe(1);
+    expect(chatItem.highestStreak).toBe(1);
   });
 });
 

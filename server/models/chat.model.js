@@ -28,6 +28,7 @@ const chatSchema = new mongoose.Schema(
       accomplished: { type: Boolean, default: false },
       date: { type: Date, default: '' },
     },
+    highestStreak: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

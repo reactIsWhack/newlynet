@@ -85,7 +85,7 @@ const sendMessage = asyncHandler(async (req, res) => {
   await chat.save().then((item) => item.populate('members'));
 
   await sendMessageNotification(newMessage, chat);
-  res.status(201).json({ newMessage, chatStreak: chat.streak });
+  res.status(201).json(newMessage);
 });
 
 const getMessages = asyncHandler(async (req, res) => {

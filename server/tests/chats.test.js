@@ -44,6 +44,7 @@ beforeAll(async () => {
     chatType: 'individual',
     members: [userInfo._id, fakeUsers[2]._id],
     streak: 5,
+    highestStreak: 5,
     accomplishedDailyStreak: {
       accomplished: true,
       date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
@@ -173,6 +174,7 @@ describe('GET /chats', () => {
     console.log(updatedChat);
 
     expect(updatedChat.streak).toBe(0);
+    expect(updatedChat.highestStreak).toBe(5);
     expect(updatedChat.accomplishedDailyStreak.accomplished).toBe(false);
     expect(updatedChat.accomplishedDailyStreak.date).toBe(null);
   });

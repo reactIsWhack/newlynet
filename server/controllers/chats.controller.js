@@ -23,7 +23,6 @@ const createchat = asyncHandler(async (req, res, next) => {
       $size: members.length + 1,
     },
   });
-  console.log(chatExists);
   if (chatExists) {
     res.status(400);
     throw new Error('Chat with these contact(s) already exists');
@@ -52,6 +51,7 @@ const createchat = asyncHandler(async (req, res, next) => {
   for (const member of members) {
     const socketId = getSocketId(member._id);
     const obj = await User.findById(member._id);
+    obj.chats = [...obj.chats, chat];
 
     if (!obj.chattingWith.some((user) => String(user) === String(member._id))) {
       obj.chattingWith = [
@@ -82,7 +82,12 @@ const getChats = asyncHandler(async (req, res) => {
     members: { $in: [req.userId] },
     chatType,
   }).populate([
-    { path: 'members', model: 'user', select: '-password' },
+    {
+      path: 'members',
+      model: 'user',
+      select: '-password',
+      populate: { path: 'chats' },
+    },
     { path: 'messages', model: 'message' },
   ]);
 

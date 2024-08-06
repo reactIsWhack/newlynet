@@ -19,11 +19,14 @@ const updateChatStreak = async (chat, newMessage) => {
     }
   }
   if (contributorsToday.size === chat.members.length) {
+    if (chat.streak === chat.highestStreak) chat.highestStreak++; // update the highest streak of a chat if it has been reached
     chat.streak++;
     const currentDate = new Date(Date.now());
     chat.accomplishedDailyStreak.accomplished = true;
     chat.accomplishedDailyStreak.date = currentDate;
+
     for (const member of chat.members) {
+      // alert the members on the client side to update the streak for a given chat
       const socketId = getSocketId(member._id);
       if (socketId)
         io.to(socketId).emit('updatedStreak', chat, chat.streak + 1, {
