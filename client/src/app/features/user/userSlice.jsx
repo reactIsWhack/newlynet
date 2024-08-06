@@ -247,6 +247,7 @@ const userSlice = createSlice({
       })
       .addCase(addSocialMediaInfo.fulfilled, (state, action) => {
         state.isLoading = false;
+        toast.success('Social media tags updated!');
         state.socialMediaInfo = action.payload.socialMediaUsernames;
       })
       .addCase(addSocialMediaInfo.rejected, (state, action) => {

@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const Chat = require('../models/chat.model');
 const { faker } = require('@faker-js/faker');
 const { config } = require('dotenv');
 const { interestOptions } = require('../db/data');
@@ -56,6 +57,11 @@ const generateFakeUsers = async () => {
         interests: generateInterests(),
         contacts: [],
         chattingWith: [],
+        socialMediaUsernames: {
+          snapchat: i % 2 === 0 || i % 4 === 0 ? faker.internet.userName() : '',
+          instagram:
+            i % 3 === 0 || i % 5 === 0 ? faker.internet.userName() : '',
+        },
       };
       try {
         const user = await User.create(fakeUser);

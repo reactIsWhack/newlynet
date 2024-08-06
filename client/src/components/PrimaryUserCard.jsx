@@ -30,7 +30,7 @@ const PrimaryUserCard = () => {
           <Badge
             key={index}
             text={value}
-            label={index === 0 ? 'Insta' : 'Snap'}
+            label={Object.keys(socialMediaInfo)[index]}
           />
         );
     });

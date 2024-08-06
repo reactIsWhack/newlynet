@@ -23,7 +23,6 @@ const SocialMediaForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     dispatch(addSocialMediaInfo(socialMediaData));
   };
 

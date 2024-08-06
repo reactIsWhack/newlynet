@@ -19,6 +19,7 @@ import {
   selectUser,
 } from '../../app/features/user/userSlice';
 import ConnectBtns from './ConnectBtns';
+import Badge from './Badge';
 
 const Contact = ({
   firstName,
@@ -32,10 +33,12 @@ const Contact = ({
   renderConnectBtns,
   bg,
   filter,
+  contacts,
+  socialMediaUsernames,
 }) => {
   const { onlineUsers } = useSocket();
   const online = checkOnlineStatus(onlineUsers, _id);
-  const { chattingWith } = useSelector(selectUser);
+  const { chattingWith, userId } = useSelector(selectUser);
   const { contactConversations, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -74,6 +77,23 @@ const Contact = ({
     );
     e.target.classList.remove('disabled');
   };
+  const contactHasUserInContacts = contacts.some(
+    (contactId) => contactId === userId
+  );
+
+  let socialMediaTag;
+  if (contactHasUserInContacts) {
+    socialMediaTag = Object.values(socialMediaUsernames).map((value, index) => {
+      if (value)
+        return (
+          <Badge
+            key={index}
+            text={value}
+            label={Object.keys(socialMediaUsernames)[index]}
+          />
+        );
+    });
+  }
 
   return (
     <div className={`card shadow-xl w-full ${bg}`}>
@@ -93,6 +113,11 @@ const Contact = ({
             </div>
           </div>
         </div>
+        {contactHasUserInContacts && (
+          <div className="flex items-center flex-wrap justify-center mb-4 mt-2 gap-2">
+            {socialMediaTag}
+          </div>
+        )}
         <div className="flex flex-wrap mb-4 gap-2 justify-center px-3">
           {interestBtn}
         </div>
