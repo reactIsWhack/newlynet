@@ -23,6 +23,11 @@ const chatSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
     },
+    streak: { type: Number, default: 0 },
+    accomplishedDailyStreak: {
+      accomplished: { type: Boolean, default: false },
+      date: { type: Date, default: '' },
+    },
   },
   { timestamps: true }
 );

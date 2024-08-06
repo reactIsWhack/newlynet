@@ -6,6 +6,9 @@ const { io } = require('../socket/socket');
 const User = require('../models/user.model');
 const appendUnreadChat = require('../utils/appendUnreadChat');
 const cloudinary = require('cloudinary').v2;
+const sendMessageNotification = require('../utils/sendMessageNotification');
+const updateChatStreak = require('../utils/updateChatStreak');
+const { isSameDay } = require('date-fns');
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_NAME,
@@ -17,7 +20,10 @@ const sendMessage = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
   const { message } = req.body;
 
-  const chat = await Chat.findById(chatId);
+  const chat = await Chat.findById(chatId).populate({
+    path: 'messages',
+    populate: 'author',
+  });
 
   if (!chat) {
     res.status(404);
@@ -68,42 +74,17 @@ const sendMessage = asyncHandler(async (req, res) => {
   }
 
   chat.messages = [...chat.messages, newMessage];
+  if (
+    !isSameDay(
+      new Date(newMessage.createdAt),
+      new Date(chat.accomplishedDailyStreak.date)
+    )
+  )
+    await updateChatStreak(chat, newMessage);
+
   await chat.save().then((item) => item.populate('members'));
 
-  for (const receiver of newMessage.receivers) {
-    const socketId = getSocketId(receiver._id);
-    const receiverObj = await User.findById(receiver._id);
-    const unreadChatItem = receiverObj.unreadChats.find(
-      (chatItem) => String(chatItem.chat._id) === String(chat._id)
-    );
-    if (!socketId) {
-      appendUnreadChat(unreadChatItem, newMessage, receiverObj, chat);
-      await receiverObj.save();
-      continue;
-    }
-
-    io.to(socketId).emit('newMessage', newMessage, chat);
-    const room = io.sockets.adapter.rooms.get(`chat-${chat._id}`);
-    if (!room) break;
-
-    // if the user is not on the chat, add the new messages to their list of unread messages
-    if (!room.has(socketId)) {
-      const unreadChat = await Chat.findById(unreadChatItem?._id); // unread chat is sent to the client for notifications
-      appendUnreadChat(unreadChatItem, newMessage, receiverObj, chat);
-      await receiverObj.save().then((item) =>
-        item.populate({
-          path: 'unreadChats',
-          populate: ['chat', 'messages'],
-        })
-      );
-      const sendingChat = unreadChat || chat;
-      io.to(socketId).emit(
-        'newMessageNotify',
-        receiverObj.unreadChats,
-        sendingChat
-      );
-    }
-  }
+  await sendMessageNotification(newMessage, chat);
   res.status(201).json(newMessage);
 });
 

@@ -21,6 +21,7 @@ let chat;
 let fourthGroupMemberSocket;
 let fourthGroupMember;
 let initialMessage;
+let fakeUsers;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -116,11 +117,11 @@ describe('POST /message', () => {
       .post(`/api/message/sendmessage/${chat._id}`)
       .set('Cookie', [...token])
       .attach('image', `${__dirname}/test-image.png`)
-      .field({ message: `Hi from ${user.fullName}` })
+      .field({ message: `Hi from ${user.firstName}` })
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body.message).toBe(`Hi from ${user.fullName}`);
+    expect(response.body.message).toBe(`Hi from ${user.firstName}`);
     expect(response.body.media.src).toBeTruthy();
     expect(response.body.media.fileType).toBe('image/png');
 
@@ -129,6 +130,38 @@ describe('POST /message', () => {
     expect(messageEvent.author._id.toString()).toBe(contacts[0]._id);
     expect(unreadMessagesEvent.length).toBe(1);
     expect(unreadMessagesEvent[0].messages.length).toBe(2);
+  });
+
+  it('Should send one more message', async () => {
+    const { token, user } = await loginUser(
+      contacts[1].username,
+      process.env.FAKE_USER_PASSWORD
+    );
+    const response = await request(app)
+      .post(`/api/message/sendmessage/${chat._id}`)
+      .set('Cookie', [...token])
+      .attach('image', `${__dirname}/test-image.png`)
+      .field({ message: `Hi from ${user.firstName}` })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+  });
+  it('Should send one last message', async () => {
+    const { token, user } = await loginUser(
+      fakeUsers[2].username,
+      process.env.FAKE_USER_PASSWORD
+    );
+    const response = await request(app)
+      .post(`/api/message/sendmessage/${chat._id}`)
+      .set('Cookie', [...token])
+      .attach('image', `${__dirname}/test-image.png`)
+      .field({ message: `Hi from ${user.firstName}` })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+  });
+
+  it('Should ensure the chat streak is increased by 1', async () => {
+    const chatItem = await Chat.findById(chat._id);
+    expect(chatItem.streak).toBe(1);
   });
 });
 
@@ -141,13 +174,13 @@ describe('GET /messages', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body.length).toBe(2);
+    expect(response.body.length).toBe(4);
     expect(response.body[0].message).toBe('Hi from test user');
     expect(response.body[0].author._id.toString()).toBe(userInfo._id);
     expect(response.body[0].receivers.map((item) => String(item._id))).toEqual(
       expect.arrayContaining([contacts[0]._id, contacts[1]._id])
     );
-    expect(response.body[1].message).toBe(`Hi from ${contacts[0].fullName}`);
+    expect(response.body[1].message).toBe(`Hi from ${contacts[0].firstName}`);
     expect(response.body[1].author._id.toString()).toBe(contacts[0]._id);
     expect(response.body[1].receivers.map((item) => String(item._id))).toEqual(
       expect.arrayContaining([contacts[1]._id, userInfo._id])
@@ -167,13 +200,13 @@ describe('GET /messages', () => {
       .expect('Content-Type', /application\/json/);
 
     expect(response.body.unreadChats.length).toBe(1);
-    expect(response.body.unreadChats[0].messages.length).toBe(2);
+    expect(response.body.unreadChats[0].messages.length).toBe(3);
     expect(response.body.unreadChats[0].chat.chatName).toBe('Test Chat');
     expect(response.body.unreadChats[0].messages[0].message).toBe(
       'Hi from test user'
     );
     expect(response.body.unreadChats[0].messages[1].message).toBe(
-      `Hi from ${contacts[0].fullName}`
+      `Hi from ${contacts[0].firstName}`
     );
   });
 
@@ -240,6 +273,20 @@ describe('DELETE /messages', () => {
     expect(deletedMessage).toBe(null);
     const messageEvent = await messagePromise;
     expect(messageEvent._id.toString()).toBe(response.body._id.toString());
+  });
+});
+
+describe('STREAK /messages', () => {
+  it('Should no longer update the chat streak after it has been accomplished for the day', async () => {
+    const response = await request(app)
+      .post(`/api/message/sendmessage/${chat._id}`)
+      .set('Cookie', [...jwt])
+      .send({ message: 'Total Test' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    const chatItem = await Chat.findById(chat._id);
+    expect(chatItem.streak).toBe(1);
   });
 });
 

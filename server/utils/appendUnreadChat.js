@@ -1,5 +1,4 @@
 const appendUnreadChat = (unreadChatItem, newMessage, receiverObj, chat) => {
-  console.log(unreadChatItem);
   if (unreadChatItem) {
     unreadChatItem.messages = [...unreadChatItem.messages, newMessage];
   } else {
