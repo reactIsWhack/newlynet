@@ -4,7 +4,7 @@ const updateChatStreak = async (chat, newMessage) => {
   const messagesToday = chat.messages.filter((msg) =>
     isSameDay(new Date(msg.createdAt), new Date(newMessage.createdAt))
   );
-  let totalContributionsToday = [];
+  let contributorsToday = new Set([]);
 
   if (messagesToday.length) {
     for (const msg of messagesToday) {
@@ -13,16 +13,11 @@ const updateChatStreak = async (chat, newMessage) => {
           (memberId) => String(memberId) === String(msg.author._id)
         )
       ) {
-        totalContributionsToday.push(true);
-      } else {
-        totalContributionsToday.push(false);
+        contributorsToday.add(String(msg.author._id));
       }
     }
   }
-  if (
-    !totalContributionsToday.includes(false) &&
-    totalContributionsToday.length >= chat.members.length
-  ) {
+  if (contributorsToday.size === chat.members.length) {
     chat.streak++;
     chat.accomplishedDailyStreak.accomplished = true;
     chat.accomplishedDailyStreak.date = new Date(Date.now());
