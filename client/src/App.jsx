@@ -44,7 +44,6 @@ function App() {
   } = useSelector(selectPopup);
   const [updatingInterests, setUpdatingInterests] = useState(false);
   const [settingsData, setSettingsData] = useState({ grade: 0 });
-  console.log(settingsData);
 
   const getData = async () => {
     await dispatch(getUserProfile());

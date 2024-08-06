@@ -3,18 +3,33 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import InterestDisplayBtn from './ui/InterestDisplayBtn';
 import editIcon from '../assets/editIcon.svg';
+import Badge from './ui/Badge';
 
 const PrimaryUserCard = () => {
-  const { firstName, lastName, school, grade, interests, profilePicture } =
-    useSelector(selectUser);
+  const {
+    firstName,
+    lastName,
+    school,
+    grade,
+    interests,
+    profilePicture,
+    socialMediaInfo,
+  } = useSelector(selectUser);
 
   const interestDisplayBtn = interests.map((interest, index) => {
     return <InterestDisplayBtn interest={interest} key={index} />;
   });
+  const hasSocialMedia =
+    socialMediaInfo.snapchat !== '' && socialMediaInfo.instagram !== '';
+  const socialMediaTag = Object.values(socialMediaInfo).map((value, index) => {
+    return (
+      <Badge key={index} text={value} label={index === 0 ? 'Insta' : 'Snap'} />
+    );
+  });
 
   return (
-    <div className="card bg-base-100 w-72 shadow-xl">
-      <figure className="h-32">
+    <div className="card bg-base-100 w-[18.5rem] shadow-xl">
+      <figure className="h-24">
         <img
           src="https://www.businessworldit.com/wp-content/uploads/2018/12/4-Types-of-Business-Networking-Opportunities-to-Consider.jpg"
           alt="Shoes"
@@ -29,6 +44,19 @@ const PrimaryUserCard = () => {
         {school && school.formattedName && (
           <p className="text-center">{`${school.formattedName} - ${grade}`}</p>
         )}
+        <div className="divider my-0"></div>
+        <div className="flex flex-col items-center gap-3 -my-1">
+          <h3 className="text-base">Social Media Info</h3>
+          {hasSocialMedia ? (
+            <div className="flex gap-2 items-center flex-wrap">
+              {socialMediaTag}
+            </div>
+          ) : (
+            <div className="text-sm">
+              No social media info, add in settings.
+            </div>
+          )}
+        </div>
         <div className="divider my-0"></div>
         <div className="my-2 flex items-center flex-wrap justify-center gap-2">
           <img src={editIcon} className="h-6 cursor-pointer" />

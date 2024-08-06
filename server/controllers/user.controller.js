@@ -134,6 +134,14 @@ const addSocialMediaInfo = asyncHandler(async (req, res) => {
 
   const user = await User.findById(req.userId).select('-password');
 
+  if (
+    snapchat === user.socialMediaUsernames.snapchat &&
+    instagram === user.socialMediaUsernames.instagram
+  ) {
+    res.status(400);
+    throw new Error('Please change your username(s) to update it');
+  }
+
   user.socialMediaUsernames.snapchat =
     snapchat || user.socialMediaUsernames.snapchat;
   user.socialMediaUsernames.instagram =

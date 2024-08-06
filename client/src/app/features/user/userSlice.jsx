@@ -12,6 +12,7 @@ const initialState = {
   grade: null,
   interests: [],
   school: null,
+  socialMediaInfo: { snapchat: '', instagram: '' },
   chattingWith: [],
   isLoading: false,
   isLoggedIn: false,
@@ -103,6 +104,22 @@ export const addContact = createAsyncThunk(
   }
 );
 
+export const addSocialMediaInfo = createAsyncThunk(
+  'user/socialMediaData',
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `${baseUrl}/api/users/addsocialmedia`,
+        data
+      );
+      console.log(response, 'social media data');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -165,6 +182,7 @@ const userSlice = createSlice({
         state.grade = action.payload.grade;
         state.school = action.payload.school;
         state.chattingWith = action.payload.chattingWith;
+        state.socialMediaInfo = action.payload.socialMediaUsernames;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -185,6 +203,7 @@ const userSlice = createSlice({
         state.school = action.payload.school;
         state.chattingWith = action.payload.chattingWith;
         state.unreadChats = action.payload.unreadChats;
+        state.socialMediaInfo = action.payload.socialMediaUsernames;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;
@@ -220,6 +239,17 @@ const userSlice = createSlice({
         state.contacts = action.payload.contacts;
       })
       .addCase(addContact.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(addSocialMediaInfo.pending, (state, action) => {
+        state.isLoading = true;
+      })
+      .addCase(addSocialMediaInfo.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.socialMediaInfo = action.payload.socialMediaUsernames;
+      })
+      .addCase(addSocialMediaInfo.rejected, (state, action) => {
         state.isLoading = false;
         toast.error(action.payload);
       });
