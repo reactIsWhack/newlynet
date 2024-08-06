@@ -5,6 +5,7 @@ const { createTestUser, addContacts, loginUser } = require('./userHelper');
 const request = require('supertest');
 const app = require('../index');
 const ioc = require('socket.io-client');
+const Chat = require('../models/chat.model');
 
 let fakeUsers;
 let contacts = [];
@@ -13,6 +14,7 @@ let userInfo;
 let clientSocket;
 let contactSockets = {};
 let chat;
+let chatWithStreak;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -38,12 +40,22 @@ beforeAll(async () => {
     const contactsData = await addContacts(token, fakeUsers[i]._id);
     if (i === 1) contacts = contactsData;
   }
+  chatWithStreak = await Chat.create({
+    chatType: 'individual',
+    members: [userInfo._id, fakeUsers[2]._id],
+    streak: 5,
+    accomplishedDailyStreak: {
+      accomplished: true,
+      date: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    }, // 2 days ago
+    messages: [],
+  });
+  console.log(chatWithStreak, 'chat with streak');
 });
 
 const getRealTimeChat = (i, event) => {
   return new Promise((resolve, reject) => {
     contactSockets[`contact${i + 1}`].on(event, (chat) => {
-      console.log('Chat created in real time: ', chat);
       resolve(chat);
     });
   });
@@ -75,7 +87,6 @@ describe('POST /chats', () => {
       ])
     );
     const chatEvent = await chatPromise;
-    console.log(chatEvent);
   });
 
   it('Should create a group chat with one contact of the test user', async () => {
@@ -140,13 +151,30 @@ describe('GET /chats', () => {
       .expect('Content-Type', /application\/json/);
 
     expect(
-      response.body[0].members.map((member) => member._id.toString())
+      response.body[1].members.map((member) => member._id.toString())
     ).toEqual(
       expect.arrayContaining([
         contacts[0]._id.toString(),
         userInfo._id.toString(),
       ])
     );
+  });
+
+  it('Should reset the chat streak if no message has been sent within a day', async () => {
+    const response = await request(app)
+      .get('/api/chats/getchats/individual')
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const updatedChat = response.body.find(
+      (item) => item._id === chatWithStreak._id.toString()
+    );
+    console.log(updatedChat);
+
+    expect(updatedChat.streak).toBe(0);
+    expect(updatedChat.accomplishedDailyStreak.accomplished).toBe(false);
+    expect(updatedChat.accomplishedDailyStreak.date).toBe(null);
   });
 });
 
@@ -165,7 +193,6 @@ describe('PATCH /chats', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body);
     expect(response.body._id).toBe(chat._id.toString());
     expect(response.body.chatName).toBe('Test Chat 2.0');
 
@@ -185,7 +212,6 @@ describe('PATCH /chats', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body);
     expect(response.body.members.length).toBe(2);
     expect(
       response.body.members.map((member) => String(member._id))

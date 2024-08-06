@@ -86,6 +86,17 @@ const getChats = asyncHandler(async (req, res) => {
     { path: 'messages', model: 'message' },
   ]);
 
+  const oneDayAgo = new Date();
+  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+
+  for (const chat of chats) {
+    if (new Date(chat.accomplishedDailyStreak.date) < oneDayAgo) {
+      chat.streak = 0;
+      chat.accomplishedDailyStreak = { accomplished: false, date: null };
+      await chat.save();
+    }
+  }
+
   res.status(200).json(chats);
 });
 
