@@ -20,12 +20,21 @@ const PrimaryUserCard = () => {
     return <InterestDisplayBtn interest={interest} key={index} />;
   });
   const hasSocialMedia =
-    socialMediaInfo.snapchat !== '' && socialMediaInfo.instagram !== '';
-  const socialMediaTag = Object.values(socialMediaInfo).map((value, index) => {
-    return (
-      <Badge key={index} text={value} label={index === 0 ? 'Insta' : 'Snap'} />
-    );
-  });
+    socialMediaInfo?.snapchat || socialMediaInfo?.instagram;
+  let socialMediaTag;
+
+  if (socialMediaInfo) {
+    socialMediaTag = Object.values(socialMediaInfo).map((value, index) => {
+      if (value)
+        return (
+          <Badge
+            key={index}
+            text={value}
+            label={index === 0 ? 'Insta' : 'Snap'}
+          />
+        );
+    });
+  }
 
   return (
     <div className="card bg-base-100 w-[18.5rem] shadow-xl">
