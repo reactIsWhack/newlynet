@@ -58,6 +58,7 @@ export const createChat = createAsyncThunk(
       thunkAPI.dispatch(
         setChattingWith(response.data.members.map((member) => member._id))
       );
+      thunkAPI.dispatch(resetMessages());
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);

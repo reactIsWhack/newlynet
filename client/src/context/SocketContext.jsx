@@ -36,7 +36,10 @@ export const SocketContextProvider = ({ children }) => {
 
       socketVal.on('newChat', (chat, updatedNotifications) => {
         console.log(chatFilter);
-        if (chatFilter === chat.chatType || !chatFilter)
+        if (
+          chatFilter === chat.chatType ||
+          (!chatFilter && chat.chatType === 'individual')
+        )
           dispatch(setConversations(chat));
         dispatch(setChattingWith(chat.members.map((member) => member._id)));
         dispatch(setUnreadChats(updatedNotifications));
