@@ -177,7 +177,7 @@ const chatsSlice = createSlice({
         state.createMsgLoading = false;
         const audio = new Audio(sendMessageSound);
         audio.play();
-        state.messages = [...state.messages, action.payload];
+        state.messages = [...state.messages, action.payload.newMessage];
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.createMsgLoading = false;
