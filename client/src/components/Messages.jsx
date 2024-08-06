@@ -18,7 +18,7 @@ const Messages = () => {
     setTimeout(() => {
       lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
-  }, [messages]);
+  }, [messages, selectedConversation]);
 
   const chatBubble = messages.map((message) => {
     return (

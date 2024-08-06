@@ -7,9 +7,13 @@ import useRedirectUser from '../hooks/useRedirectUser';
 import InterestDisplayBtn from '../components/ui/InterestDisplayBtn';
 import { Link } from 'react-router-dom';
 import SocialMediaForm from '../components/ui/SocialMediaForm';
+import useListenNotifications from '../hooks/useListenNotifications';
+import useUpdateStreak from '../hooks/useUpdateStreak';
 
 const Settings = ({ formData, setFormData }) => {
   useRedirectUser();
+  useListenNotifications();
+  useUpdateStreak();
   const { grade, school, interests } = useSelector(selectUser);
   const [schoolQuery, setSchoolQuery] = useState('');
 

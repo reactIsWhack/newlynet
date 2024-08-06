@@ -130,6 +130,13 @@ const chatsSlice = createSlice({
     overideChats(state, action) {
       state.conversations = action.payload;
     },
+    updateConversationStreak(state, action) {
+      const conversation = state.conversations.find(
+        (conversation) => conversation._id === action.payload.chat._id
+      );
+      conversation.streak++;
+      conversation.accomplishedDailyStreak = action.payload.metaData;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -210,6 +217,7 @@ export const {
   resetConversations,
   setContactChats,
   overideChats,
+  updateConversationStreak,
 } = chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;

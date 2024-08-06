@@ -1,4 +1,5 @@
 const { isSameDay } = require('date-fns');
+const { io, getSocketId } = require('../socket/socket');
 
 const updateChatStreak = async (chat, newMessage) => {
   const messagesToday = chat.messages.filter((msg) =>
@@ -19,8 +20,17 @@ const updateChatStreak = async (chat, newMessage) => {
   }
   if (contributorsToday.size === chat.members.length) {
     chat.streak++;
+    const currentDate = new Date(Date.now());
     chat.accomplishedDailyStreak.accomplished = true;
-    chat.accomplishedDailyStreak.date = new Date(Date.now());
+    chat.accomplishedDailyStreak.date = currentDate;
+    for (const member of chat.members) {
+      const socketId = getSocketId(member._id);
+      if (socketId)
+        io.to(socketId).emit('updatedStreak', chat, chat.streak + 1, {
+          accomplished: true,
+          date: currentDate,
+        });
+    }
   }
 };
 

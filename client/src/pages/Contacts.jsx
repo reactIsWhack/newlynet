@@ -6,10 +6,12 @@ import Contact from '../components/ui/Contact';
 import useRedirectUser from '../hooks/useRedirectUser';
 import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
+import useUpdateStreak from '../hooks/useUpdateStreak';
 
 const Contacts = ({ filter }) => {
   useRedirectUser();
   useListenNotifications();
+  useUpdateStreak();
 
   const { contacts } = useSelector(selectUser);
   const contactCard = contacts.map((contact) => {

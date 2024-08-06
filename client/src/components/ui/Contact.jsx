@@ -3,7 +3,6 @@ import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import { useSocket } from '../../context/SocketContext';
 import InterestDisplayBtn from './InterestDisplayBtn';
 import truncateInterest from '../../utils/truncateInterest';
-import useCheckConversation from '../../hooks/useCheckConversation';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createChat,

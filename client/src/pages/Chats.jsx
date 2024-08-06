@@ -17,10 +17,12 @@ import { selectUser, setUnreadChats } from '../app/features/user/userSlice';
 import toast from 'react-hot-toast';
 import useListenNotifications from '../hooks/useListenNotifications';
 import { selectPopup } from '../app/features/popup/popupSlice';
+import useUpdateStreak from '../hooks/useUpdateStreak';
 
 const Chats = ({ filter }) => {
   useRedirectUser();
   useListenNotifications();
+  useUpdateStreak();
 
   const dispatch = useDispatch();
   const { conversations, selectedConversation, messages, chatFilter } =

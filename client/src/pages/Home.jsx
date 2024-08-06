@@ -5,10 +5,12 @@ import PrimaryUserCard from '../components/PrimaryUserCard';
 import HomeMainContent from '../components/HomeMainContent';
 import useDetectMobile from '../hooks/useDetectMobile';
 import useListenNotifications from '../hooks/useListenNotifications';
+import useUpdateStreak from '../hooks/useUpdateStreak';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
   useListenNotifications();
+  useUpdateStreak();
 
   const mobile = useDetectMobile();
 
