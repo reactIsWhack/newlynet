@@ -18,7 +18,7 @@ router.post(
   routeProtector,
   sendMessage
 );
-router.get('/messages/:chatId', routeProtector, getMessages);
+router.get('/messages/:chatId/:dateQuery', routeProtector, getMessages);
 router.patch('/editmessage/:messageId', routeProtector, editMessage);
 router.delete('/:messageId', routeProtector, deleteMessage);
 

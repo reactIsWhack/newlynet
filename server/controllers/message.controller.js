@@ -89,21 +89,25 @@ const sendMessage = asyncHandler(async (req, res) => {
 });
 
 const getMessages = asyncHandler(async (req, res) => {
-  const { chatId } = req.params;
+  const { chatId, dateQuery } = req.params;
 
-  const chat = await Chat.findById(chatId).populate({
-    path: 'messages',
-    model: 'message',
-    populate: [
-      { path: 'author', model: 'user', select: '-password' },
-      { path: 'receivers', model: 'user', select: '-password' },
-    ],
-  });
+  const chat = await Chat.findById(chatId);
 
   if (!chat) {
     res.status(404);
     throw new Error('Chat not found');
   }
+
+  const messages = await Message.find({
+    _id: { $in: chat.messages },
+    createdAt: { $lte: dateQuery },
+  })
+    .limit(2)
+    .sort('-createdAt')
+    .populate([
+      { path: 'author', model: 'user', select: '-password' },
+      { path: 'receivers', model: 'user', select: '-password' },
+    ]);
 
   // mark unread messages as read by removing the chat from the unreadChats array
   const user = await User.findById(req.userId).populate({
@@ -127,7 +131,7 @@ const getMessages = asyncHandler(async (req, res) => {
   const socketId = getSocketId(user._id);
   if (socketId) io.to(socketId).emit('newMessageNotify', user.unreadChats);
 
-  res.status(200).json(chat.messages);
+  res.status(200).json(messages);
 });
 
 const editMessage = asyncHandler(async (req, res) => {
