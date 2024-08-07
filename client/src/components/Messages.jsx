@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import MessageInput from './ui/MessageInput';
 import ChatBubble from './ui/ChatBubble';
 import { useDispatch, useSelector } from 'react-redux';
@@ -20,13 +20,14 @@ const Messages = () => {
   const lastMessageRef = useRef(null);
   useListenMessages();
   const dispatch = useDispatch();
+  const [filePreview, setFilePreview] = useState('');
 
   useEffect(() => {
     if (!paginating)
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-  }, [selectedConversation, messages, paginating]);
+  }, [selectedConversation, messages, paginating, filePreview]);
 
   const chatBubble = messages.map((message) => {
     return (
@@ -47,10 +48,10 @@ const Messages = () => {
   return (
     <>
       {selectedConversation && (
-        <div className="flex-1 relative overflow-x-hidden h-full overflow-hidden max-[550px]:w-full z-20 pt-32">
+        <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20 pt-[4.5rem]">
           {selectedConversation && <ChatHeader />}
           <div
-            className="message-container overflow-auto pt-4 px-8 h-full max-[550px]:px-1 w-full"
+            className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full"
             onScroll={handleScroll}
           >
             {chatsLoading &&
@@ -70,7 +71,11 @@ const Messages = () => {
             )}
           </div>
 
-          <MessageInput />
+          <MessageInput
+            filePreview={filePreview}
+            setFilePreview={setFilePreview}
+            lastMessageRef={lastMessageRef}
+          />
         </div>
       )}
     </>
