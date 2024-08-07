@@ -1,7 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectChats, setMessages } from '../app/features/chats/chatSlice';
+import {
+  selectChats,
+  setMessages,
+  setSelectedChat,
+} from '../app/features/chats/chatSlice';
 import { setUnreadChats } from '../app/features/user/userSlice';
 
 const useListenMessages = () => {

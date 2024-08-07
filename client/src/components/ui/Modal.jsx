@@ -5,7 +5,9 @@ const Modal = ({ children, modalType }) => {
     <>
       <dialog id="my_modal_3" className="modal">
         <div
-          className={`modal-box ${modalType === 'user-detail' ? 'p-2' : ''} `}
+          className={`modal-box overflow-hidden ${
+            modalType === 'user-detail' ? 'p-2' : ''
+          } `}
         >
           {children}
         </div>

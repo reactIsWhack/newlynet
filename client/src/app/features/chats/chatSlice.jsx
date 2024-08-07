@@ -217,7 +217,10 @@ const chatsSlice = createSlice({
         } else {
           state.paginating = true;
           state.messages = [
-            ...action.payload.data.reverse(),
+            ...action.payload.data.reverse().map((msg) => {
+              msg.shouldShake = true;
+              return msg;
+            }),
             ...state.messages,
           ];
         }

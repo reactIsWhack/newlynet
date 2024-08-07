@@ -12,6 +12,7 @@ const ChatBubble = ({ message, author, createdAt }) => {
     ? format(new Date(createdAt), 'p') // e.g., 10:00 AM
     : format(new Date(createdAt), 'MMM dd, yyyy'); // e.g., Jul 31, 2024
 
+  console.log(message.shouldShake);
   const shakeClass = message.shouldShake ? 'shake' : '';
 
   return (

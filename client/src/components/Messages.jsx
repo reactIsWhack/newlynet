@@ -54,9 +54,15 @@ const Messages = () => {
             onScroll={handleScroll}
           >
             {chatsLoading &&
+              !messages.length &&
               [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
+            {chatsLoading && messages.length > 0 && (
+              <div className="flex justify-center mt-4">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            )}
 
-            {messages.length > 0 && !chatsLoading && chatBubble}
+            {messages.length > 0 && chatBubble}
             {!messages.length && !chatsLoading && (
               <h4 className="text-center text-lg">
                 Send a message to start the conversation
