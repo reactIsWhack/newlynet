@@ -5,6 +5,7 @@ import { useSocket } from '../../context/SocketContext';
 import checkOnlineStatus from '../../utils/checkOnlineStatus';
 import {
   getMessages,
+  resetDateQuery,
   resetMessages,
   selectChats,
   setSelectedChat,
@@ -40,6 +41,7 @@ const Conversation = ({
     dispatch(setSelectedChat(conversation));
     navigate(`/chats/${_id}`);
     await dispatch(resetMessages());
+    await dispatch(resetDateQuery());
     dispatch(getMessages(_id));
   };
 

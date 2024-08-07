@@ -24,6 +24,8 @@ const initialState = {
   chatFilter: '',
   err: null,
   contactConversations: [], // an array of chats strictly for chats with a user's contacts
+  dateQuery: null,
+  paginating: false,
 };
 
 export const getConversations = createAsyncThunk(
@@ -85,10 +87,15 @@ export const getMessages = createAsyncThunk(
   'chats/getMessages',
   async (chatId, thunkAPI) => {
     try {
+      const { chats } = thunkAPI.getState();
+      const dateQuery = chats.dateQuery
+        ? new Date(chats.dateQuery)
+        : new Date(Date.now());
+      console.log(dateQuery);
       const response = await axios.get(
-        `${baseUrl}/api/message/messages/${chatId}`
+        `${baseUrl}/api/message/messages/${chatId}/${dateQuery}`
       );
-      return response.data;
+      return { data: response.data, paginating: chats.dateQuery !== null };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -136,6 +143,10 @@ const chatsSlice = createSlice({
       );
       conversation.streak++;
       conversation.accomplishedDailyStreak = action.payload.metaData;
+    },
+    resetDateQuery(state) {
+      state.dateQuery = null;
+      state.paginating = false;
     },
   },
   extraReducers: (builder) => {
@@ -185,6 +196,7 @@ const chatsSlice = createSlice({
         const audio = new Audio(sendMessageSound);
         audio.play();
         state.messages = [...state.messages, action.payload];
+        state.selectedConversation.messages.push(action.payload);
       })
       .addCase(sendMessage.rejected, (state, action) => {
         state.createMsgLoading = false;
@@ -195,7 +207,20 @@ const chatsSlice = createSlice({
       })
       .addCase(getMessages.fulfilled, (state, action) => {
         state.chatsLoading = false;
-        state.messages = action.payload;
+        if (action.payload.data.length)
+          state.dateQuery =
+            action.payload.data[action.payload.data.length - 1].createdAt;
+        else state.dateQuery = '';
+
+        if (!action.payload.paginating) {
+          state.messages = action.payload.data.reverse();
+        } else {
+          state.paginating = true;
+          state.messages = [
+            ...action.payload.data.reverse(),
+            ...state.messages,
+          ];
+        }
       })
       .addCase(getMessages.rejected, (state, action) => {
         state.chatsLoading = false;
@@ -218,6 +243,7 @@ export const {
   setContactChats,
   overideChats,
   updateConversationStreak,
+  resetDateQuery,
 } = chatsSlice.actions;
 
 export const selectChats = (state) => state.chats;

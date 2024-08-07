@@ -102,7 +102,7 @@ const getMessages = asyncHandler(async (req, res) => {
     _id: { $in: chat.messages },
     createdAt: { $lte: dateQuery },
   })
-    .limit(2)
+    .limit(process.env.NODE_ENV === 'test' ? 2 : 10)
     .sort('-createdAt')
     .populate([
       { path: 'author', model: 'user', select: '-password' },
