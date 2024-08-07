@@ -31,22 +31,22 @@ const createchat = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.userId);
   user.chattingWith = [...user.chattingWith, ...members];
 
-  const [chat, updatedUser] = await Promise.all([
-    Chat.create({
-      members: [...members, req.userId],
-      messages: [],
-      chatName: '',
-      chatPic: null,
-      chatType: members.length > 1 ? 'group' : 'individual',
-      creator: req.userId,
-    }).then((chat) =>
-      chat.populate([
-        { path: 'members', model: 'user', select: '-password' },
-        { path: 'creator' },
-      ])
-    ),
-    user.save(),
-  ]);
+  const chat = await Chat.create({
+    members: [...members, req.userId],
+    messages: [],
+    chatName: '',
+    chatPic: null,
+    chatType: members.length > 1 ? 'group' : 'individual',
+    creator: req.userId,
+  }).then((chat) =>
+    chat.populate([
+      { path: 'members', model: 'user', select: '-password' },
+      { path: 'creator' },
+    ])
+  );
+  user.chats = [...user.chats, chat];
+
+  await user.save();
 
   for (const member of members) {
     const socketId = getSocketId(member._id);

@@ -42,7 +42,7 @@ const registerUser = asyncHandler(async (req, res) => {
     },
     interests,
     contacts: [],
-    profilePicture: `https://avatar.iran.liara.run/public/?username=${firstName}`,
+    profilePicture: `https://eu.ui-avatars.com/api/?name=${firstName}+${lastName}&size=100`,
     chattingWith: [],
   });
   const token = generateToken(user._id);

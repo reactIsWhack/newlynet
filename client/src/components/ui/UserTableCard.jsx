@@ -79,7 +79,11 @@ const UserTableCard = ({
         <div className="flex items-center gap-3">
           <div className={`avatar ${isOnline ? 'online' : 'offline'}`}>
             <div className="mask mask-squircle h-12 w-12">
-              <img src={profilePicture} alt="Avatar Tailwind CSS Component" />
+              <img
+                src={profilePicture}
+                alt="Avatar Tailwind CSS Component"
+                className="rounded-full object-cover"
+              />
             </div>
           </div>
           <div>

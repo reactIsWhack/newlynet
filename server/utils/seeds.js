@@ -52,7 +52,7 @@ const generateFakeUsers = async () => {
         lastName,
         username: firstName,
         password: process.env.FAKE_USER_PASSWORD,
-        profilePicture: `https://avatar.iran.liara.run/public/?username=${firstName}`,
+        profilePicture: `https://eu.ui-avatars.com/api/?name=${firstName}+${lastName}&size=100`,
         school: schoolInfo,
         grade: generateGrade(i),
         interests: generateInterests(),
