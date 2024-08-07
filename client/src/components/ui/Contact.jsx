@@ -7,6 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   createChat,
   overideChats,
+  resetDateQuery,
+  resetMessages,
   selectChats,
   setChatFilter,
   setSelectedChat,
@@ -57,6 +59,8 @@ const Contact = ({
     const conversation = contactConversations.find((chat) =>
       chat.members.some((member) => member._id === _id)
     );
+    await dispatch(resetMessages());
+    await dispatch(resetDateQuery());
     await dispatch(setSelectedChat(conversation));
     navigate(`/chats/${conversation._id}`);
   };
