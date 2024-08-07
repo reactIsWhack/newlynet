@@ -25,8 +25,15 @@ const Messages = () => {
   useEffect(() => {
     if (!paginating)
       setTimeout(() => {
-        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+        document
+          .getElementById(messages[messages.length - 1]._id)
+          .scrollIntoView({
+            block: 'nearest',
+            inline: 'center',
+            behavior: 'smooth',
+            alignToTop: false,
+          });
+      }, 300);
   }, [selectedConversation, messages, paginating, filePreview]);
 
   const chatBubble = messages.map((message) => {

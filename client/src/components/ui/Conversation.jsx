@@ -40,8 +40,8 @@ const Conversation = ({
   const handleClick = async () => {
     dispatch(setSelectedChat(conversation));
     navigate(`/chats/${_id}`);
-    await dispatch(resetDateQuery());
     await dispatch(resetMessages());
+    await dispatch(resetDateQuery());
     dispatch(getMessages(_id));
   };
 

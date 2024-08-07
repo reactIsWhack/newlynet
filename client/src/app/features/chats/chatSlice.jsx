@@ -70,11 +70,11 @@ export const createChat = createAsyncThunk(
 
 export const sendMessage = createAsyncThunk(
   'chats/sendMessage',
-  async ({ chatId, message }, thunkAPI) => {
+  async ({ chatId, formData }, thunkAPI) => {
     try {
       const response = await axios.post(
         `${baseUrl}/api/message/sendmessage/${chatId}`,
-        { message }
+        formData
       );
       return response.data;
     } catch (error) {

@@ -63,7 +63,7 @@ const Chats = ({ filter }) => {
     if (id) {
       dispatch(getMessages(id));
     }
-  }, [id]);
+  }, []);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

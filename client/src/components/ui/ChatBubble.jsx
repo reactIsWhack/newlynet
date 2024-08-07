@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import { format, isToday } from 'date-fns';
 
-const ChatBubble = ({ message, author, createdAt }) => {
+const ChatBubble = ({ message, author, createdAt, media }) => {
   const { userId } = useSelector(selectUser);
 
   const myMessage = author._id === userId;
@@ -12,7 +12,6 @@ const ChatBubble = ({ message, author, createdAt }) => {
     ? format(new Date(createdAt), 'p') // e.g., 10:00 AM
     : format(new Date(createdAt), 'MMM dd, yyyy'); // e.g., Jul 31, 2024
 
-  console.log(message.shouldShake);
   const shakeClass = message.shouldShake ? 'shake' : '';
 
   return (
@@ -25,13 +24,26 @@ const ChatBubble = ({ message, author, createdAt }) => {
       <div className="chat-header capitalize">
         {author.firstName + ' ' + author.lastName}
       </div>
-      <div
-        className={`chat-bubble text-white ${
-          myMessage ? 'bg-blue-500' : 'bg-gray-700'
-        } ${shakeClass} break-words whitespace-pre-wrap max-w-96 max-[550px]:max-w-36`}
-      >
-        {message}
+
+      <div className="max-w-96 max-[550px]:max-w-36 flex flex-col whitespace-pre-wrap">
+        {media.src && (
+          <div className="mb-3">
+            {media.fileType.includes('video') ? (
+              <video src={media.src} controls className="rounded-lg"></video>
+            ) : (
+              <img src={media.src} className="rounded-lg" />
+            )}
+          </div>
+        )}
+        <div
+          className={`chat-bubble text-white ${
+            myMessage ? 'bg-blue-500 ml-auto' : 'bg-gray-700 mr-auto'
+          } ${shakeClass} pr-6 whitespace-nowrap`}
+        >
+          {message}
+        </div>
       </div>
+
       <time className="text-xs opacity-50 chat-footer">{formattedDate}</time>
     </div>
   );

@@ -11,7 +11,7 @@ const MessageInput = ({ filePreview, setFilePreview, lastMessageRef }) => {
   const [message, setMessage] = useState('');
   const [fileInput, setFileInput] = useState({ data: '', type: '' });
   const dispatch = useDispatch();
-  const { selectedConversation } = useSelector(selectChats);
+  const { selectedConversation, createMsgLoading } = useSelector(selectChats);
   const { id } = useParams();
 
   const handleChange = (e) => setMessage(e.target.value);
@@ -35,7 +35,6 @@ const MessageInput = ({ filePreview, setFilePreview, lastMessageRef }) => {
     element.style.height = 'auto';
     element.style.height = element.scrollHeight + 'px';
   }, [message]);
-  console.log(filePreview, fileInput);
 
   useEffect(() => {
     setMessage('');
@@ -48,11 +47,16 @@ const MessageInput = ({ filePreview, setFilePreview, lastMessageRef }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log(message);
+    const formData = new FormData();
+    formData.append('message', message);
+    formData.append('image', fileInput.data);
+
     if (!message) {
       return toast.error('Please enter a message', { id: 'msg-warning' });
     }
 
-    dispatch(sendMessage({ message, chatId: selectedConversation._id })).then(
+    dispatch(sendMessage({ formData, chatId: selectedConversation._id })).then(
       (res) => {
         lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
       }
@@ -123,12 +127,16 @@ const MessageInput = ({ filePreview, setFilePreview, lastMessageRef }) => {
             rows={1}
           />
         </div>
-        <button
-          type="submit"
-          className="absolute inset-y-0 end-0 flex items-center pe-3"
-        >
-          <BsSend />
-        </button>
+        {createMsgLoading ? (
+          <span className="loading loading-spinner loading-sm absolute inset-y-0 right-4 flex items-center pe-3 disabled"></span>
+        ) : (
+          <button
+            type="submit"
+            className="absolute inset-y-0 end-0 flex items-center pe-3"
+          >
+            <BsSend />
+          </button>
+        )}
       </div>
     </form>
   );
