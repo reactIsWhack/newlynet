@@ -105,20 +105,27 @@ const getMessages = asyncHandler(async (req, res) => {
     throw new Error('Chat not found');
   }
 
-  // mark unread messsages as read by removing the chat from the unreadChats array
-  const user = await User.findById(req.userId).populate('unreadChats');
+  // mark unread messages as read by removing the chat from the unreadChats array
+  const user = await User.findById(req.userId).populate({
+    path: 'unreadChats',
+    populate: { path: 'chat' },
+  });
+
   const updatedUnreadChats = user.unreadChats.filter(
     (chatItem) => String(chatItem.chat._id) !== String(chat._id)
   );
+
   user.unreadChats = updatedUnreadChats;
-  await user
-    .save()
-    .then((item) =>
-      item.populate({ path: 'unreadChats', populate: ['chat', 'messagse'] })
-    );
+
+  // Disable versioning for this save operation
+  await User.findByIdAndUpdate(
+    req.userId,
+    { unreadChats: updatedUnreadChats },
+    { new: true, useFindAndModify: false }
+  ).populate({ path: 'unreadChats', populate: ['chat', 'messages'] });
 
   const socketId = getSocketId(user._id);
-  io.to(socketId).emit('newMessageNotify', user.unreadChats);
+  if (socketId) io.to(socketId).emit('newMessageNotify', user.unreadChats);
 
   res.status(200).json(chat.messages);
 });
