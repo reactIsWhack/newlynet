@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import { format, isToday } from 'date-fns';
 
 const ChatBubble = ({ message, author, createdAt, media }) => {
   const { userId } = useSelector(selectUser);
+  const chatBubbleRef = useRef(null);
+  const [isOverflowing, setIsOverflowing] = useState(false);
 
   const myMessage = author._id === userId;
 
@@ -13,6 +15,22 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
     : format(new Date(createdAt), 'MMM dd, yyyy'); // e.g., Jul 31, 2024
 
   const shakeClass = message.shouldShake ? 'shake' : '';
+
+  useEffect(() => {
+    const checkOverflow = () => {
+      if (chatBubbleRef.current) {
+        const { scrollHeight, clientHeight } = chatBubbleRef.current;
+        setIsOverflowing(scrollHeight > clientHeight);
+      }
+    };
+
+    checkOverflow();
+
+    // Optional: Add a resize listener to recheck on window resize
+    window.addEventListener('resize', checkOverflow);
+    return () => window.removeEventListener('resize', checkOverflow);
+  }, [message]);
+  if (message === 'great job') console.log(message.length > 20);
 
   return (
     <div className={`chat ${myMessage ? 'chat-end' : 'chat-start'}`}>
@@ -25,7 +43,7 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
         {author.firstName + ' ' + author.lastName}
       </div>
 
-      <div className="max-w-96 max-[550px]:max-w-36 flex flex-col whitespace-pre-wrap">
+      <div className="max-w-96 max-[550px]:max-w-36 flex flex-col">
         {media.src && (
           <div className="mb-3">
             {media.fileType.includes('video') ? (
@@ -38,7 +56,8 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
         <div
           className={`chat-bubble text-white ${
             myMessage ? 'bg-blue-500 ml-auto' : 'bg-gray-700 mr-auto'
-          } ${shakeClass} pr-6 whitespace-nowrap`}
+          } ${shakeClass} break-words whitespace-pre-wrap max-w-96 max-[550px]:max-w-36`}
+          ref={chatBubbleRef}
         >
           {message}
         </div>
