@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
+const {
+  generateFakeUsers,
+  generateClubChats,
+  initializeChatClub,
+} = require('../utils/seeds');
 
 let mongoServer;
 
@@ -11,12 +16,13 @@ const initializeMongoDB = async () => {
     dbName: process.env.NODE_ENV === 'test' ? 'NodeNetTest' : 'NodeNet',
   });
 
-  console.log(`MongoDB successfully connected to ${mongoUri}`);
+  await generateFakeUsers();
+  await generateClubChats();
+  await initializeChatClub();
 };
 
 const disconnectMongoDB = async () => {
   await mongoServer.stop();
-  await mongoose.connection.close();
 };
 
 module.exports = { initializeMongoDB, disconnectMongoDB };

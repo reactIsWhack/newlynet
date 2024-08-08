@@ -9,6 +9,33 @@ const shuffle = require('./shuffleArray');
 const ClubChat = require('../models/clubChat.model');
 config();
 
+const shuffledInterests = shuffle(interestOptions);
+
+const rotateClubChat = async () => {
+  const activeClubChat = await ClubChat.findOne({ isActive: true });
+  activeClubChat.isActive = false;
+
+  let nextIndex = shuffledInterests.indexOf(activeClubChat.chatTopic) + 1;
+  if (nextIndex >= shuffledInterests.length) nextIndex = 0;
+
+  const nextInterest = shuffledInterests[nextIndex];
+  const newClubChat = await ClubChat.findOne({ chatTopic: nextInterest });
+  newClubChat.isActive = true;
+
+  await Promise.all([activeClubChat.save(), newClubChat.save()]);
+  console.log(newClubChat);
+};
+
+const initializeChatClub = async () => {
+  const firstInterest = shuffledInterests[0];
+  const startingClubChat = await ClubChat.findOne({
+    chatTopic: firstInterest,
+  });
+  startingClubChat.isActive = true;
+  await startingClubChat.save();
+  console.log(startingClubChat);
+};
+
 const generateGrade = (i) => {
   const randomGrade =
     process.env.NODE_ENV === 'test'
@@ -30,7 +57,6 @@ const generateInterests = () => {
 };
 
 const generateClubChats = async () => {
-  const shuffledInterests = shuffle(interestOptions);
   const clubChats = [];
   for (const interest of shuffledInterests) {
     const clubChat = await ClubChat.create({
@@ -94,4 +120,21 @@ const generateFakeUsers = async () => {
   return fakeUsers;
 };
 
-module.exports = { generateFakeUsers, generateClubChats };
+const populateDB = async () => {
+  // return ClubChat.deleteMany();
+  // await generateFakeUsers();
+  await generateClubChats();
+  await initializeChatClub();
+  setInterval(async () => {
+    await rotateClubChat();
+  }, 60000);
+};
+
+module.exports = {
+  generateFakeUsers,
+  generateClubChats,
+  shuffledInterests,
+  populateDB,
+  rotateClubChat,
+  initializeChatClub,
+};
