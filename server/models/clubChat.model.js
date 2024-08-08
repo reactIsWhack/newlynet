@@ -1,16 +1,19 @@
 const mongoose = require('mongoose');
 
-const clubChatSchema = new mongoose.Schema({
-  generalMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
-  topicMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
-  chatTopic: {
-    type: String,
+const clubChatSchema = new mongoose.Schema(
+  {
+    generalMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
+    topicMessages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
+    chatTopic: {
+      type: String,
+    },
+    isActive: {
+      type: Boolean,
+      default: false,
+    },
   },
-  isActive: {
-    type: Boolean,
-    default: false,
-  },
-});
+  { timestamps: true }
+);
 
 const ClubChat = mongoose.model('clubChat', clubChatSchema);
 

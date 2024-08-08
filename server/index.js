@@ -6,6 +6,7 @@ const authRouter = require('./routes/auth.route');
 const userRouter = require('./routes/user.route');
 const chatsRouter = require('./routes/chats.route');
 const messageRouter = require('./routes/message.route');
+const clubChatRouter = require('./routes/clubChat.route');
 const express = require('express');
 const { server, io, app } = require('./socket/socket');
 const userErrorHandler = require('./middleware/userErrorHandler');
@@ -28,6 +29,7 @@ app.use('/api/auth', authRouter, userErrorHandler);
 app.use('/api/users', userRouter, userErrorHandler);
 app.use('/api/chats', chatsRouter, userErrorHandler);
 app.use('/api/message', messageRouter, userErrorHandler);
+app.use('/api/club-chat', clubChatRouter, userErrorHandler);
 
 server.listen(process.env.PORT, async () => {
   console.log(`Server started on port ${PORT}`);
