@@ -15,18 +15,16 @@ const addContact = asyncHandler(async (req, res) => {
 
   user.contacts = [contactedUser, ...user.contacts];
 
-  await user
-    .save()
-    .then((item) =>
-      item.populate([
-        {
-          path: 'contacts',
-          model: 'user',
-          select: '-password',
-          populate: { path: 'chats' },
-        },
-      ])
-    );
+  await user.save().then((item) =>
+    item.populate([
+      {
+        path: 'contacts',
+        model: 'user',
+        select: '-password',
+        populate: { path: 'chats' },
+      },
+    ])
+  );
 
   res.status(200).json(user);
 });
@@ -100,13 +98,16 @@ const getPersonalProfile = asyncHandler(async (req, res) => {
 
 const updateProfile = asyncHandler(async (req, res) => {
   const { grade, school, interests, replacedInterests } = req.body;
+  const user = await User.findById(req.userId);
 
-  if (!grade && !school && !interests && !req.file) {
+  if (
+    grade === user.grade &&
+    school.schoolId === user.school.schoolId &&
+    !interests.length
+  ) {
     res.status(400);
     throw new Error('Please provide a field to be updated');
   }
-
-  const user = await User.findById(req.userId);
 
   let profilePicture = '';
   if (req.file) {
@@ -121,16 +122,32 @@ const updateProfile = asyncHandler(async (req, res) => {
     }
   }
 
-  user.grade = grade || user.grade;
-  user.school = school || user.school;
-  user.profilePicture = profilePicture || user.profilePicture;
-  if (interests.length === 3) user.interests = interests;
-  else {
-    const filteredInterests = user.interests.filter(
-      (interest) => !replacedInterests.includes(interest)
+  let schoolDetails;
+  if (school.schoolId !== user.school.schoolId) {
+    const response = await fetch(
+      `https://places.googleapis.com/v1/places/${school.schoolId}?fields=id,displayName&key=${process.env.API_KEY}`
     );
-    user.interests = [...filteredInterests, ...interests];
+    const verifiedSchool = await response.json();
+    schoolDetails = {
+      ...school,
+      formattedName: verifiedSchool.displayName.text,
+    };
   }
+
+  user.grade = grade || user.grade;
+  user.school = schoolDetails || user.school;
+  user.profilePicture = profilePicture || user.profilePicture;
+
+  if (interests.length) {
+    if (interests.length === 3) user.interests = interests;
+    else {
+      const filteredInterests = user.interests.filter(
+        (interest) => !replacedInterests.includes(interest)
+      );
+      user.interests = [...filteredInterests, ...interests];
+    }
+  }
+
   await user.save();
 
   res.status(200).json(user);

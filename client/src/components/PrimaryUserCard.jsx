@@ -40,7 +40,7 @@ const PrimaryUserCard = () => {
 
   return (
     <div className="card bg-base-100 w-[18.5rem] shadow-xl">
-      <figure className="h-24">
+      <figure className="h-28">
         <img
           src="https://www.businessworldit.com/wp-content/uploads/2018/12/4-Types-of-Business-Networking-Opportunities-to-Consider.jpg"
           alt="Shoes"

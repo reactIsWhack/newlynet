@@ -119,6 +119,7 @@ function App() {
               setUpdatingInterests={setUpdatingInterests}
               formData={settingsData}
               setFormData={setSettingsData}
+              filter={filter}
             />
           }
         ></Route>

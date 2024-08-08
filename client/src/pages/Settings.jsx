@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import SchoolSelect from '../components/ui/SchoolSelect';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../app/features/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  getCommonNewStudents,
+  resetStudents,
+  selectUser,
+  updateProfile,
+} from '../app/features/user/userSlice';
 import useRedirectUser from '../hooks/useRedirectUser';
 import InterestDisplayBtn from '../components/ui/InterestDisplayBtn';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,13 +15,14 @@ import SocialMediaForm from '../components/ui/SocialMediaForm';
 import useListenNotifications from '../hooks/useListenNotifications';
 import useUpdateStreak from '../hooks/useUpdateStreak';
 
-const Settings = ({ formData, setFormData, setUpdatingInterests }) => {
+const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
-  const { grade, school, interests } = useSelector(selectUser);
+  const { grade, school, interests, updateLoading } = useSelector(selectUser);
   const [schoolQuery, setSchoolQuery] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     school && setSchoolQuery(school.formattedName);
@@ -30,16 +36,18 @@ const Settings = ({ formData, setFormData, setUpdatingInterests }) => {
     await setUpdatingInterests(true);
     navigate('/select-interests');
   };
-
-  const shouldDisableBtn = () => {
+  const checkInterestsSame = () => {
     const interestsSame =
       interests.length == formData.interests.length &&
       interests.every((interest, index) => {
         return interest === formData.interests[index];
       });
+    return interestsSame;
+  };
 
+  const shouldDisableBtn = () => {
     if (
-      interestsSame &&
+      checkInterestsSame() &&
       grade === formData.grade &&
       school.schoolId === formData.school.schoolId
     )
@@ -49,6 +57,24 @@ const Settings = ({ formData, setFormData, setUpdatingInterests }) => {
   };
   const saveDisabled = shouldDisableBtn();
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const updatedData = {
+      grade: formData.grade,
+      school: formData.school,
+      interests: checkInterestsSame() ? [] : formData.interests,
+      replacedInterests: interests,
+    };
+
+    await dispatch(updateProfile(updatedData)).then(async (res) => {
+      if (!res.meta.rejectedWithValue) {
+        await dispatch(resetStudents());
+        dispatch(getCommonNewStudents({ filter, cursor: '' }));
+      }
+    });
+  };
+
   return (
     <>
       <Navbar />
@@ -57,7 +83,7 @@ const Settings = ({ formData, setFormData, setUpdatingInterests }) => {
           <h1 className="text-xl font-semibold text-center mb-3">
             Personal Information
           </h1>
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="px-7 max-[550px]:px-1">
               <SchoolSelect
                 formData={formData}
@@ -81,14 +107,18 @@ const Settings = ({ formData, setFormData, setUpdatingInterests }) => {
               {interestDisplayBtn}
             </div>
             <div className="flex justify-center">
-              <button
-                className={`btn btn-primary min-w-20 mt-8 ${
-                  saveDisabled ? 'disabled' : ''
-                }`}
-                disabled={saveDisabled}
-              >
-                Save
-              </button>
+              {updateLoading ? (
+                <span className="loading loading-spinner loading-lg mt-8"></span>
+              ) : (
+                <button
+                  className={`btn btn-primary min-w-20 mt-8 ${
+                    saveDisabled ? 'disabled' : ''
+                  }`}
+                  disabled={saveDisabled}
+                >
+                  Save
+                </button>
+              )}
             </div>
           </form>
         </div>

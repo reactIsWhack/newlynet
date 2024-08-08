@@ -19,6 +19,7 @@ const initialState = {
   commonNewStudents: [],
   unreadChats: [],
   cursor: '',
+  updateLoading: false,
 };
 
 export const signup = createAsyncThunk(
@@ -113,6 +114,22 @@ export const addSocialMediaInfo = createAsyncThunk(
         data
       );
       console.log(response, 'social media data');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const updateProfile = createAsyncThunk(
+  'user/updateProfile',
+  async (data, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `${baseUrl}/api/users/updateprofile`,
+        data
+      );
+      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -252,6 +269,20 @@ const userSlice = createSlice({
       })
       .addCase(addSocialMediaInfo.rejected, (state, action) => {
         state.isLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(updateProfile.pending, (state, action) => {
+        state.updateLoading = true;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.updateLoading = false;
+        toast.success('Profile updated!');
+        state.grade = action.payload.grade;
+        state.interests = action.payload.interests;
+        state.school = action.payload.school;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.updateLoading = false;
         toast.error(action.payload);
       });
   },
