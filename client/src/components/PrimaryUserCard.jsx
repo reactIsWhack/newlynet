@@ -4,6 +4,7 @@ import { selectUser } from '../app/features/user/userSlice';
 import InterestDisplayBtn from './ui/InterestDisplayBtn';
 import editIcon from '../assets/editIcon.svg';
 import Badge from './ui/Badge';
+import { useNavigate } from 'react-router-dom';
 
 const PrimaryUserCard = () => {
   const {
@@ -15,6 +16,7 @@ const PrimaryUserCard = () => {
     profilePicture,
     socialMediaInfo,
   } = useSelector(selectUser);
+  const navigate = useNavigate();
 
   const interestDisplayBtn = interests.map((interest, index) => {
     return <InterestDisplayBtn interest={interest} key={index} />;
@@ -68,7 +70,11 @@ const PrimaryUserCard = () => {
         </div>
         <div className="divider my-0"></div>
         <div className="my-2 flex items-center flex-wrap justify-center gap-2">
-          <img src={editIcon} className="h-6 cursor-pointer" />
+          <img
+            src={editIcon}
+            className="h-6 cursor-pointer"
+            onClick={() => navigate('/settings')}
+          />
           {interestDisplayBtn}
         </div>
         {/* <div className="card-actions justify-end mt-1">

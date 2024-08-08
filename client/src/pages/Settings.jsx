@@ -5,25 +5,49 @@ import { useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import useRedirectUser from '../hooks/useRedirectUser';
 import InterestDisplayBtn from '../components/ui/InterestDisplayBtn';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import SocialMediaForm from '../components/ui/SocialMediaForm';
 import useListenNotifications from '../hooks/useListenNotifications';
 import useUpdateStreak from '../hooks/useUpdateStreak';
 
-const Settings = ({ formData, setFormData }) => {
+const Settings = ({ formData, setFormData, setUpdatingInterests }) => {
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
   const { grade, school, interests } = useSelector(selectUser);
   const [schoolQuery, setSchoolQuery] = useState('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     school && setSchoolQuery(school.formattedName);
   }, [school]);
 
-  const interestDisplayBtn = interests.map((interest, index) => {
+  const interestDisplayBtn = formData.interests.map((interest, index) => {
     return <InterestDisplayBtn interest={interest} key={index} />;
   });
+
+  const handleClick = async () => {
+    await setUpdatingInterests(true);
+    navigate('/select-interests');
+  };
+
+  const shouldDisableBtn = () => {
+    const interestsSame =
+      interests.length == formData.interests.length &&
+      interests.every((interest, index) => {
+        return interest === formData.interests[index];
+      });
+
+    if (
+      interestsSame &&
+      grade === formData.grade &&
+      school.schoolId === formData.school.schoolId
+    )
+      return true;
+
+    return false;
+  };
+  const saveDisabled = shouldDisableBtn();
 
   return (
     <>
@@ -45,19 +69,26 @@ const Settings = ({ formData, setFormData }) => {
             <label className="label w-full mt-2 max-[550px]:px-4 px-7">
               <div className="w-full flex items-center justify-between">
                 <span className="text-base label-text">Interests</span>
-                <Link
+                <span
                   className="text-sm hover:underline hover:text-blue-600"
-                  to="/select-interests"
+                  onClick={handleClick}
                 >
                   Select your interests {`-->`}
-                </Link>
+                </span>
               </div>
             </label>
             <div className="my-2 flex items-center flex-wrap justify-center gap-2">
               {interestDisplayBtn}
             </div>
             <div className="flex justify-center">
-              <button className="btn btn-primary min-w-20 mt-8">Save</button>
+              <button
+                className={`btn btn-primary min-w-20 mt-8 ${
+                  saveDisabled ? 'disabled' : ''
+                }`}
+                disabled={saveDisabled}
+              >
+                Save
+              </button>
             </div>
           </form>
         </div>

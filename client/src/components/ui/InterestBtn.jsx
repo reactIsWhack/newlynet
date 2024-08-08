@@ -2,6 +2,8 @@ import React from 'react';
 
 const InterestBtn = ({ interest, setFormData, formData }) => {
   const inFormData = formData.interests.includes(interest);
+
+  console.log(inFormData, formData);
   const interestsFiltered = formData.interests.filter(
     (interestItem) => interestItem !== interest
   );

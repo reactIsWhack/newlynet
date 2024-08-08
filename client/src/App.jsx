@@ -35,7 +35,7 @@ function App() {
     interests: [],
   });
   const [schoolQuery, setSchoolQuery] = useState('');
-  const { isLoggedIn, grade, school } = useSelector(selectUser);
+  const { isLoggedIn, grade, interests, school } = useSelector(selectUser);
   const { selectedConversation, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const [filter, setFilter] = useState('grade');
@@ -43,7 +43,11 @@ function App() {
     renderModal: { render, name },
   } = useSelector(selectPopup);
   const [updatingInterests, setUpdatingInterests] = useState(false);
-  const [settingsData, setSettingsData] = useState({ grade: 0 });
+  const [settingsData, setSettingsData] = useState({
+    grade: 0,
+    interests: [],
+    school: {},
+  });
 
   const getData = async () => {
     await dispatch(getUserProfile());
@@ -62,8 +66,10 @@ function App() {
       setSettingsData((prev) => ({
         ...prev,
         grade: grade,
+        interests: interests,
+        school: school,
       }));
-  }, [grade]);
+  }, [grade, interests, school]);
 
   return (
     <>
@@ -91,9 +97,10 @@ function App() {
           path="/select-interests"
           element={
             <InterestsSelect
-              setFormData={setFormData}
-              formData={formData}
-              route={'/signup'}
+              setFormData={updatingInterests ? setSettingsData : setFormData}
+              formData={updatingInterests ? settingsData : formData}
+              route={updatingInterests ? '/settings' : '/signup'}
+              updatingInterests={updatingInterests}
             />
           }
         ></Route>

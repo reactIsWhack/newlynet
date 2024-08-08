@@ -6,7 +6,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
-const useRedirectUser = () => {
+const useRedirectUser = (blockInterstsPage) => {
   const { isLoggedIn } = useSelector(selectUser);
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -25,6 +25,10 @@ const useRedirectUser = () => {
 
     if ((pathname === '/login' || pathname === '/signup') && response.data)
       navigate('/');
+
+    if (!blockInterstsPage && pathname === '/select-interests') {
+      navigate('/settings');
+    }
   };
 
   useEffect(() => {

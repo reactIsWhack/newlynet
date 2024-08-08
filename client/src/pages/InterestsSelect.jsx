@@ -3,8 +3,15 @@ import interestOptions from '../../data';
 import InterestBtn from '../components/ui/InterestBtn';
 import '../styles/InterestBtn.css';
 import { useNavigate } from 'react-router-dom';
+import useRedirectUser from '../hooks/useRedirectUser';
 
-const InterestsSelect = ({ route, setFormData, formData }) => {
+const InterestsSelect = ({
+  route,
+  setFormData,
+  formData,
+  updatingInterests,
+}) => {
+  useRedirectUser(updatingInterests);
   const interestBtn = interestOptions.map((interest, index) => {
     return (
       <InterestBtn
