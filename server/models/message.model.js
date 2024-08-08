@@ -17,6 +17,9 @@ const messageSchema = new mongoose.Schema(
       type: Object,
       default: {},
     },
+    isClubChatMsg: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );

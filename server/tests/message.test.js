@@ -103,6 +103,7 @@ describe('POST /message', () => {
     expect(response.body.author._id.toString()).toBe(userInfo._id);
     expect(updatedChat.messages.length).toBe(1);
     expect(updatedChat.messages[0]._id.toString()).toBe(response.body._id);
+    expect(response.body.isClubChatMsg).toBe(false);
 
     const messageEvent = await messagePromise;
     expect(messageEvent.message).toBe('Hi from test user');
@@ -132,6 +133,7 @@ describe('POST /message', () => {
     expect(response.body.message).toBe(`Hi from ${user.firstName}`);
     expect(response.body.media.src).toBeTruthy();
     expect(response.body.media.fileType).toBe('image/png');
+    expect(response.body.isClubChatMsg).toBe(false);
 
     const messageEvent = await messagePromise;
     const unreadMessagesEvent = await notificationPromise;

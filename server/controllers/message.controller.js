@@ -61,6 +61,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     author: req.userId,
     receivers,
     media: mediaInfo,
+    isClubChatMsg: false,
   }).then((msg) =>
     msg.populate([
       { path: 'author', model: 'user', select: '-password' },
