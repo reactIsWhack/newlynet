@@ -21,11 +21,11 @@ const interestOptions = [
   'Volleyball',
   'Track',
   'Cross Country',
+  'Golf',
   'Arts',
   'Film',
   'Video Production',
   'Editing',
-  'Racial Literacy',
 ];
 
 export default interestOptions;

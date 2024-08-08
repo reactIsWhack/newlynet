@@ -1,7 +1,7 @@
 const { initializeMongoDB, disconnectMongoDB } = require('../db/connectTestDB');
 const { interestOptions } = require('../db/data');
 const User = require('../models/user.model');
-const { generateFakeUsers } = require('../utils/seeds');
+const { generateFakeUsers, generateClubChats } = require('../utils/seeds');
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -14,7 +14,8 @@ describe('Generate Fake Users', () => {
     const grades = [5, 6, 7, 8, 9, 10, 11, 12];
 
     console.log(sampleFakeUser);
-    expect(sampleFakeUser.fullName).toBeTruthy();
+    expect(sampleFakeUser.firstName).toBeTruthy();
+    expect(sampleFakeUser.lastName).toBeTruthy();
     expect(sampleFakeUser.school.formattedName).toMatch(
       /(Princeton High School)/i
     );
@@ -24,6 +25,20 @@ describe('Generate Fake Users', () => {
     expect(interestOptions).toContain(sampleFakeUser.interests[1]);
     expect(interestOptions).toContain(sampleFakeUser.interests[2]);
     expect(grades).toContain(sampleFakeUser.grade);
+  });
+});
+
+describe('Generate club chats', () => {
+  it('Should generate 27 club chats based off interests', async () => {
+    const clubChats = await generateClubChats();
+
+    console.log(clubChats[0]);
+    expect(clubChats.length).toBe(27);
+    expect(clubChats[0]._id).toBeTruthy();
+    expect(interestOptions).toContain(clubChats[0].chatTopic);
+    expect(clubChats[0].generalMessages).toEqual([]);
+    expect(clubChats[0].topicMessages).toEqual([]);
+    expect(clubChats[0].isActive).toBe(false);
   });
 });
 

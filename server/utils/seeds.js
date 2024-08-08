@@ -5,6 +5,8 @@ const { config } = require('dotenv');
 const { interestOptions } = require('../db/data');
 const getSchool = require('../services/schoolService');
 const Message = require('../models/message.model');
+const shuffle = require('./shuffleArray');
+const ClubChat = require('../models/clubChat.model');
 config();
 
 const generateGrade = (i) => {
@@ -25,6 +27,22 @@ const generateInterests = () => {
   }
 
   return interests;
+};
+
+const generateClubChats = async () => {
+  const shuffledInterests = shuffle(interestOptions);
+  const clubChats = [];
+  for (const interest of shuffledInterests) {
+    const clubChat = await ClubChat.create({
+      topicMessages: [],
+      generalMessages: [],
+      chatTopic: interest,
+      isActive: false,
+    });
+    clubChats.push(clubChat);
+  }
+
+  return clubChats;
 };
 
 const generateFakeUsers = async () => {
@@ -76,4 +94,4 @@ const generateFakeUsers = async () => {
   return fakeUsers;
 };
 
-module.exports = { generateFakeUsers };
+module.exports = { generateFakeUsers, generateClubChats };
