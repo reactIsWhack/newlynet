@@ -13,6 +13,7 @@ let fakeUsers;
 let clientSocket;
 let secondSocket;
 let secondUser;
+let secondUserToken;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -23,12 +24,17 @@ beforeAll(async () => {
   jwt = token;
   userInfo = user;
   secondUser = fakeUsers[0];
+  const secondUserData = await loginUser(
+    secondUser.username,
+    process.env.FAKE_USER_PASSWORD
+  );
+  secondUserToken = secondUserData.token;
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
-    query: { user: { userId: user._id, school: user.school } },
+    query: { userId: user._id, school: user.school.schoolId },
   });
   secondSocket = ioc(`http://localhost:${process.env.PORT}`, {
-    query: { user: { userId: secondUser._id, school: secondUser.school } },
+    query: { userId: secondUser._id, school: secondUser.school.schoolId },
   });
 
   clientSocket.emit('joinroom', `clubchat-${user.school.schoolId}`, true);
@@ -52,6 +58,43 @@ const getRealTimeMessages = (socket, event) => {
 
 let montgomeryMsgId;
 
+describe('PATCH /clubChats', () => {
+  it('Should have both users join the club chat', async () => {
+    for (let i = 0; i < 2; i++) {
+      const response = await request(app)
+        .patch(`/api/club-chat/joinclubchat`)
+        .set('Cookie', i === 0 ? [...jwt] : [...secondUserToken])
+        .expect(200)
+        .expect('Content-Type', /application\/json/);
+
+      i === 0 &&
+        expect(response.body.members[0]._id.toString()).toBe(
+          userInfo._id.toString()
+        );
+      i === 1 &&
+        expect(response.body.members[1]._id.toString()).toBe(
+          secondUser._id.toString()
+        );
+    }
+  });
+
+  it('Should have a user from a different school join the club chat', async () => {
+    const { user, token } = await loginUser(
+      fakeUsers[4].username,
+      process.env.FAKE_USER_PASSWORD
+    );
+    const response = await request(app)
+      .patch(`/api/club-chat/joinclubchat`)
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.members.map((member) => String(member._id))).toContain(
+      String(user._id)
+    );
+  });
+});
+
 describe('POST /clubChats', () => {
   it('Should send a general message', async () => {
     console.log('Sending message...');
@@ -68,6 +111,9 @@ describe('POST /clubChats', () => {
     expect(udpatedClubChat.generalMessages[0]._id.toString()).toBe(
       response.body._id.toString()
     );
+    expect(
+      response.body.receivers.map((receiver) => String(receiver._id))
+    ).toEqual(expect.arrayContaining([String(secondUser._id)]));
 
     expect(response.body.message).toBe('Test club chat');
     expect(response.body.isClubChatMsg).toBe(true);
@@ -101,6 +147,9 @@ describe('POST /clubChats', () => {
     expect(udpatedClubChat.topicMessages[0]._id.toString()).toBe(
       response.body._id.toString()
     );
+    expect(
+      response.body.receivers.map((receiver) => String(receiver._id))
+    ).toEqual(expect.arrayContaining([String(secondUser._id)]));
 
     expect(response.body.message).toBe('Test club 2.0');
     expect(response.body.isClubChatMsg).toBe(true);
@@ -127,6 +176,7 @@ describe('POST /clubChats', () => {
     expect(response.body.message).toBe('Club chat for montgomery');
     expect(response.body.schoolAffiliation).toBe(user.school.schoolId);
     expect(response.body.schoolAffiliation).not.toBe(userInfo.school.schoolId);
+    expect(response.body.receivers).toEqual([]);
   });
 });
 

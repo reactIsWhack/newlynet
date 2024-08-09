@@ -15,7 +15,7 @@ const io = new Server(server, {
 });
 
 const onlineUsers = {};
-const usersInClubChat = {};
+let usersInClubChat = [];
 
 const getSocketId = (userId) => {
   return onlineUsers[userId];
@@ -24,7 +24,7 @@ const getSocketId = (userId) => {
 io.on('connection', (socket) => {
   console.log(`user connected on socket with id of ${socket.id}`);
 
-  const userId = socket.handshake.query.userId;
+  const { school, userId } = socket.handshake.query;
   if (userId) {
     onlineUsers[userId] = socket.id;
   }
@@ -32,23 +32,30 @@ io.on('connection', (socket) => {
   socket.on('joinroom', (roomname, isClubChat) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
     socket.join(roomname);
-    console.log(isClubChat);
+
     if (isClubChat) {
-      usersInClubChat[userId] = socket.id;
-      io.emit('usersInClubChat', Object.keys(usersInClubChat));
+      usersInClubChat.push({
+        user: userId,
+        school,
+        socket: socket.id,
+      });
+      console.log(usersInClubChat);
     }
   });
 
   socket.on('leaveroom', (roomname, isClubChat) => {
     console.log(`user: ${socket.id} left room - ${roomname}`);
     socket.leave(roomname);
+
     if (isClubChat) {
-      delete usersInClubChat[userId];
-      io.emit('usersInClubChat', Object.keys(usersInClubChat));
+      usersInClubChat = usersInClubChat.filter(
+        (user) => user.socket !== socket.id
+      );
     }
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
+  io.emit('usersInClubChat', usersInClubChat);
 
   socket.on('disconnect', () => {
     console.log(`user disconnected from socket with id of ${socket.id} `);

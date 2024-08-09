@@ -4,6 +4,21 @@ const Message = require('../models/message.model');
 const { io } = require('../socket/socket');
 const User = require('../models/user.model');
 
+const joinClubChat = asyncHandler(async (req, res) => {
+  const clubChat = await ClubChat.findOne({ isActive: true });
+
+  if (!clubChat) {
+    res.status(404);
+    throw new Error('No active club chat, join later');
+  }
+
+  clubChat.members = [...clubChat.members, req.userId];
+
+  await clubChat.save().then((item) => item.populate('members'));
+
+  res.status(200).json(clubChat);
+});
+
 const getActiveClubChat = asyncHandler(async (req, res) => {
   const activeClubChat = await ClubChat.findOne({ isActive: true }).populate([
     'generalMessages',
@@ -20,17 +35,30 @@ const getActiveClubChat = asyncHandler(async (req, res) => {
 const sendClubChatMessage = asyncHandler(async (req, res) => {
   const { message, messageType } = req.body;
 
-  const clubChat = await ClubChat.findOne({ isActive: true });
+  const clubChat = await ClubChat.findOne({ isActive: true }).populate(
+    'members'
+  );
   const user = await User.findById(req.userId);
+
+  if (!clubChat.members.some((m) => m._id.toString() === user._id.toString())) {
+    res.status(400);
+    throw new Error('Please join the chat club to send a message');
+  }
 
   if (!clubChat) {
     res.status(404);
     throw new Error('No active chat open currently to send messages in');
   }
 
+  const receivers = clubChat.members.filter(
+    (member) =>
+      String(member._id) !== String(req.userId) &&
+      member.school.schoolId === user.school.schoolId
+  );
+
   const newMessage = await Message.create({
     message,
-    receivers: clubChat.members,
+    receivers,
     media: { src: '', fileType: '' },
     isClubChatMsg: true,
     schoolAffiliation: user.school.schoolId,
@@ -64,7 +92,11 @@ const getClubChatMessages = asyncHandler(async (req, res) => {
 
   const clubChatMessages =
     section === 'general' ? clubChat.generalMessages : clubChat.topicMessages;
-  console.log(clubChatMessages);
+
+  if (!clubChat.members.some((m) => m.toString() === user._id.toString())) {
+    res.status(400);
+    throw new Error('Please join the chat club to view messages');
+  }
 
   if (!clubChat) {
     res.status(404);
@@ -91,4 +123,5 @@ module.exports = {
   getActiveClubChat,
   sendClubChatMessage,
   getClubChatMessages,
+  joinClubChat,
 };

@@ -4,6 +4,7 @@ const {
   getActiveClubChat,
   sendClubChatMessage,
   getClubChatMessages,
+  joinClubChat,
 } = require('../controllers/clubChat.controller');
 
 const router = Router();
@@ -15,5 +16,6 @@ router.get(
   routeProtector,
   getClubChatMessages
 );
+router.patch('/joinclubchat', routeProtector, joinClubChat);
 
 module.exports = router;
