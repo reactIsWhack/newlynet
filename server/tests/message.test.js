@@ -104,6 +104,7 @@ describe('POST /message', () => {
     expect(updatedChat.messages.length).toBe(1);
     expect(updatedChat.messages[0]._id.toString()).toBe(response.body._id);
     expect(response.body.isClubChatMsg).toBe(false);
+    expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
 
     const messageEvent = await messagePromise;
     expect(messageEvent.message).toBe('Hi from test user');
@@ -134,6 +135,7 @@ describe('POST /message', () => {
     expect(response.body.media.src).toBeTruthy();
     expect(response.body.media.fileType).toBe('image/png');
     expect(response.body.isClubChatMsg).toBe(false);
+    expect(response.body.schoolAffiliation).toBe(user.school.schoolId);
 
     const messageEvent = await messagePromise;
     const unreadMessagesEvent = await notificationPromise;

@@ -55,6 +55,7 @@ const sendMessage = asyncHandler(async (req, res) => {
       console.log('Error uploading to cloudinary: ' + error);
     }
   }
+  const user = await User.findById(req.userId);
 
   const newMessage = await Message.create({
     message,
@@ -62,6 +63,7 @@ const sendMessage = asyncHandler(async (req, res) => {
     receivers,
     media: mediaInfo,
     isClubChatMsg: false,
+    schoolAffiliation: user.school.schoolId,
   }).then((msg) =>
     msg.populate([
       { path: 'author', model: 'user', select: '-password' },

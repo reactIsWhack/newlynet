@@ -20,6 +20,9 @@ const messageSchema = new mongoose.Schema(
     isClubChatMsg: {
       type: Boolean,
     },
+    schoolAffiliation: {
+      type: String, // the id of a school the author attends in order to query for clubChatMessages exclusive to a certian school.
+    },
   },
   { timestamps: true }
 );

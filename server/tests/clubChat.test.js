@@ -74,6 +74,7 @@ describe('POST /clubChats', () => {
     expect(response.body.receivers.map((item) => item._id.toString())).toEqual(
       expect.arrayContaining([secondUser._id.toString()])
     );
+    expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
 
     let messageEvent = await messagePromise;
     expect(messageEvent.message).toBe('Test club chat');
