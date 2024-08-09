@@ -15,6 +15,7 @@ const io = new Server(server, {
 });
 
 const onlineUsers = {};
+const usersInClubChat = {};
 
 const getSocketId = (userId) => {
   return onlineUsers[userId];
@@ -28,15 +29,23 @@ io.on('connection', (socket) => {
     onlineUsers[userId] = socket.id;
   }
 
-  socket.on('joinroom', (roomname) => {
+  socket.on('joinroom', (roomname, isClubChat) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
-    // the rooms will be used to check if a user has unread messages based on if they are in the room or not
-    socket.join(roomname); // roomname is the id of a chat with the prefix "chat"
+    socket.join(roomname);
+    console.log(isClubChat);
+    if (isClubChat) {
+      usersInClubChat[userId] = socket.id;
+      io.emit('usersInClubChat', Object.keys(usersInClubChat));
+    }
   });
 
-  socket.on('leaveroom', (roomname) => {
+  socket.on('leaveroom', (roomname, isClubChat) => {
     console.log(`user: ${socket.id} left room - ${roomname}`);
     socket.leave(roomname);
+    if (isClubChat) {
+      delete usersInClubChat[userId];
+      io.emit('usersInClubChat', Object.keys(usersInClubChat));
+    }
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
@@ -48,4 +57,4 @@ io.on('connection', (socket) => {
   });
 });
 
-module.exports = { server, io, getSocketId, app };
+module.exports = { server, io, getSocketId, app, usersInClubChat };
