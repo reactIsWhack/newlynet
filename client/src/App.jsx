@@ -22,6 +22,7 @@ import { selectPopup } from './app/features/popup/popupSlice';
 import UserDetails from './components/UserDetails';
 import Settings from './pages/Settings';
 import { getActiveClubChat } from './app/features/clubChat/clubChatSlice';
+import LoadingScreen from './components/LoadingScreen';
 
 axios.defaults.withCredentials = true;
 
@@ -49,15 +50,18 @@ function App() {
     interests: [],
     school: {},
   });
+  const [renderLoadingScreen, setRenderLoadingScreen] = useState(false);
 
   const getData = async () => {
-    await dispatch(getUserProfile());
+    setRenderLoadingScreen(true);
+    await dispatch(getUserProfile()).then(() => setRenderLoadingScreen(false));
     await dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' }));
     await dispatch(getConversations(chatFilter));
     await dispatch(getActiveClubChat());
   };
 
   useEffect(() => {
+    setRenderLoadingScreen(true);
     if (isLoggedIn) {
       getData();
     }
@@ -75,57 +79,64 @@ function App() {
 
   return (
     <>
-      <Routes>
-        <Route
-          path="/login"
-          element={<Login setFormData={setFormData} />}
-        ></Route>
-        <Route
-          path="/signup"
-          element={
-            <Signup
-              formData={formData}
-              setFormData={setFormData}
-              schoolQuery={schoolQuery}
-              setSchoolQuery={setSchoolQuery}
-            />
-          }
-        ></Route>
-        <Route
-          path="/"
-          element={<Home filter={filter} setFilter={setFilter} />}
-        ></Route>
-        <Route
-          path="/select-interests"
-          element={
-            <InterestsSelect
-              setFormData={updatingInterests ? setSettingsData : setFormData}
-              formData={updatingInterests ? settingsData : formData}
-              route={updatingInterests ? '/settings' : '/signup'}
-              updatingInterests={updatingInterests}
-            />
-          }
-        ></Route>
-        <Route path="/chats" element={<Chats filter={filter} />}>
+      {renderLoadingScreen ? (
+        <LoadingScreen />
+      ) : (
+        <Routes>
           <Route
-            index
-            element={!selectedConversation ? <NoChatSelected /> : null}
+            path="/login"
+            element={<Login setFormData={setFormData} />}
           ></Route>
-          <Route path=":id" element={<Messages />} />
-        </Route>
-        <Route path="/contacts" element={<Contacts filter={filter} />}></Route>
-        <Route
-          path="/settings"
-          element={
-            <Settings
-              setUpdatingInterests={setUpdatingInterests}
-              formData={settingsData}
-              setFormData={setSettingsData}
-              filter={filter}
-            />
-          }
-        ></Route>
-      </Routes>
+          <Route
+            path="/signup"
+            element={
+              <Signup
+                formData={formData}
+                setFormData={setFormData}
+                schoolQuery={schoolQuery}
+                setSchoolQuery={setSchoolQuery}
+              />
+            }
+          ></Route>
+          <Route
+            path="/"
+            element={<Home filter={filter} setFilter={setFilter} />}
+          ></Route>
+          <Route
+            path="/select-interests"
+            element={
+              <InterestsSelect
+                setFormData={updatingInterests ? setSettingsData : setFormData}
+                formData={updatingInterests ? settingsData : formData}
+                route={updatingInterests ? '/settings' : '/signup'}
+                updatingInterests={updatingInterests}
+              />
+            }
+          ></Route>
+          <Route path="/chats" element={<Chats filter={filter} />}>
+            <Route
+              index
+              element={!selectedConversation ? <NoChatSelected /> : null}
+            ></Route>
+            <Route path=":id" element={<Messages />} />
+          </Route>
+          <Route
+            path="/contacts"
+            element={<Contacts filter={filter} />}
+          ></Route>
+          <Route
+            path="/settings"
+            element={
+              <Settings
+                setUpdatingInterests={setUpdatingInterests}
+                formData={settingsData}
+                setFormData={setSettingsData}
+                filter={filter}
+              />
+            }
+          ></Route>
+        </Routes>
+      )}
       <Toaster />
       {render && name === 'user-detail' && <UserDetails filter={filter} />}
     </>
