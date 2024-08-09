@@ -122,13 +122,12 @@ const generateFakeUsers = async () => {
 };
 
 const populateDB = async () => {
-  return ClubChat.deleteMany();
   // await generateFakeUsers();
-  await generateClubChats();
-  await initializeChatClub();
+  // await generateClubChats();
+  // await initializeChatClub();
   setInterval(async () => {
     await rotateClubChat();
-  }, 60000);
+  }, 60 * 60 * 1000);
 };
 
 module.exports = {

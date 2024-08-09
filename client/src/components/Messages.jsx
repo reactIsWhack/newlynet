@@ -25,14 +25,12 @@ const Messages = () => {
   useEffect(() => {
     if (!paginating)
       setTimeout(() => {
-        document
-          .getElementById(messages[messages.length - 1]._id)
-          .scrollIntoView({
-            block: 'nearest',
-            inline: 'center',
-            behavior: 'smooth',
-            alignToTop: false,
-          });
+        lastMessageRef.current?.scrollIntoView({
+          block: 'nearest',
+          inline: 'center',
+          behavior: 'smooth',
+          alignToTop: false,
+        });
       }, 300);
   }, [selectedConversation, messages, paginating, filePreview]);
 

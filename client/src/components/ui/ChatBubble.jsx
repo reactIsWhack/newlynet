@@ -16,22 +16,6 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
 
   const shakeClass = message.shouldShake ? 'shake' : '';
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      if (chatBubbleRef.current) {
-        const { scrollHeight, clientHeight } = chatBubbleRef.current;
-        setIsOverflowing(scrollHeight > clientHeight);
-      }
-    };
-
-    checkOverflow();
-
-    // Optional: Add a resize listener to recheck on window resize
-    window.addEventListener('resize', checkOverflow);
-    return () => window.removeEventListener('resize', checkOverflow);
-  }, [message]);
-  if (message === 'great job') console.log(message.length > 20);
-
   return (
     <div className={`chat ${myMessage ? 'chat-end' : 'chat-start'}`}>
       <div className="chat-image avatar">

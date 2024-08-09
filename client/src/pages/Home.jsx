@@ -6,6 +6,10 @@ import HomeMainContent from '../components/HomeMainContent';
 import useDetectMobile from '../hooks/useDetectMobile';
 import useListenNotifications from '../hooks/useListenNotifications';
 import useUpdateStreak from '../hooks/useUpdateStreak';
+import ClubChatStats from '../components/ui/ClubChatStats';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../app/features/user/userSlice';
+import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
@@ -13,6 +17,8 @@ const Home = ({ filter, setFilter }) => {
   useUpdateStreak();
 
   const mobile = useDetectMobile();
+  const { school } = useSelector(selectUser);
+  const { clubChatLoading } = useSelector(selectClubChat);
 
   return (
     <div>
@@ -24,7 +30,20 @@ const Home = ({ filter, setFilter }) => {
           </div>
         )}
         <HomeMainContent filter={filter} setFilter={setFilter} />
-        {!mobile && <div className="home-right w-1/4"></div>}
+        {!mobile && (
+          <div className="home-right w-1/3 -ml-6 sticky py-4">
+            <h2 className="mb-3 text-lg text-center my-0">
+              Current club hour at {school?.formattedName}
+            </h2>
+            {clubChatLoading ? (
+              <div className="flex justify-center mt-4">
+                <span className="loading loading-spinner loading-lg"></span>
+              </div>
+            ) : (
+              <ClubChatStats />
+            )}
+          </div>
+        )}
       </div>{' '}
     </div>
   );

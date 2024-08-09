@@ -23,6 +23,7 @@ const getActiveClubChat = asyncHandler(async (req, res) => {
   const activeClubChat = await ClubChat.findOne({ isActive: true }).populate([
     'generalMessages',
     'topicMessages',
+    'members',
   ]);
 
   if (!activeClubChat) {

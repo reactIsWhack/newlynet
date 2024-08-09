@@ -20,13 +20,15 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
-  const { isLoggedIn, userId } = useSelector(selectUser);
+  const { isLoggedIn, userId, school } = useSelector(selectUser);
   const { chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (isLoggedIn) {
-      const socketVal = io('http://localhost:4000', { query: { userId } });
+      const socketVal = io('http://localhost:4000', {
+        query: { userId, school: school?.schoolId },
+      });
       setSocket(socketVal);
 
       socketVal.on('onlineUsers', (users) => {

@@ -30,8 +30,8 @@ body {
   gap: 4rem;
 }
 
-.primary-user-card {
-  width: 18rem;
+.primary-user-card,
+.home-right {
   position: sticky;
   top: 100px;
 }

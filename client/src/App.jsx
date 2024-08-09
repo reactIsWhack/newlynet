@@ -21,6 +21,7 @@ import Contacts from './pages/Contacts';
 import { selectPopup } from './app/features/popup/popupSlice';
 import UserDetails from './components/UserDetails';
 import Settings from './pages/Settings';
+import { getActiveClubChat } from './app/features/clubChat/clubChatSlice';
 
 axios.defaults.withCredentials = true;
 
@@ -53,6 +54,7 @@ function App() {
     await dispatch(getUserProfile());
     await dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' }));
     await dispatch(getConversations(chatFilter));
+    await dispatch(getActiveClubChat());
   };
 
   useEffect(() => {
