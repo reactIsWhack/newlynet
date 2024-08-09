@@ -19,14 +19,18 @@ const useRedirectUser = (blockInterstsPage) => {
 
     dispatch(setIsLoggedIn(response.data));
 
-    if (!response.data && pathname !== '/signup') {
+    if (
+      !response.data &&
+      pathname !== '/signup' &&
+      pathname !== '/select-interests'
+    ) {
       navigate('/login');
     }
 
     if ((pathname === '/login' || pathname === '/signup') && response.data)
       navigate('/');
 
-    if (!blockInterstsPage && pathname === '/select-interests') {
+    if (response.data && pathname === '/select-interests') {
       navigate('/settings');
     }
   };
