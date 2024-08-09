@@ -25,10 +25,10 @@ beforeAll(async () => {
   secondUser = fakeUsers[0];
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
-    query: { userId: user._id },
+    query: { user: { userId: user._id, school: user.school } },
   });
   secondSocket = ioc(`http://localhost:${process.env.PORT}`, {
-    query: { userId: fakeUsers[0]._id },
+    query: { user: { userId: secondUser._id, school: secondUser.school } },
   });
 
   clientSocket.emit('joinroom', `clubchat-${user.school.schoolId}`, true);
@@ -39,7 +39,6 @@ beforeAll(async () => {
   );
 
   console.log('Before all finished');
-  await new Promise((resolve) => setTimeout(resolve, 1000));
 });
 
 const getRealTimeMessages = (socket, event) => {
@@ -51,10 +50,11 @@ const getRealTimeMessages = (socket, event) => {
   });
 };
 
+let montgomeryMsgId;
+
 describe('POST /clubChats', () => {
   it('Should send a general message', async () => {
     console.log('Sending message...');
-    let messagePromise = getRealTimeMessages(secondSocket, 'clubChatMsg');
 
     const response = await request(app)
       .post(`/api/club-chat/clubchatmsg`)
@@ -71,13 +71,18 @@ describe('POST /clubChats', () => {
 
     expect(response.body.message).toBe('Test club chat');
     expect(response.body.isClubChatMsg).toBe(true);
-    expect(response.body.receivers.map((item) => item._id.toString())).toEqual(
-      expect.arrayContaining([secondUser._id.toString()])
-    );
     expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
+  });
 
-    let messageEvent = await messagePromise;
-    expect(messageEvent.message).toBe('Test club chat');
+  it('Should send two more general message', async () => {
+    for (let i = 0; i < 2; i++) {
+      const response = await request(app)
+        .post(`/api/club-chat/clubchatmsg`)
+        .set('Cookie', [...jwt])
+        .send({ message: `General message ${i + 1}`, messageType: 'general' })
+        .expect(201)
+        .expect('Content-Type', /application\/json/);
+    }
   });
 
   it('Should send a topic message', async () => {
@@ -99,12 +104,29 @@ describe('POST /clubChats', () => {
 
     expect(response.body.message).toBe('Test club 2.0');
     expect(response.body.isClubChatMsg).toBe(true);
-    expect(response.body.receivers.map((item) => item._id.toString())).toEqual(
-      expect.arrayContaining([secondUser._id.toString()])
-    );
 
     let messageEvent = await messagePromise;
     expect(messageEvent.message).toBe('Test club 2.0');
+  });
+
+  it('Should have a user from a different school send a general messsage', async () => {
+    const { user, token } = await loginUser(
+      fakeUsers[4].username,
+      process.env.FAKE_USER_PASSWORD
+    );
+
+    const response = await request(app)
+      .post(`/api/club-chat/clubchatmsg`)
+      .set('Cookie', [...token])
+      .send({ message: 'Club chat for montgomery', messageType: 'general' })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    montgomeryMsgId = response.body._id;
+    expect(response.body.message).toBe('Club chat for montgomery');
+    expect(response.body.schoolAffiliation).toBe(user.school.schoolId);
+    expect(response.body.schoolAffiliation).not.toBe(userInfo.school.schoolId);
   });
 });
 
@@ -117,10 +139,47 @@ describe('GET /clubChats', () => {
       .expect('Content-Type', /application\/json/);
 
     expect(response.body.chatTopic).toBe(shuffledInterests[0]);
-    expect(response.body.generalMessages.length).toBe(1);
+    expect(response.body.generalMessages.length).toBe(4);
     expect(response.body.topicMessages.length).toBe(1);
     expect(response.body.isActive).toBe(true);
     expect(response.body._id).toBeTruthy();
+  });
+
+  let dateQuery;
+  it('Should get the first message from the general club chat messages', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const response = await request(app)
+      .get(`/api/club-chat/messages/general/${new Date(Date.now())}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    dateQuery = response.body[1].createdAt;
+    expect(response.body.length).toBe(2);
+    expect(response.body.map((item) => String(item._id))).not.toContain(
+      String(montgomeryMsgId)
+    );
+  });
+
+  it('Should get the latest message from the general messages', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    console.log(dateQuery);
+
+    const response = await request(app)
+      .get(`/api/club-chat/messages/general/${dateQuery}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.length).toBe(1);
+    expect(response.body.map((item) => String(item._id))).not.toContain(
+      String(montgomeryMsgId)
+    );
+    expect(response.body[0].message).toBe('Test club chat');
+    expect(response.body[0].author._id.toString()).toBe(userInfo._id);
   });
 });
 

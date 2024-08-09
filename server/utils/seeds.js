@@ -64,6 +64,7 @@ const generateClubChats = async () => {
       generalMessages: [],
       chatTopic: interest,
       isActive: false,
+      members: [],
     });
     clubChats.push(clubChat);
   }
@@ -121,7 +122,7 @@ const generateFakeUsers = async () => {
 };
 
 const populateDB = async () => {
-  // return ClubChat.deleteMany();
+  return ClubChat.deleteMany();
   // await generateFakeUsers();
   await generateClubChats();
   await initializeChatClub();

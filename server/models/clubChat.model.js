@@ -11,6 +11,7 @@ const clubChatSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   },
   { timestamps: true }
 );
