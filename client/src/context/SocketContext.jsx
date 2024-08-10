@@ -22,14 +22,19 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [usersInClubChat, setUsersInClubChat] = useState([]);
-  const { isLoggedIn, userId, school } = useSelector(selectUser);
+  const { isLoggedIn, userId, school, username } = useSelector(selectUser);
   const { chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
 
+  console.log(username);
   useEffect(() => {
     if (isLoggedIn) {
       const socketVal = io('http://localhost:4000', {
-        query: { userId, school: school?.schoolId },
+        query: {
+          userId,
+          school: school?.schoolId,
+          username,
+        },
       });
       setSocket(socketVal);
 
@@ -41,7 +46,9 @@ export const SocketContextProvider = ({ children }) => {
       socketVal.on('usersInClubChat', (users) => {
         console.log(users);
         const filteredUsers = users.filter(
-          (user) => user.school === school.schoolId
+          (user) =>
+            user.school === school.schoolId &&
+            !users.some((item) => item.user === user._id)
         );
         setUsersInClubChat(filteredUsers);
       });

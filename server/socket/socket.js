@@ -30,12 +30,14 @@ io.on('connection', async (socket) => {
     onlineUsers[userId] = socket.id;
   }
 
-  const user = await User.findOne({ username }).select('-password');
-  socket.on('joinroom', (roomname, isClubChat) => {
+  socket.on('joinroom', async (roomname, isClubChat) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
     socket.join(roomname);
 
     if (isClubChat) {
+      const user = await User.findOne({ username })
+        .select('-password')
+        .populate('chats');
       usersInClubChat.push({
         user: userId,
         school,
@@ -66,4 +68,13 @@ io.on('connection', async (socket) => {
   });
 });
 
-module.exports = { server, io, getSocketId, app, usersInClubChat };
+const resetOnlineUsers = () => (usersInClubChat = []);
+
+module.exports = {
+  server,
+  io,
+  getSocketId,
+  app,
+  usersInClubChat,
+  resetOnlineUsers,
+};

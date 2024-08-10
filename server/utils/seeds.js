@@ -7,6 +7,7 @@ const getSchool = require('../services/schoolService');
 const Message = require('../models/message.model');
 const shuffle = require('./shuffleArray');
 const ClubChat = require('../models/clubChat.model');
+const { usersInClubChat, resetOnlineUsers } = require('../socket/socket');
 config();
 
 const shuffledInterests = shuffle(interestOptions);
@@ -128,16 +129,16 @@ const generateFakeUsers = async () => {
 };
 
 const populateDB = async () => {
-  const existingClubChats = await ClubChat.find();
   let intervalID;
-  if (existingClubChats) {
-    await ClubChat.deleteMany();
-    clearInterval(intervalID);
-    await generateClubChats();
-  }
+  resetOnlineUsers();
+
+  await ClubChat.deleteMany();
+  clearInterval(intervalID);
+  await generateClubChats();
   // await generateFakeUsers();
 
   await initializeChatClub();
+  clearInterval(intervalID);
   intervalID = setInterval(async () => {
     await rotateClubChat();
   }, 60 * 60 * 1000);

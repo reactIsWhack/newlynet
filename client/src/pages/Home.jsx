@@ -21,13 +21,12 @@ const Home = ({ filter, setFilter }) => {
   const { school } = useSelector(selectUser);
   const { clubChatLoading, topic } = useSelector(selectClubChat);
 
-  const loading = true;
   return (
     <div>
       <Navbar />
       <div
         className={`py-8 ${
-          !mobile ? 'px-12' : ''
+          !mobile ? 'px-6' : ''
         } flex gap-12 items-start max-[550px]:pt-2`}
       >
         {!mobile && window.screen.width > 1000 && (
@@ -37,7 +36,7 @@ const Home = ({ filter, setFilter }) => {
         )}
         <HomeMainContent filter={filter} setFilter={setFilter} />
         {!mobile && (
-          <div className="home-right w-1/3 -ml-6 sticky py-4">
+          <div className="home-right w-1/3 -ml-4 sticky py-4">
             <h2 className="mb-3 text-lg text-center my-0">
               Current club hour at {school?.formattedName}
             </h2>

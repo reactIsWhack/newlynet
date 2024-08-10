@@ -5,6 +5,7 @@ const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 const initialState = {
   userId: '',
+  username: '',
   contacts: [],
   firstName: '',
   lastName: '',
@@ -179,6 +180,7 @@ const userSlice = createSlice({
         state.profilePicture = action.payload.profilePicture;
         state.grade = action.payload.grade;
         state.school = action.payload.school;
+        state.username = action.payload.username;
       })
       .addCase(signup.rejected, (state, action) => {
         state.isLoading = false;
@@ -200,6 +202,7 @@ const userSlice = createSlice({
         state.school = action.payload.school;
         state.chattingWith = action.payload.chattingWith;
         state.socialMediaInfo = action.payload.socialMediaUsernames;
+        state.username = action.payload.username;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -221,6 +224,7 @@ const userSlice = createSlice({
         state.chattingWith = action.payload.chattingWith;
         state.unreadChats = action.payload.unreadChats;
         state.socialMediaInfo = action.payload.socialMediaUsernames;
+        state.username = action.payload.username;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;
