@@ -61,6 +61,12 @@ let montgomeryMsgId;
 describe('PATCH /clubChats', () => {
   it('Should have both users join the club chat', async () => {
     for (let i = 0; i < 2; i++) {
+      const joinPromise = new Promise((resolve, reject) => {
+        secondSocket.on('clubChatJoin', (clubChat, user) => {
+          resolve({ clubChat, user });
+        });
+      });
+
       const response = await request(app)
         .patch(`/api/club-chat/joinclubchat`)
         .set('Cookie', i === 0 ? [...jwt] : [...secondUserToken])
@@ -75,6 +81,14 @@ describe('PATCH /clubChats', () => {
         expect(response.body.members[1]._id.toString()).toBe(
           secondUser._id.toString()
         );
+
+      if (i === 0) {
+        const joinEvent = await joinPromise;
+        expect(
+          joinEvent.clubChat.members.map((m) => m._id.toString())
+        ).toContain(userInfo._id.toString());
+        expect(joinEvent.user._id.toString()).toBe(userInfo._id.toString());
+      }
     }
   });
 
@@ -188,11 +202,11 @@ describe('GET /clubChats', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    expect(response.body.chatTopic).toBe(shuffledInterests[0]);
-    expect(response.body.generalMessages.length).toBe(4);
-    expect(response.body.topicMessages.length).toBe(1);
-    expect(response.body.isActive).toBe(true);
-    expect(response.body._id).toBeTruthy();
+    expect(response.body.clubChat.chatTopic).toBe(shuffledInterests[0]);
+    expect(response.body.clubChat.generalMessages.length).toBe(4);
+    expect(response.body.clubChat.topicMessages.length).toBe(1);
+    expect(response.body.clubChat.isActive).toBe(true);
+    expect(response.body.clubChat._id).toBeTruthy();
   });
 
   let dateQuery;

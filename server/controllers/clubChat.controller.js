@@ -7,6 +7,7 @@ const { shuffledInterests } = require('../utils/seeds');
 
 const joinClubChat = asyncHandler(async (req, res) => {
   const clubChat = await ClubChat.findOne({ isActive: true });
+  const user = await User.findById(req.userId);
 
   if (!clubChat) {
     res.status(404);
@@ -16,6 +17,8 @@ const joinClubChat = asyncHandler(async (req, res) => {
   clubChat.members = [...clubChat.members, req.userId];
 
   await clubChat.save().then((item) => item.populate('members'));
+
+  io.emit('clubChatJoin', clubChat, user);
 
   res.status(200).json(clubChat);
 });
@@ -30,7 +33,8 @@ const getActiveClubChat = asyncHandler(async (req, res) => {
   const nextTopic = shuffledInterests[currentIndex + 1] || shuffledInterests[0];
 
   if (!activeClubChat) {
-    return res.status(200).json({ message: 'No active club chats right now' });
+    res.status(404);
+    throw new Error('Club hour not active right now');
   }
 
   res.status(200).json({ nextTopic, clubChat: activeClubChat });
