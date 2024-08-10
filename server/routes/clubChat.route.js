@@ -14,6 +14,5 @@ router.get(
   routeProtector,
   getClubChatMessages
 );
-router.patch('/joinclubchat', routeProtector, joinClubChat);
 
 module.exports = router;

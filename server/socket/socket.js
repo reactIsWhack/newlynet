@@ -25,39 +25,20 @@ const getSocketId = (userId) => {
 io.on('connection', async (socket) => {
   console.log(`user connected on socket with id of ${socket.id}`);
 
-  const { school, userId, username } = socket.handshake.query;
+  const { userId } = socket.handshake.query;
   if (userId) {
     onlineUsers[userId] = socket.id;
   }
 
-  socket.on('joinroom', async (roomname, isClubChat) => {
+  socket.on('joinroom', async (roomname) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
     socket.join(roomname);
-
-    if (isClubChat) {
-      const user = await User.findOne({ username })
-        .select('-password')
-        .populate('chats');
-      usersInClubChat.push({
-        user: userId,
-        school,
-        socket: socket.id,
-        userData: user,
-      });
-      io.emit('usersInClubChat', usersInClubChat);
-    }
   });
 
-  socket.on('leaveroom', (roomname, isClubChat) => {
+  socket.on('leaveroom', (roomname) => {
     console.log(`user: ${socket.id} left room - ${roomname}`);
     socket.leave(roomname);
-
-    if (isClubChat) {
-      usersInClubChat = usersInClubChat.filter((user) => user.user !== userId);
-      io.emit('usersInClubChat', usersInClubChat);
-    }
   });
-  io.emit('usersInClubChat', usersInClubChat);
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
 
