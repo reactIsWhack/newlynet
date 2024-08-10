@@ -4,6 +4,7 @@ const express = require('express');
 // const app = require('../index');
 const app = express();
 const { config } = require('dotenv');
+const User = require('../models/user.model');
 config();
 
 const server = http.createServer(app);
@@ -21,14 +22,15 @@ const getSocketId = (userId) => {
   return onlineUsers[userId];
 };
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
   console.log(`user connected on socket with id of ${socket.id}`);
 
-  const { school, userId } = socket.handshake.query;
+  const { school, userId, username } = socket.handshake.query;
   if (userId) {
     onlineUsers[userId] = socket.id;
   }
 
+  const user = await User.findOne({ username }).select('-password');
   socket.on('joinroom', (roomname, isClubChat) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
     socket.join(roomname);
@@ -38,10 +40,10 @@ io.on('connection', (socket) => {
         user: userId,
         school,
         socket: socket.id,
+        userData: user,
       });
-      console.log(usersInClubChat);
+      io.emit('usersInClubChat', usersInClubChat);
     }
-    io.emit('usersInClubChat', usersInClubChat);
   });
 
   socket.on('leaveroom', (roomname, isClubChat) => {
@@ -49,12 +51,11 @@ io.on('connection', (socket) => {
     socket.leave(roomname);
 
     if (isClubChat) {
-      usersInClubChat = usersInClubChat.filter(
-        (user) => user.socket !== socket.id
-      );
+      usersInClubChat = usersInClubChat.filter((user) => user.user !== userId);
+      io.emit('usersInClubChat', usersInClubChat);
     }
-    io.emit('usersInClubChat', usersInClubChat);
   });
+  io.emit('usersInClubChat', usersInClubChat);
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
 
