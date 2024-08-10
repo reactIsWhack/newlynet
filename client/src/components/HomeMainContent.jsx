@@ -38,9 +38,9 @@ const HomeMainContent = ({ filter, setFilter }) => {
 
   return (
     <div className="home-main-content flex-1 py-4 px-1 max-[550px]:px-0">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between max-[550px]:px-2 max-[550px]:flex-col">
         <h3 className="text-lg font-medium">New Students in your School</h3>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 max-[550px]:mt-3">
           <button
             className="btn btn-accent min-h-10 h-10"
             onClick={handleClick}

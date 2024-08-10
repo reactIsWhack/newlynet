@@ -24,7 +24,11 @@ const Home = ({ filter, setFilter }) => {
   return (
     <div>
       <Navbar />
-      <div className={`py-8 ${!mobile ? 'px-12' : ''} flex gap-12 items-start`}>
+      <div
+        className={`py-8 ${
+          !mobile ? 'px-12' : ''
+        } flex gap-12 items-start max-[550px]:pt-2`}
+      >
         {!mobile && window.screen.width > 1000 && (
           <div className="sticky primary-user-card">
             <PrimaryUserCard />
