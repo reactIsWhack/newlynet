@@ -3,7 +3,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 const {
   generateFakeUsers,
   generateClubChats,
-  initializeChatClub,
+  populateDB,
 } = require('../utils/seeds');
 
 let mongoServer;
@@ -16,9 +16,7 @@ const initializeMongoDB = async () => {
     dbName: process.env.NODE_ENV === 'test' ? 'NodeNetTest' : 'NodeNet',
   });
 
-  await generateFakeUsers();
-  await generateClubChats();
-  await initializeChatClub();
+  await populateDB();
 };
 
 const disconnectMongoDB = async () => {

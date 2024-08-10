@@ -7,41 +7,11 @@ const getSchool = require('../services/schoolService');
 const Message = require('../models/message.model');
 const shuffle = require('./shuffleArray');
 const ClubChat = require('../models/clubChat.model');
-const { usersInClubChat, resetOnlineUsers } = require('../socket/socket');
+const { resetOnlineUsers } = require('../socket/socket');
+const ClubServer = require('../models/clubServer.model');
 config();
 
 const shuffledInterests = shuffle(interestOptions);
-
-const rotateClubChat = async () => {
-  const activeClubChat = await ClubChat.findOne({ isActive: true });
-  activeClubChat.isActive = false;
-
-  let nextIndex = shuffledInterests.indexOf(activeClubChat.chatTopic) + 1;
-  if (nextIndex >= shuffledInterests.length) nextIndex = 0;
-
-  const nextInterest = shuffledInterests[nextIndex];
-  const newClubChat = await ClubChat.findOne({ chatTopic: nextInterest });
-  newClubChat.isActive = true;
-
-  await Promise.all([activeClubChat.save(), newClubChat.save()]);
-  console.log(newClubChat);
-};
-
-const initializeChatClub = async () => {
-  const activeClubChat = await ClubChat.findOne({ isActive: true });
-  if (activeClubChat) {
-    activeClubChat.isActive = false;
-    await activeClubChat.save();
-  }
-
-  const firstInterest = shuffledInterests[0];
-  const startingClubChat = await ClubChat.findOne({
-    chatTopic: firstInterest,
-  });
-  startingClubChat.isActive = true;
-  await startingClubChat.save();
-  console.log(startingClubChat);
-};
 
 const generateGrade = (i) => {
   const randomGrade =
@@ -64,30 +34,33 @@ const generateInterests = () => {
 };
 
 const generateClubChats = async () => {
-  const clubChats = [];
-  for (const interest of shuffledInterests) {
-    const clubChat = await ClubChat.create({
-      topicMessages: [],
-      generalMessages: [],
-      chatTopic: interest,
-      isActive: false,
+  const initialSchools = ['PrincetonHighSchool', 'MontgomeryHighSchool'];
+  for (const initialSchool of initialSchools) {
+    const clubChats = [];
+    const schoolInfo = await getSchool(initialSchool);
+    const clubServer = await ClubServer.create({
       members: [],
+      chats: [],
+      schoolAffiliation: schoolInfo.schoolId,
     });
-    clubChats.push(clubChat);
-  }
 
-  return clubChats;
+    for (const interest of shuffledInterests) {
+      const clubChat = await ClubChat.create({
+        messages: [],
+        chatTopic: interest,
+      });
+      clubChats.push(clubChat);
+    }
+    clubServer.chats = clubChats;
+    await clubServer.save();
+  }
 };
 
 const generateFakeUsers = async () => {
   console.log('Generating fake users...');
 
   const fakeUsers = [];
-  const schoolQueries = [
-    'PrincetonHighSchool',
-    'MontgomeryHighSchool',
-    // 'SouthBrunswickHighSchool',
-  ];
+  const schoolQueries = ['PrincetonHighSchool', 'MontgomeryHighSchool'];
 
   for (const schoolQuery of schoolQueries) {
     const numOfFakeUsers =
@@ -129,19 +102,9 @@ const generateFakeUsers = async () => {
 };
 
 const populateDB = async () => {
-  let intervalID;
   resetOnlineUsers();
-
-  await ClubChat.deleteMany();
-  clearInterval(intervalID);
   await generateClubChats();
-  // await generateFakeUsers();
-
-  await initializeChatClub();
-  clearInterval(intervalID);
-  intervalID = setInterval(async () => {
-    await rotateClubChat();
-  }, 60 * 60 * 1000);
+  await generateFakeUsers();
 };
 
 module.exports = {
@@ -149,6 +112,4 @@ module.exports = {
   generateClubChats,
   shuffledInterests,
   populateDB,
-  rotateClubChat,
-  initializeChatClub,
 };
