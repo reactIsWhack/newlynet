@@ -54,10 +54,19 @@ const connectContactSockets = async (contactId, i) => {
   return contactSockets;
 };
 
+const joinClubServer = async (clubServerId, jwt) => {
+  await request(app)
+    .patch(`/api/clubserver/${clubServerId}`)
+    .set('Cookie', [...jwt])
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
+};
+
 module.exports = {
   loginUser,
   createTestUser,
   addContacts,
   connectClientSocket,
   connectContactSockets,
+  joinClubServer,
 };

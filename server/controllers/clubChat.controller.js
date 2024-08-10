@@ -7,53 +7,54 @@ const { shuffledInterests } = require('../utils/seeds');
 const ClubServer = require('../models/clubServer.model');
 
 const sendClubChatMessage = asyncHandler(async (req, res) => {
-  const { message, messageType } = req.body;
+  const { message, chatSection } = req.body;
+  const { serverId } = req.params;
 
-  const clubChat = await ClubChat.findOne({ isActive: true }).populate(
-    'members'
-  );
+  const clubServer = await ClubServer.findById(serverId).populate('chats');
   const user = await User.findById(req.userId);
 
-  if (!clubChat.members.some((m) => m._id.toString() === user._id.toString())) {
-    res.status(400);
-    throw new Error('Please join the chat club to send a message');
-  }
-
-  if (!clubChat) {
+  if (!clubServer) {
     res.status(404);
-    throw new Error('No active chat open currently to send messages in');
+    throw new Error('Club server not found');
   }
 
-  const receivers = clubChat.members.filter(
-    (member) =>
-      String(member._id) !== String(req.userId) &&
-      member.school.schoolId === user.school.schoolId
-  );
+  if (
+    !clubServer.members.some(
+      (memberId) => String(memberId) === String(user._id)
+    )
+  ) {
+    res.status(400);
+    throw new Error('Please join the club server to send messagse');
+  }
 
+  const receivers = clubServer.members.filter(
+    (member) => String(member) !== String(user._id)
+  );
   const newMessage = await Message.create({
     message,
     receivers,
-    media: { src: '', fileType: '' },
+    author: user,
     isClubChatMsg: true,
     schoolAffiliation: user.school.schoolId,
-    author: user,
-  }).then((msg) => msg.populate('receivers'));
-
-  if (messageType === 'general') {
-    clubChat.generalMessages = [...clubChat.generalMessages, newMessage];
-  } else {
-    clubChat.topicMessages = [...clubChat.topicMessages, newMessage];
-  }
-  await clubChat.save();
+  }).then((item) => item.populate(['receivers', 'author']));
 
   if (!newMessage) {
     res.status(500);
     throw new Error('Message failed to send');
   }
 
-  const roomName = `clubchat-${user.school.schoolId}`;
+  const serverChat = clubServer.chats.find(
+    (chat) => chat.chatTopic === chatSection
+  );
+  const chat = await ClubChat.findById(serverChat._id);
+  chat.messages = [...chat.messages, newMessage];
+  await chat.save();
 
-  io.to(roomName).emit('clubChatMsg', newMessage);
+  io.to(`clubserver-${clubServer._id}-${chat._id}`).emit(
+    'newClubServerMsg',
+    chat,
+    newMessage
+  );
 
   res.status(201).json(newMessage);
 });

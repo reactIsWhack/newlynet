@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const clubChatSchema = new mongoose.Schema(
   {
-    messages: [],
+    messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
     chatTopic: {
       type: String,
     },

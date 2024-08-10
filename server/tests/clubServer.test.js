@@ -6,12 +6,14 @@ const { app } = require('../socket/socket');
 const { shuffledInterests } = require('../utils/seeds');
 const ioc = require('socket.io-client');
 const User = require('../models/user.model');
+const ClubServer = require('../models/clubServer.model');
 
 let jwt;
 let userInfo;
 let clubServerId;
 let clientSocket;
 let secondUserSocket;
+let secondUserToken;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -23,6 +25,11 @@ beforeAll(async () => {
   const secondUser = await User.findOne({
     'school.schoolId': user.school.schoolId,
   });
+  const secondUserData = await loginUser(
+    secondUser.username,
+    process.env.FAKE_USER_PASSWORD
+  );
+  secondUserToken = secondUserData.token;
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: user._id },
@@ -75,5 +82,7 @@ describe('PATCH /clubserver', () => {
 });
 
 afterAll(async () => {
+  clientSocket.disconnect();
+  secondUserSocket.disconnect();
   await disconnectMongoDB();
 });

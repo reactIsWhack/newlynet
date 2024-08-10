@@ -8,7 +8,7 @@ const {
 
 const router = Router();
 
-router.post('/clubchatmsg', routeProtector, sendClubChatMessage);
+router.post('/:serverId', routeProtector, sendClubChatMessage);
 router.get(
   '/messages/:section/:dateQuery',
   routeProtector,
