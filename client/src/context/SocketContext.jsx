@@ -20,6 +20,7 @@ export const useSocket = () => useContext(SocketContext);
 export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
+  const [usersInClubChat, setUsersInClubChat] = useState([]);
   const { isLoggedIn, userId, school } = useSelector(selectUser);
   const { chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
@@ -34,6 +35,13 @@ export const SocketContextProvider = ({ children }) => {
       socketVal.on('onlineUsers', (users) => {
         // listens for the onlineUsers event
         setOnlineUsers(users);
+      });
+
+      socketVal.on('usersInClubChat', (users) => {
+        const filteredUsers = users.filter(
+          (user) => user.school === school.schoolId
+        );
+        setUsersInClubChat(filteredUsers);
       });
 
       socketVal.on('newChat', (chat, updatedNotifications) => {
@@ -73,7 +81,7 @@ export const SocketContextProvider = ({ children }) => {
   }, [isLoggedIn, userId, chatFilter]);
 
   return (
-    <SocketContext.Provider value={{ socket, onlineUsers }}>
+    <SocketContext.Provider value={{ socket, onlineUsers, usersInClubChat }}>
       {children}
     </SocketContext.Provider>
   );

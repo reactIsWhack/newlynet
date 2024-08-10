@@ -10,6 +10,7 @@ import ClubChatStats from '../components/ui/ClubChatStats';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import ClubChatInfo from '../components/ui/ClubChatInfo';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
@@ -40,7 +41,10 @@ const Home = ({ filter, setFilter }) => {
                 <span className="loading loading-spinner loading-lg"></span>
               </div>
             ) : (
-              <ClubChatStats />
+              <>
+                <ClubChatStats />
+                <ClubChatInfo />
+              </>
             )}
           </div>
         )}

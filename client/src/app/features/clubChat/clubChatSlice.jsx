@@ -11,6 +11,7 @@ const initialState = {
   generalMessages: [],
   activatedAt: '',
   clubChatLoading: false,
+  nextTopic: '',
 };
 
 export const getActiveClubChat = createAsyncThunk(
@@ -37,11 +38,12 @@ const clubChatSlice = createSlice({
         state.clubChatLoading = true;
       })
       .addCase(getActiveClubChat.fulfilled, (state, action) => {
-        state.topic = action.payload.data.chatTopic;
-        state.activatedAt = action.payload.data.updatedAt;
-        state.members = action.payload.data.members.filter(
+        state.topic = action.payload.data.clubChat.chatTopic;
+        state.activatedAt = action.payload.data.clubChat.updatedAt;
+        state.members = action.payload.data.clubChat.members.filter(
           (member) => member.school.schoolId === action.payload.schoolId
         );
+        state.nextTopic = action.payload.data.nextTopic;
         state.clubChatLoading = false;
       })
       .addCase(getActiveClubChat.rejected, (state, action) => {

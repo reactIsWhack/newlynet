@@ -27,6 +27,12 @@ const rotateClubChat = async () => {
 };
 
 const initializeChatClub = async () => {
+  const activeClubChat = await ClubChat.findOne({ isActive: true });
+  if (activeClubChat) {
+    activeClubChat.isActive = false;
+    await activeClubChat.save();
+  }
+
   const firstInterest = shuffledInterests[0];
   const startingClubChat = await ClubChat.findOne({
     chatTopic: firstInterest,
@@ -122,11 +128,17 @@ const generateFakeUsers = async () => {
 };
 
 const populateDB = async () => {
-  // return ClubChat.deleteMany();
+  const existingClubChats = await ClubChat.find();
+  let intervalID;
+  if (existingClubChats && false) {
+    await ClubChat.deleteMany();
+    clearInterval(intervalID);
+    await generateClubChats();
+  }
   // await generateFakeUsers();
-  await generateClubChats();
+
   await initializeChatClub();
-  setInterval(async () => {
+  intervalID = setInterval(async () => {
     await rotateClubChat();
   }, 60 * 60 * 1000);
 };
