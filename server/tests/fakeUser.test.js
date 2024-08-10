@@ -37,10 +37,11 @@ describe('Generate club chats', () => {
   });
 
   it('Should generate two club servers', async () => {
-    const clubServer = await ClubServer.findOne({});
+    const clubServer = await ClubServer.findOne({}).populate('chats');
     console.log(clubServer);
 
-    expect(clubServer.chats.length).toBe(27);
+    expect(clubServer.chats.length).toBe(28);
+    expect(clubServer.chats.map((chat) => chat.chatTopic)).toContain('General');
   });
 });
 

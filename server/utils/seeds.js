@@ -51,7 +51,11 @@ const generateClubChats = async () => {
       });
       clubChats.push(clubChat);
     }
-    clubServer.chats = clubChats;
+    const generalClubChat = await ClubChat.create({
+      messages: [],
+      chatTopic: 'General',
+    });
+    clubServer.chats = [...clubChats, generalClubChat];
     await clubServer.save();
   }
 };
