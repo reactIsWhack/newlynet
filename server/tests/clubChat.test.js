@@ -50,11 +50,15 @@ beforeAll(async () => {
 
   clientSocket.emit(
     'joinroom',
-    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`
+    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`,
+    true,
+    clubServer.chats[0].chatTopic
   );
   secondSocket.emit(
     'joinroom',
-    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`
+    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`,
+    true,
+    clubServer.chats[0].chatTopic
   );
 });
 
@@ -145,11 +149,13 @@ describe('GET /clubChat', () => {
 afterAll(async () => {
   clientSocket.emit(
     'leaveroom',
-    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`
+    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`,
+    true
   );
   secondSocket.emit(
     'leaveroom',
-    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`
+    `clubserver-${clubServer._id}-${clubServer.chats[0]._id}`,
+    true
   );
   clientSocket.disconnect();
   secondSocket.disconnect();

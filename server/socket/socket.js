@@ -16,7 +16,7 @@ const io = new Server(server, {
 });
 
 const onlineUsers = {};
-let usersInClubChat = [];
+let usersInClubServer = [];
 
 const getSocketId = (userId) => {
   return onlineUsers[userId];
@@ -30,14 +30,33 @@ io.on('connection', async (socket) => {
     onlineUsers[userId] = socket.id;
   }
 
-  socket.on('joinroom', async (roomname) => {
+  socket.on('joinroom', async (roomname, isClubServer, chatSection) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
     socket.join(roomname);
+    if (isClubServer) {
+      const userData = await User.findById(userId).select('-password');
+      usersInClubServer.push({
+        socket: socket.id,
+        userId,
+        chatSection,
+        userData,
+      });
+      io.emit('onlineClubUsers', usersInClubServer);
+      console.log(usersInClubServer);
+    }
   });
 
-  socket.on('leaveroom', (roomname) => {
+  socket.on('leaveroom', (roomname, isClubServer) => {
     console.log(`user: ${socket.id} left room - ${roomname}`);
+
     socket.leave(roomname);
+    if (isClubServer) {
+      usersInClubServer = usersInClubServer.filter(
+        (user) => user.userId !== userId
+      );
+      io.emit('onlineClubUsers', usersInClubServer);
+      console.log(usersInClubServer);
+    }
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
@@ -56,6 +75,5 @@ module.exports = {
   io,
   getSocketId,
   app,
-  usersInClubChat,
   resetOnlineUsers,
 };
