@@ -111,6 +111,37 @@ describe('POST /clubChat', () => {
   });
 });
 
+describe('GET /clubChat', () => {
+  let dateQuery;
+  it('Should get the first two messages sent in the club chat', async () => {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const response = await request(app)
+      .get(`/api/club-chat/${clubServer.chats[0]._id}/${new Date(Date.now())}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    dateQuery = response.body[1].createdAt;
+    expect(response.body.length).toBe(2);
+    expect(response.body[0].message).toBe('Extra message 2');
+    expect(response.body[1].message).toBe('Extra message 1');
+  });
+
+  it('Should get the oldest message sent in the club chat via pagination', async () => {
+    const response = await request(app)
+      .get(`/api/club-chat/${clubServer.chats[0]._id}/${dateQuery}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body[0].message).toBe('Hi from test user');
+    expect(response.body[0].author._id.toString()).toBe(
+      userInfo._id.toString()
+    );
+  });
+});
+
 afterAll(async () => {
   clientSocket.emit(
     'leaveroom',

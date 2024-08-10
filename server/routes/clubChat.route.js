@@ -9,10 +9,6 @@ const {
 const router = Router();
 
 router.post('/:serverId', routeProtector, sendClubChatMessage);
-router.get(
-  '/messages/:section/:dateQuery',
-  routeProtector,
-  getClubChatMessages
-);
+router.get('/:chatId/:dateQuery', routeProtector, getClubChatMessages);
 
 module.exports = router;
