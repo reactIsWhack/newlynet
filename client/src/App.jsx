@@ -24,6 +24,8 @@ import Settings from './pages/Settings';
 import { getActiveClubChat } from './app/features/clubChat/clubChatSlice';
 import LoadingScreen from './components/LoadingScreen';
 import ClubChat from './pages/ClubChat';
+import GeneralMessages from './pages/GeneralMessages';
+import SectionMessages from './pages/SectionMessages';
 
 axios.defaults.withCredentials = true;
 
@@ -53,8 +55,9 @@ function App() {
   });
   const [renderLoadingScreen, setRenderLoadingScreen] = useState(false);
 
+  console.log(renderLoadingScreen);
   const getData = async () => {
-    setRenderLoadingScreen(true);
+    if (isLoggedIn) setRenderLoadingScreen(true);
     await dispatch(getUserProfile()).then(() => setRenderLoadingScreen(false));
     await Promise.all([
       dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' })),
@@ -66,7 +69,6 @@ function App() {
   };
 
   useEffect(() => {
-    setRenderLoadingScreen(true);
     if (isLoggedIn) {
       getData();
     }
@@ -140,7 +142,10 @@ function App() {
               />
             }
           ></Route>
-          <Route path="/clubchat" element={<ClubChat />}></Route>
+          <Route path="/clubchat" element={<ClubChat />}>
+            <Route index element={<GeneralMessages />}></Route>
+            <Route path=":section" element={<SectionMessages />}></Route>
+          </Route>
         </Routes>
       )}
       <Toaster />
