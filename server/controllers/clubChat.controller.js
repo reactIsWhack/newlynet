@@ -4,6 +4,7 @@ const Message = require('../models/message.model');
 const { io } = require('../socket/socket');
 const User = require('../models/user.model');
 const { shuffledInterests } = require('../utils/seeds');
+const ClubServer = require('../models/clubServer.model');
 
 const joinClubChat = asyncHandler(async (req, res) => {
   const clubChat = await ClubChat.findOne({ isActive: true });
@@ -21,23 +22,6 @@ const joinClubChat = asyncHandler(async (req, res) => {
   io.emit('clubChatJoin', clubChat, user);
 
   res.status(200).json(clubChat);
-});
-
-const getActiveClubChat = asyncHandler(async (req, res) => {
-  const activeClubChat = await ClubChat.findOne({ isActive: true }).populate([
-    'generalMessages',
-    'topicMessages',
-    'members',
-  ]);
-  const currentIndex = shuffledInterests.indexOf(activeClubChat.chatTopic);
-  const nextTopic = shuffledInterests[currentIndex + 1] || shuffledInterests[0];
-
-  if (!activeClubChat) {
-    res.status(404);
-    throw new Error('Club hour not active right now');
-  }
-
-  res.status(200).json({ nextTopic, clubChat: activeClubChat });
 });
 
 const sendClubChatMessage = asyncHandler(async (req, res) => {
@@ -128,7 +112,6 @@ const getClubChatMessages = asyncHandler(async (req, res) => {
 });
 
 module.exports = {
-  getActiveClubChat,
   sendClubChatMessage,
   getClubChatMessages,
   joinClubChat,

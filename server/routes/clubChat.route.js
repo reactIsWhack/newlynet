@@ -1,7 +1,6 @@
 const { Router } = require('express');
 const routeProtector = require('../middleware/routeProtector');
 const {
-  getActiveClubChat,
   sendClubChatMessage,
   getClubChatMessages,
   joinClubChat,
@@ -9,7 +8,6 @@ const {
 
 const router = Router();
 
-router.get('/activeclubchat', routeProtector, getActiveClubChat);
 router.post('/clubchatmsg', routeProtector, sendClubChatMessage);
 router.get(
   '/messages/:section/:dateQuery',
