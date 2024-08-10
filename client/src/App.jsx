@@ -23,6 +23,7 @@ import UserDetails from './components/UserDetails';
 import Settings from './pages/Settings';
 import { getActiveClubChat } from './app/features/clubChat/clubChatSlice';
 import LoadingScreen from './components/LoadingScreen';
+import ClubChat from './pages/ClubChat';
 
 axios.defaults.withCredentials = true;
 
@@ -55,9 +56,13 @@ function App() {
   const getData = async () => {
     setRenderLoadingScreen(true);
     await dispatch(getUserProfile()).then(() => setRenderLoadingScreen(false));
-    await dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' }));
-    await dispatch(getConversations(chatFilter));
-    await dispatch(getActiveClubChat());
+    await Promise.all([
+      dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' })),
+
+      dispatch(getConversations(chatFilter)),
+
+      dispatch(getActiveClubChat()),
+    ]);
   };
 
   useEffect(() => {
@@ -135,6 +140,7 @@ function App() {
               />
             }
           ></Route>
+          <Route path="/clubchat" element={<ClubChat />}></Route>
         </Routes>
       )}
       <Toaster />

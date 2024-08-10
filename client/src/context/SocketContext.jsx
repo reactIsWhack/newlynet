@@ -12,6 +12,7 @@ import {
   setMessages,
 } from '../app/features/chats/chatSlice';
 import toast from 'react-hot-toast';
+import { setClubChatMembers } from '../app/features/clubChat/clubChatSlice';
 
 const SocketContext = createContext();
 
@@ -38,10 +39,16 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       socketVal.on('usersInClubChat', (users) => {
+        console.log(users);
         const filteredUsers = users.filter(
           (user) => user.school === school.schoolId
         );
         setUsersInClubChat(filteredUsers);
+      });
+
+      socketVal.on('clubChatJoin', (clubChat, user) => {
+        if (user.school.schoolId === school.schoolId)
+          dispatch(setClubChatMembers(clubChat));
       });
 
       socketVal.on('newChat', (chat, updatedNotifications) => {

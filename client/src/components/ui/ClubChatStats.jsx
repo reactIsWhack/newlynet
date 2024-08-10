@@ -27,8 +27,8 @@ const ClubChatStats = () => {
 
   return (
     <>
-      <div className="stats shadow h-28 w-full overflow-hidden">
-        <div className="stat max-w-32 px-4">
+      <div className="stats shadow h-28 w-full overflow-hidden flex">
+        <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title">Members</div>
           <div className="stat-value text-3xl">{members.length}</div>
           <div className="stat-desc">
@@ -36,19 +36,19 @@ const ClubChatStats = () => {
           </div>
         </div>
 
-        <div className="stat max-w-32 px-4 flex-1">
-          <div className="stat-title text-center">Online Users</div>
+        <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
+          <div className="stat-title text-center w-full ">Online Users</div>
           <div className="stat-value text-3xl text-center w-full">
             {usersInClubChat.length}
           </div>
         </div>
-        <div className="stat max-w-32 px-4">
+        <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title">Schedule</div>
           <div className="stat-value text-lg font-normal">
             {futureEndingTime}
           </div>
           <div
-            className="stat-desc text-[13px] tooltip relative"
+            className="stat-desc text-[13px] tooltip relative text-left"
             data-tip={nextTopic}
           >
             {truncatedNextTopic}

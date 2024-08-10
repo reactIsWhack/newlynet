@@ -130,7 +130,7 @@ const generateFakeUsers = async () => {
 const populateDB = async () => {
   const existingClubChats = await ClubChat.find();
   let intervalID;
-  if (existingClubChats && false) {
+  if (existingClubChats) {
     await ClubChat.deleteMany();
     clearInterval(intervalID);
     await generateClubChats();

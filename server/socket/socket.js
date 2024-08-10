@@ -41,6 +41,7 @@ io.on('connection', (socket) => {
       });
       console.log(usersInClubChat);
     }
+    io.emit('usersInClubChat', usersInClubChat);
   });
 
   socket.on('leaveroom', (roomname, isClubChat) => {
@@ -52,10 +53,10 @@ io.on('connection', (socket) => {
         (user) => user.socket !== socket.id
       );
     }
+    io.emit('usersInClubChat', usersInClubChat);
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
-  io.emit('usersInClubChat', usersInClubChat);
 
   socket.on('disconnect', () => {
     console.log(`user disconnected from socket with id of ${socket.id} `);

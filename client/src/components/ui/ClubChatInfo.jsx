@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import { selectClubChat } from '../../app/features/clubChat/clubChatSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  joinClubChat,
+  selectClubChat,
+} from '../../app/features/clubChat/clubChatSlice';
 import { add, differenceInMinutes } from 'date-fns';
+import { selectUser } from '../../app/features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { useSocket } from '../../context/SocketContext';
 
 // Function to calculate minutes between now and ending time
 const getMinutesUntilEnding = (activatedAt) => {
@@ -18,11 +24,16 @@ const getMinutesUntilEnding = (activatedAt) => {
 };
 
 const ClubChatInfo = () => {
-  const { topic, activatedAt } = useSelector(selectClubChat);
+  const { topic, activatedAt, members, clubChatLoading } =
+    useSelector(selectClubChat);
   const [currentMinute, setCurrentMinute] = useState(new Date().getMinutes());
   const [minutesRemaining, setMinutesRemaining] = useState(
     getMinutesUntilEnding(activatedAt)
   );
+  const { userId, school } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { socket } = useSocket();
 
   useEffect(() => {
     // This effect runs every time the minute changes
@@ -47,13 +58,38 @@ const ClubChatInfo = () => {
     return () => clearInterval(intervalId);
   }, [currentMinute]);
 
+  const join = async () => {
+    await dispatch(joinClubChat()).then((res) => {
+      navigate('/clubchat');
+    });
+  };
+  const resumeClubHour = () => {
+    navigate('/clubchat');
+  };
+
+  const inClubChat = members.find((member) => member._id === userId);
+
   return (
-    <div className="card bg-base-100 text-neutral-content w-96 mt-4 shadow-lg">
+    <div className="card bg-base-100 text-neutral-content w-full mt-4 shadow-lg">
       <div className="card-body items-center text-center">
         <h2 className="card-title">Topic: {topic}</h2>
-        <p>{minutesRemaining} minutes remaining</p>
+        {!topic ? (
+          <p>Loading...</p>
+        ) : (
+          <p>{minutesRemaining} minutes remaining</p>
+        )}
         <div className="card-actions justify-end">
-          <button className="btn btn-primary mt-3">Join</button>
+          {clubChatLoading ? (
+            <span className="loading loading-spinner loading-lg mt-3"></span>
+          ) : inClubChat ? (
+            <button className="btn btn-primary mt-3" onClick={resumeClubHour}>
+              Resume club hour
+            </button>
+          ) : (
+            <button className="btn btn-primary mt-3" onClick={join}>
+              Join
+            </button>
+          )}
         </div>
       </div>
     </div>

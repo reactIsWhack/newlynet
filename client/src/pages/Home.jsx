@@ -19,8 +19,9 @@ const Home = ({ filter, setFilter }) => {
 
   const mobile = useDetectMobile();
   const { school } = useSelector(selectUser);
-  const { clubChatLoading } = useSelector(selectClubChat);
+  const { clubChatLoading, topic } = useSelector(selectClubChat);
 
+  const loading = true;
   return (
     <div>
       <Navbar />
@@ -40,7 +41,7 @@ const Home = ({ filter, setFilter }) => {
             <h2 className="mb-3 text-lg text-center my-0">
               Current club hour at {school?.formattedName}
             </h2>
-            {clubChatLoading ? (
+            {clubChatLoading && !topic ? (
               <div className="flex justify-center mt-4">
                 <span className="loading loading-spinner loading-lg"></span>
               </div>

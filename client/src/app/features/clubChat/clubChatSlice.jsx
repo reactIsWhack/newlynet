@@ -29,9 +29,28 @@ export const getActiveClubChat = createAsyncThunk(
   }
 );
 
+export const joinClubChat = createAsyncThunk(
+  'clubChat/join',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `${baseURL}/api/club-chat/joinclubchat`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const clubChatSlice = createSlice({
   name: 'clubChat',
   initialState,
+  reducers: {
+    setClubChatMembers(state, action) {
+      state.members = [...state.members, action.payload];
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getActiveClubChat.pending, (state) => {
@@ -49,10 +68,24 @@ const clubChatSlice = createSlice({
       .addCase(getActiveClubChat.rejected, (state, action) => {
         state.clubChatLoading = false;
         toast.error(action.payload);
+      })
+      .addCase(joinClubChat.pending, (state) => {
+        state.clubChatLoading = true;
+      })
+      .addCase(joinClubChat.fulfilled, (state, action) => {
+        state.members = action.payload.members;
+        toast.success(`Joined ${state.topic} club hour!`);
+        state.clubChatLoading = false;
+      })
+      .addCase(joinClubChat.rejected, (state, action) => {
+        state.clubChatLoading = false;
+        toast.error(action.payload);
       });
   },
 });
 
 export default clubChatSlice.reducer;
+
+export const { setClubChatMembers } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;
