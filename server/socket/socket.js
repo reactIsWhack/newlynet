@@ -34,7 +34,9 @@ io.on('connection', async (socket) => {
     console.log(`user: ${socket.id} joined room - ${roomname}`);
     socket.join(roomname);
     if (isClubServer) {
-      const userData = await User.findById(userId).select('-password');
+      const userData = await User.findById(userId)
+        .select('-password')
+        .populate('chats');
       if (
         !usersInClubServer.some(
           (user) => user.userId.toString() === userData._id.toString()
