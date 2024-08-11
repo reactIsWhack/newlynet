@@ -44,7 +44,7 @@ const ClubChat = () => {
     if (sectionId) {
       dispatch(getClubChatMessages(sectionId));
     }
-  }, []);
+  }, [sectionId]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

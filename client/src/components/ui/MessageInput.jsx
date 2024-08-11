@@ -6,13 +6,23 @@ import { selectChats, sendMessage } from '../../app/features/chats/chatSlice';
 import toast from 'react-hot-toast';
 import { useParams } from 'react-router-dom';
 import { IoIosClose } from 'react-icons/io';
+import {
+  selectClubChat,
+  sendClubChatMessage,
+} from '../../app/features/clubChat/clubChatSlice';
 
-const MessageInput = ({ filePreview, setFilePreview, lastMessageRef }) => {
+const MessageInput = ({
+  filePreview,
+  setFilePreview,
+  lastMessageRef,
+  messageType,
+}) => {
   const [message, setMessage] = useState('');
   const [fileInput, setFileInput] = useState({ data: '', type: '' });
   const dispatch = useDispatch();
   const { selectedConversation, createMsgLoading } = useSelector(selectChats);
   const { id } = useParams();
+  const { selectedClubChat } = useSelector(selectClubChat);
 
   const handleChange = (e) => setMessage(e.target.value);
   const handleKeyDown = (e) => {
@@ -47,20 +57,27 @@ const MessageInput = ({ filePreview, setFilePreview, lastMessageRef }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(message);
     const formData = new FormData();
     formData.append('message', message);
     formData.append('image', fileInput.data);
 
-    if (!message) {
-      return toast.error('Please enter a message', { id: 'msg-warning' });
-    }
-
-    dispatch(sendMessage({ formData, chatId: selectedConversation._id })).then(
-      (res) => {
-        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messageType === 'standard') {
+      if (!message) {
+        return toast.error('Please enter a message', { id: 'msg-warning' });
       }
-    );
+
+      dispatch(
+        sendMessage({ formData, chatId: selectedConversation._id })
+      ).then((res) => {
+        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+      });
+    } else {
+      formData.append('chatSection', selectedClubChat.chatTopic);
+      console.log(message);
+      dispatch(sendClubChatMessage(formData)).then((res) => {
+        lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+      });
+    }
 
     setMessage('');
     setFilePreview('');

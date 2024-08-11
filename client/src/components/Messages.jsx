@@ -80,6 +80,7 @@ const Messages = () => {
             filePreview={filePreview}
             setFilePreview={setFilePreview}
             lastMessageRef={lastMessageRef}
+            messageType="standard"
           />
         </div>
       )}

@@ -1,14 +1,39 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import ClubChatHeader from '../components/ClubChatHeader';
 import MessageSkeleton from '../components/ui/MessageSkeleton';
 import MessageInput from '../components/ui/MessageInput';
+import ChatBubble from '../components/ui/ChatBubble';
+import useListenClubServerMsg from '../hooks/useListenClubServerMsg';
+import { useParams } from 'react-router-dom';
 
 const SectionMessages = () => {
+  useListenClubServerMsg();
   const { selectedClubChat, clubChatLoading, messages } =
     useSelector(selectClubChat);
   const [filePreview, setFilePreview] = useState('');
+  const lastMessageRef = useRef(null);
+  const { sectionId } = useParams();
+
+  const chatBubble = messages.map((message) => {
+    return (
+      <div key={message._id} id={message._id} ref={lastMessageRef}>
+        <ChatBubble {...message} />
+      </div>
+    );
+  });
+
+  useEffect(() => {
+    setTimeout(() => {
+      lastMessageRef.current?.scrollIntoView({
+        block: 'nearest',
+        inline: 'center',
+        behavior: 'smooth',
+        alignToTop: false,
+      });
+    }, 300);
+  }, [selectedClubChat, sectionId]);
 
   return (
     <>
@@ -34,6 +59,8 @@ const SectionMessages = () => {
           <MessageInput
             filePreview={filePreview}
             setFilePreview={setFilePreview}
+            messageType="chatClub"
+            lastMessageRef={lastMessageRef}
           />
         </div>
       )}

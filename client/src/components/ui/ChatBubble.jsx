@@ -28,7 +28,7 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
       </div>
 
       <div className="max-w-96 max-[550px]:max-w-36 flex flex-col">
-        {media.src && (
+        {media?.src && (
           <div className="mb-3">
             {media.fileType.includes('video') ? (
               <video src={media.src} controls className="rounded-lg"></video>

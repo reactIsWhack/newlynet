@@ -1,6 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import toast from 'react-hot-toast';
+import sendMessageSound from '../../../assets/sendMessage.wav';
 
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
@@ -16,6 +17,7 @@ const initialState = {
   selectedClubChat: null,
   onlineServerUsers: [],
   dateQuery: null,
+  createMsgLoading: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -52,9 +54,34 @@ export const getClubChatMessages = createAsyncThunk(
       const {
         clubChat: { dateQuery },
       } = thunkAPI.getState();
-      const date = dateQuery ? dateQuery : new Date(Date.now());
+      const date = dateQuery ? dateQuery : Date.parse(new Date(Date.now()));
+      console.log(date, chatId);
       const response = await axios.get(
         `${baseURL}/api/club-chat/${chatId}/${date}`
+      );
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const sendClubChatMessage = createAsyncThunk(
+  'clubChat/sendMessage',
+  async (formData, thunkAPI) => {
+    console.log(formData.get('message'));
+    try {
+      const {
+        clubChat: { serverId },
+      } = thunkAPI.getState();
+      console.log(serverId);
+      const response = await axios.post(
+        `${baseURL}/api/club-chat/${serverId}`,
+        {
+          message: formData.get('message'),
+          chatSection: formData.get('chatSection'),
+        }
       );
       console.log(response);
       return response.data;
@@ -76,6 +103,12 @@ const clubChatSlice = createSlice({
     },
     setOnlineServerUsers(state, action) {
       state.onlineServerUsers = action.payload;
+    },
+    resetClubChatMessages(state, action) {
+      state.messages = [];
+    },
+    setclubChatMessages(state, action) {
+      state.messages = [...state.messages, action.payload];
     },
   },
   extraReducers: (builder) => {
@@ -116,12 +149,25 @@ const clubChatSlice = createSlice({
           state.messages = [...action.payload.reverse(), ...state.messages];
         }
 
-        if (action.payload.length)
+        if (action.payload.length === 20)
           state.dateQuery = action.payload[action.payload.length - 1].createdAt;
         else state.dateQuery = '';
       })
       .addCase(getClubChatMessages.rejected, (state, action) => {
         state.clubChatLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(sendClubChatMessage.pending, (state) => {
+        state.createMsgLoading = true;
+      })
+      .addCase(sendClubChatMessage.fulfilled, (state, action) => {
+        state.createMsgLoading = false;
+        const audio = new Audio(sendMessageSound);
+        audio.play();
+        state.messages = [...state.messages, action.payload];
+      })
+      .addCase(sendClubChatMessage.rejected, (state, action) => {
+        state.createMsgLoading = false;
         toast.error(action.payload);
       });
   },
@@ -129,7 +175,12 @@ const clubChatSlice = createSlice({
 
 export default clubChatSlice.reducer;
 
-export const { setClubChatMembers, setSelectedClubChat, setOnlineServerUsers } =
-  clubChatSlice.actions;
+export const {
+  setClubChatMembers,
+  setSelectedClubChat,
+  setOnlineServerUsers,
+  resetClubChatMessages,
+  setclubChatMessages,
+} = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;
