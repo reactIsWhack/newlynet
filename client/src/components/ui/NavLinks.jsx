@@ -21,7 +21,7 @@ const NavLinks = () => {
           <NavLink to={`/`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
             <AiFillHome
-              size={mobile ? 31 : 35}
+              size={35}
               className="stroke-[50px] stroke-gray home-icon"
             />
           </NavLink>
@@ -29,14 +29,14 @@ const NavLinks = () => {
         <li className="relative">
           <NavLink to={`/chats`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
-            <PiChatsFill size={mobile ? 31 : 35} className="stroke-gray" />
+            <PiChatsFill size={35} className="stroke-gray" />
           </NavLink>
           {unreadChats?.length > 0 && <NotificationCount />}
         </li>
         <li>
           <NavLink to={`/contacts`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
-            <FaUserFriends size={mobile ? 31 : 35} className="stroke-gray" />
+            <FaUserFriends size={35} className="stroke-gray" />
           </NavLink>
         </li>
       </ul>

@@ -37,7 +37,7 @@ const ClubChat = () => {
     } else {
       socket?.emit('joinroom', `clubserver-${serverId}-guide`, true, 'Guide');
     }
-  }, [sectionId, selectedClubChat, chats, pathname]);
+  }, [sectionId, selectedClubChat, chats]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

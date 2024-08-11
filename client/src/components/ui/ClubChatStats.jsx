@@ -26,8 +26,7 @@ const ClubChatStats = () => {
 
   const join = async () => {
     await dispatch(joinClubServer()).then(() => {
-      const chat = chats.find((chat) => chat.chatTopic === 'General');
-      navigate(`/clubchat/${chat._id}`);
+      navigate(`/clubchat`);
     });
   };
 

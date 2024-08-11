@@ -57,7 +57,7 @@ const ClubChatSidebar = () => {
       </ul>
       <div className="divider m-0 mt-2"></div>
       <div className="mt-4 flex-1">
-        <span className="ml-4 text-base">Online Users Here</span>
+        <span className="ml-4 text-base">Online Users</span>
         <div className="h-40 overflow-auto">{onlineServerUser}</div>
       </div>
     </div>
