@@ -2,49 +2,63 @@ import React, { useEffect, useRef } from 'react';
 import Navbar from '../components/Navbar';
 import useRedirectUser from '../hooks/useRedirectUser';
 import { useSocket } from '../context/SocketContext';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import ClubChatSidebar from '../components/ClubChatSidebar';
 import ClubChatHeader from '../components/ClubChatHeader';
-import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import {
+  selectClubChat,
+  setSelectedClubChat,
+} from '../app/features/clubChat/clubChatSlice';
 import toast from 'react-hot-toast';
-import { Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import useDetectMobile from '../hooks/useDetectMobile';
 
 const ClubChat = () => {
   useRedirectUser();
   const { socket } = useSocket();
-  const { school, userId } = useSelector(selectUser);
-  const { members } = useSelector(selectClubChat);
-  const navigate = useNavigate();
-  const firstRender = useRef(true);
-
-  const isInClubChat = members.some((member) => member._id === userId);
+  const { members, serverId, selectedClubChat, chats } =
+    useSelector(selectClubChat);
+  const { sectionId } = useParams();
+  const dispatch = useDispatch();
+  const mobile = useDetectMobile();
 
   useEffect(() => {
-    if (!isInClubChat) {
-      navigate('/');
-      toast.error('Please join the club chat to access it');
+    const chat = chats.find((chat) => chat._id === sectionId);
+    dispatch(setSelectedClubChat(chat));
+    if (chat) {
+      socket?.emit(
+        'joinroom',
+        `clubserver-${serverId}-${chat._id}`,
+        true,
+        chat.chatTopic
+      );
     }
 
-    if (isInClubChat && firstRender.current)
-      socket?.emit('joinroom', `clubchat-${school.schoolId}`, true);
-
-    firstRender.current = false;
     return () => {
-      if (isInClubChat)
-        socket?.emit('leaveroom', `clubchat-${school.schoolId}`, true);
+      if (selectedClubChat)
+        socket?.emit(
+          'leaveroom',
+          `clubserver-${serverId}-${selectedClubChat._id}`,
+          true,
+          selectedClubChat.chatTopic
+        );
     };
-  }, []);
+  }, [sectionId, selectedClubChat, chats]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
       <div className="flex flex-1">
-        <ClubChatSidebar />
-        <Outlet />
-        <div>
-          <ClubChatHeader />
-        </div>
+        {((mobile && !sectionId) || !mobile) && <ClubChatSidebar />}
+        {((mobile && sectionId) || !mobile) && (
+          <div>
+            <Outlet />
+            <div>
+              <ClubChatHeader />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -11,31 +11,31 @@ import { useNavigate } from 'react-router-dom';
 import { setSelectedChat } from '../../app/features/chats/chatSlice';
 
 const ClubChatStats = () => {
-  const { members, clubChatLoading, serverId, chats, selectedClubChat } =
-    useSelector(selectClubChat);
-  const { usersInClubChat } = useSocket();
+  const {
+    members,
+    clubChatLoading,
+    onlineServerUsers,
+    chats,
+    selectedClubChat,
+  } = useSelector(selectClubChat);
   const { userId } = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const userInClubServer = members.some((member) => member._id === userId);
 
-  const initializeSelectedChat = () => {
-    const chat = chats.find((chat) => chat.chatTopic === 'General');
-    dispatch(setSelectedChat(chat));
-  };
-
   const join = async () => {
     await dispatch(joinClubServer()).then(() => {
-      navigate('/clubchat');
+      const chat = chats.find((chat) => chat.chatTopic === 'General');
+      navigate(`/clubchat/${chat._id}`);
     });
   };
 
   const resume = async () => {
     if (selectedClubChat) navigate(`/clubchat/${selectedClubChat._id}`);
     else {
-      await initializeSelectedChat();
-      navigate('/clubchat');
+      const chat = chats.find((chat) => chat.chatTopic === 'General');
+      navigate(`/clubchat/${chat._id}`);
     }
   };
 
@@ -68,7 +68,7 @@ const ClubChatStats = () => {
         <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title text-center w-full ">Online Users</div>
           <div className="stat-value text-3xl text-right w-full">
-            {usersInClubChat.length}
+            {onlineServerUsers.length}
           </div>
         </div>
       </div>

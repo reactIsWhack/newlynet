@@ -35,13 +35,19 @@ io.on('connection', async (socket) => {
     socket.join(roomname);
     if (isClubServer) {
       const userData = await User.findById(userId).select('-password');
-      usersInClubServer.push({
-        socket: socket.id,
-        userId,
-        chatSection,
-        userData,
-      });
-      io.emit('onlineClubUsers', usersInClubServer);
+      if (
+        !usersInClubServer.some(
+          (user) => user.userId.toString() === userData._id.toString()
+        )
+      ) {
+        usersInClubServer.push({
+          socket: socket.id,
+          userId,
+          chatSection,
+          userData,
+        });
+        io.emit('onlineClubUsers', usersInClubServer, userData);
+      }
       console.log(usersInClubServer);
     }
   });
@@ -60,6 +66,7 @@ io.on('connection', async (socket) => {
   });
 
   io.emit('onlineUsers', Object.keys(onlineUsers));
+  io.emit('onlineClubUsers', usersInClubServer);
 
   socket.on('disconnect', () => {
     console.log(`user disconnected from socket with id of ${socket.id} `);

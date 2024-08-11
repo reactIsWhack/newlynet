@@ -26,10 +26,12 @@ import ClubChat from './pages/ClubChat';
 import GeneralMessages from './pages/GeneralMessages';
 import SectionMessages from './pages/SectionMessages';
 import { getClubServer } from './app/features/clubChat/clubChatSlice';
+import useUpdateClubServer from './hooks/useUpdateClubServer';
 
 axios.defaults.withCredentials = true;
 
 function App() {
+  useUpdateClubServer();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',

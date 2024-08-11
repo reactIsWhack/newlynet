@@ -5,6 +5,7 @@ const ClubChat = require('../models/clubChat.model');
 const connectToDB = async () => {
   mongoose.connection.on('connected', async () => {
     console.log('Connected to MongoDB');
+    // await populateDB();
   });
 
   mongoose.connection.on('error', (err) => {

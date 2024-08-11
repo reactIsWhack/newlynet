@@ -14,6 +14,7 @@ const initialState = {
   nextTopic: '',
   serverId: '',
   selectedClubChat: null,
+  onlineServerUsers: [],
 };
 
 export const getClubServer = createAsyncThunk(
@@ -53,6 +54,9 @@ const clubChatSlice = createSlice({
     setSelectedClubChat(state, action) {
       state.selectedClubChat = action.payload;
     },
+    setOnlineServerUsers(state, action) {
+      state.onlineServerUsers = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -86,7 +90,7 @@ const clubChatSlice = createSlice({
 
 export default clubChatSlice.reducer;
 
-export const { setClubChatMembers, setSelectedClubChat } =
+export const { setClubChatMembers, setSelectedClubChat, setOnlineServerUsers } =
   clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

@@ -5,7 +5,13 @@ import {
   setViewingUserData,
 } from '../../app/features/popup/popupSlice';
 
-const OnlineUserCard = ({ profilePicture, firstName, lastName, userData }) => {
+const OnlineUserCard = ({
+  profilePicture,
+  firstName,
+  lastName,
+  userData,
+  chatSection,
+}) => {
   const dispatch = useDispatch();
 
   const openDetails = async () => {
@@ -16,7 +22,7 @@ const OnlineUserCard = ({ profilePicture, firstName, lastName, userData }) => {
 
   return (
     <div className="flex gap-2 items-center rounded ml-2 my-3 p-2">
-      <div className="avatar online">
+      <div className="avatar">
         <div className="w-10 rounded-full">
           <img src={profilePicture} alt="user avatar" className="h-16" />
         </div>
@@ -28,6 +34,7 @@ const OnlineUserCard = ({ profilePicture, firstName, lastName, userData }) => {
             {firstName + ' ' + lastName}
           </p>
         </div>
+        <span className="text-xs"># {chatSection}</span>
       </div>
       <button
         className="btn btn-ghost btn-xs max-[550px]:pr-0"

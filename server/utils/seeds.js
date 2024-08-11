@@ -107,8 +107,11 @@ const generateFakeUsers = async () => {
 
 const populateDB = async () => {
   resetOnlineUsers();
+  // await ClubServer.deleteMany();
+  // await ClubChat.deleteMany();
+  // return;
   await generateClubChats();
-  await generateFakeUsers();
+  // await generateFakeUsers();
 };
 
 module.exports = {
