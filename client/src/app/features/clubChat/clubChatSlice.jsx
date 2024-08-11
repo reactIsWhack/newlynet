@@ -15,6 +15,7 @@ const initialState = {
   serverId: '',
   selectedClubChat: null,
   onlineServerUsers: [],
+  dateQuery: null,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -30,13 +31,32 @@ export const getClubServer = createAsyncThunk(
 );
 
 export const joinClubServer = createAsyncThunk(
-  'clubChat/join',
+  'clubServer/join',
   async (_, thunkAPI) => {
     try {
       const { clubChat } = thunkAPI.getState();
       const response = await axios.patch(
         `${baseURL}/api/clubserver/${clubChat.serverId}`
       );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getClubChatMessages = createAsyncThunk(
+  'clubChat/getMessages',
+  async (chatId, thunkAPI) => {
+    try {
+      const {
+        clubChat: { dateQuery },
+      } = thunkAPI.getState();
+      const date = dateQuery ? dateQuery : new Date(Date.now());
+      const response = await axios.get(
+        `${baseURL}/api/club-chat/${chatId}/${date}`
+      );
+      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -82,6 +102,25 @@ const clubChatSlice = createSlice({
         toast.success("Welcome to your school's club server");
       })
       .addCase(joinClubServer.rejected, (state, action) => {
+        state.clubChatLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(getClubChatMessages.pending, (state) => {
+        state.clubChatLoading = true;
+      })
+      .addCase(getClubChatMessages.fulfilled, (state, action) => {
+        state.clubChatLoading = false;
+        if (!state.dateQuery) {
+          state.messages = action.payload.reverse();
+        } else {
+          state.messages = [...action.payload.reverse(), ...state.messages];
+        }
+
+        if (action.payload.length)
+          state.dateQuery = action.payload[action.payload.length - 1].createdAt;
+        else state.dateQuery = '';
+      })
+      .addCase(getClubChatMessages.rejected, (state, action) => {
         state.clubChatLoading = false;
         toast.error(action.payload);
       });

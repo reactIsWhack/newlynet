@@ -1,7 +1,8 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import {
+  getClubChatMessages,
   selectClubChat,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
@@ -14,9 +15,15 @@ const ClubChatSidebar = () => {
   const { school, userId } = useSelector(selectUser);
   const dispatch = useDispatch();
   const location = useLocation();
+  const { sectionId } = useParams();
 
   const listItem = chats.map((chat) => {
     const isActive = location.pathname === `/clubchat/${chat._id}`;
+
+    const handleClick = async () => {
+      await dispatch(setSelectedClubChat(chat));
+      await dispatch(getClubChatMessages(sectionId));
+    };
 
     return (
       <li
@@ -24,7 +31,7 @@ const ClubChatSidebar = () => {
         className={`${
           isActive ? 'bg-slate-600' : ''
         } hover:bg-slate-600 rounded-md transition-colors duration-200`}
-        onClick={() => dispatch(setSelectedClubChat(chat))}
+        onClick={handleClick}
       >
         <Link to={`/clubchat/${chat._id}`} className="text-[15px] block p-2">
           # {chat.chatTopic}

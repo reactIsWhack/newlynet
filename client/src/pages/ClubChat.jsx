@@ -7,6 +7,7 @@ import { selectUser } from '../app/features/user/userSlice';
 import ClubChatSidebar from '../components/ClubChatSidebar';
 import ClubChatHeader from '../components/ClubChatHeader';
 import {
+  getClubChatMessages,
   selectClubChat,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
@@ -38,6 +39,12 @@ const ClubChat = () => {
       socket?.emit('joinroom', `clubserver-${serverId}-guide`, true, 'Guide');
     }
   }, [sectionId, selectedClubChat, chats]);
+
+  useEffect(() => {
+    if (sectionId) {
+      dispatch(getClubChatMessages(sectionId));
+    }
+  }, []);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

@@ -65,7 +65,7 @@ const ClubChatStats = () => {
         </div>
 
         <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
-          <div className="stat-title text-center w-full ">Online Users</div>
+          <div className="stat-title text-right w-full ">Online Users</div>
           <div className="stat-value text-3xl text-right w-full">
             {onlineServerUsers.length}
           </div>
