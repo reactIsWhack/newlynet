@@ -35,8 +35,17 @@ const ClubChat = () => {
         true,
         chat.chatTopic
       );
-    } else {
-      socket?.emit('joinroom', `clubserver-${serverId}-guide`, true, 'Guide');
+    }
+
+    if (selectedClubChat) {
+      return () => {
+        socket?.emit(
+          'leaveroom',
+          `clubserver-${serverId}-${selectedClubChat._id}`,
+          true,
+          selectedClubChat.chatTopic
+        );
+      };
     }
   }, [sectionId, selectedClubChat, chats]);
 

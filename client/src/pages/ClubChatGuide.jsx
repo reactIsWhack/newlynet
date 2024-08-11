@@ -6,7 +6,7 @@ const ClubChatGuide = () => {
   const { school } = useSelector(selectUser);
 
   return (
-    <div className="flex flex-col justify-center w-3/4 items-center gap-8">
+    <div className="flex flex-col justify-center items-center gap-8 w-full h-full">
       <h2 className="font-semibold text-xl">
         Welcome to the club server of {school && school.formattedName}!
       </h2>

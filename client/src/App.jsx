@@ -27,13 +27,11 @@ import SectionMessages from './pages/SectionMessages';
 import { getClubServer } from './app/features/clubChat/clubChatSlice';
 import useUpdateClubServer from './hooks/useUpdateClubServer';
 import ClubChatGuide from './pages/ClubChatGuide';
-import useLeaveClubServer from './hooks/useLeaveClubServer';
 
 axios.defaults.withCredentials = true;
 
 function App() {
   useUpdateClubServer();
-  useLeaveClubServer();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
