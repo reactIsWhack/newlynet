@@ -23,15 +23,17 @@ import UserDetails from './components/UserDetails';
 import Settings from './pages/Settings';
 import LoadingScreen from './components/LoadingScreen';
 import ClubChat from './pages/ClubChat';
-import GeneralMessages from './pages/GeneralMessages';
 import SectionMessages from './pages/SectionMessages';
 import { getClubServer } from './app/features/clubChat/clubChatSlice';
 import useUpdateClubServer from './hooks/useUpdateClubServer';
+import ClubChatGuide from './pages/ClubChatGuide';
+import useLeaveClubServer from './hooks/useLeaveClubServer';
 
 axios.defaults.withCredentials = true;
 
 function App() {
   useUpdateClubServer();
+  useLeaveClubServer();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -144,7 +146,7 @@ function App() {
             }
           ></Route>
           <Route path="/clubchat" element={<ClubChat />}>
-            <Route index element={<GeneralMessages />}></Route>
+            <Route index element={<ClubChatGuide />}></Route>
             <Route path=":sectionId" element={<SectionMessages />}></Route>
           </Route>
         </Routes>

@@ -11,7 +11,7 @@ import {
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import toast from 'react-hot-toast';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 
 const ClubChat = () => {
@@ -22,6 +22,7 @@ const ClubChat = () => {
   const { sectionId } = useParams();
   const dispatch = useDispatch();
   const mobile = useDetectMobile();
+  const { pathname } = useLocation();
 
   useEffect(() => {
     const chat = chats.find((chat) => chat._id === sectionId);
@@ -33,32 +34,17 @@ const ClubChat = () => {
         true,
         chat.chatTopic
       );
+    } else {
+      socket?.emit('joinroom', `clubserver-${serverId}-guide`, true, 'Guide');
     }
-
-    return () => {
-      if (selectedClubChat)
-        socket?.emit(
-          'leaveroom',
-          `clubserver-${serverId}-${selectedClubChat._id}`,
-          true,
-          selectedClubChat.chatTopic
-        );
-    };
-  }, [sectionId, selectedClubChat, chats]);
+  }, [sectionId, selectedClubChat, chats, pathname]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
       <div className="flex flex-1">
         {((mobile && !sectionId) || !mobile) && <ClubChatSidebar />}
-        {((mobile && sectionId) || !mobile) && (
-          <div>
-            <Outlet />
-            <div>
-              <ClubChatHeader />
-            </div>
-          </div>
-        )}
+        {((mobile && sectionId) || !mobile) && <Outlet />}
       </div>
     </div>
   );
