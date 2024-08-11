@@ -1,29 +1,43 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { selectClubChat } from '../../app/features/clubChat/clubChatSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  joinClubServer,
+  selectClubChat,
+} from '../../app/features/clubChat/clubChatSlice';
 import { format, add } from 'date-fns';
 import { useSocket } from '../../context/SocketContext';
+import { selectUser } from '../../app/features/user/userSlice';
+import { useNavigate } from 'react-router-dom';
+import { setSelectedChat } from '../../app/features/chats/chatSlice';
 
 const ClubChatStats = () => {
-  const { members, activatedAt, topic, nextTopic } =
+  const { members, clubChatLoading, serverId, chats, selectedClubChat } =
     useSelector(selectClubChat);
   const { usersInClubChat } = useSocket();
+  const { userId } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  let startingTime;
-  let endingTime;
-  let futureEndingTime;
-  if (activatedAt) {
-    startingTime = format(new Date(activatedAt), 'h:mm a');
-    const endingDate = add(new Date(activatedAt), { hours: 1 });
-    const futureEndingDate = add(new Date(endingDate), { hours: 1 });
-    endingTime = format(endingDate, 'h:mm a');
-    futureEndingTime = format(futureEndingDate, 'h:mm a');
-  }
+  const userInClubServer = members.some((member) => member._id === userId);
 
-  let truncatedNextTopic = nextTopic;
-  if (nextTopic.length > 14) {
-    truncatedNextTopic = nextTopic.substring(0, 14) + '...';
-  }
+  const initializeSelectedChat = () => {
+    const chat = chats.find((chat) => chat.chatTopic === 'General');
+    dispatch(setSelectedChat(chat));
+  };
+
+  const join = async () => {
+    await dispatch(joinClubServer()).then(() => {
+      navigate('/clubchat');
+    });
+  };
+
+  const resume = async () => {
+    if (selectedClubChat) navigate(`/clubchat/${selectedClubChat._id}`);
+    else {
+      await initializeSelectedChat();
+      navigate('/clubchat');
+    }
+  };
 
   return (
     <>
@@ -31,27 +45,30 @@ const ClubChatStats = () => {
         <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title">Members</div>
           <div className="stat-value text-3xl">{members.length}</div>
-          <div className="stat-desc">
-            {startingTime} - {endingTime}
+          <div className="stat-desc"></div>
+        </div>
+
+        <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
+          <div className="stat-title text-center w-full ">Connect</div>
+          <div className="stat-value text-3xl text-center w-full">
+            {clubChatLoading ? (
+              <span className="loading loading-spinner loading-sm"></span>
+            ) : userInClubServer ? (
+              <button className="btn btn-primary h-9 min-h-9" onClick={resume}>
+                Resume
+              </button>
+            ) : (
+              <button className="btn btn-primary h-9 min-h-9" onClick={join}>
+                Join
+              </button>
+            )}
           </div>
         </div>
 
         <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title text-center w-full ">Online Users</div>
-          <div className="stat-value text-3xl text-center w-full">
+          <div className="stat-value text-3xl text-right w-full">
             {usersInClubChat.length}
-          </div>
-        </div>
-        <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
-          <div className="stat-title">Schedule</div>
-          <div className="stat-value text-lg font-normal">
-            {futureEndingTime}
-          </div>
-          <div
-            className="stat-desc text-[13px] tooltip relative text-left"
-            data-tip={nextTopic}
-          >
-            {truncatedNextTopic}
           </div>
         </div>
       </div>

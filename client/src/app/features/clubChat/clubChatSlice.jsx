@@ -7,34 +7,34 @@ const baseURL = import.meta.env.VITE_SERVER_URL;
 const initialState = {
   topic: '',
   members: [],
-  topicMessages: [],
-  generalMessages: [],
+  messages: [],
+  chats: [],
   activatedAt: '',
   clubChatLoading: false,
   nextTopic: '',
+  serverId: '',
+  selectedClubChat: null,
 };
 
-export const getActiveClubChat = createAsyncThunk(
-  'clubChat/getActive',
+export const getClubServer = createAsyncThunk(
+  'clubServer/getData',
   async (_, thunkAPI) => {
     try {
-      const response = await axios.get(
-        `${baseURL}/api/club-chat/activeclubchat`
-      );
-      const { user } = thunkAPI.getState();
-      return { data: response.data, schoolId: user.school.schoolId };
+      const response = await axios.get(`${baseURL}/api/clubserver`);
+      return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
 );
 
-export const joinClubChat = createAsyncThunk(
+export const joinClubServer = createAsyncThunk(
   'clubChat/join',
   async (_, thunkAPI) => {
     try {
+      const { clubChat } = thunkAPI.getState();
       const response = await axios.patch(
-        `${baseURL}/api/club-chat/joinclubchat`
+        `${baseURL}/api/clubserver/${clubChat.serverId}`
       );
       return response.data;
     } catch (error) {
@@ -48,36 +48,36 @@ const clubChatSlice = createSlice({
   initialState,
   reducers: {
     setClubChatMembers(state, action) {
-      state.members = [...state.members, action.payload];
+      state.members = action.payload;
+    },
+    setSelectedClubChat(state, action) {
+      state.selectedClubChat = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(getActiveClubChat.pending, (state) => {
+      .addCase(getClubServer.pending, (state) => {
         state.clubChatLoading = true;
       })
-      .addCase(getActiveClubChat.fulfilled, (state, action) => {
-        state.topic = action.payload.data.clubChat.chatTopic;
-        state.activatedAt = action.payload.data.clubChat.updatedAt;
-        state.members = action.payload.data.clubChat.members.filter(
-          (member) => member.school.schoolId === action.payload.schoolId
-        );
-        state.nextTopic = action.payload.data.nextTopic;
+      .addCase(getClubServer.fulfilled, (state, action) => {
         state.clubChatLoading = false;
+        state.members = action.payload.members;
+        state.chats = action.payload.chats.reverse();
+        state.serverId = action.payload._id;
       })
-      .addCase(getActiveClubChat.rejected, (state, action) => {
+      .addCase(getClubServer.rejected, (state, action) => {
         state.clubChatLoading = false;
         toast.error(action.payload);
       })
-      .addCase(joinClubChat.pending, (state) => {
+      .addCase(joinClubServer.pending, (state) => {
         state.clubChatLoading = true;
       })
-      .addCase(joinClubChat.fulfilled, (state, action) => {
-        state.members = action.payload.members;
-        toast.success(`Joined ${state.topic} club hour!`);
+      .addCase(joinClubServer.fulfilled, (state, action) => {
         state.clubChatLoading = false;
+        state.members = action.payload.members;
+        toast.success("Welcome to your school's club server");
       })
-      .addCase(joinClubChat.rejected, (state, action) => {
+      .addCase(joinClubServer.rejected, (state, action) => {
         state.clubChatLoading = false;
         toast.error(action.payload);
       });
@@ -86,6 +86,7 @@ const clubChatSlice = createSlice({
 
 export default clubChatSlice.reducer;
 
-export const { setClubChatMembers } = clubChatSlice.actions;
+export const { setClubChatMembers, setSelectedClubChat } =
+  clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

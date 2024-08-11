@@ -1,54 +1,48 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
-import { Link, NavLink } from 'react-router-dom';
-import { useSocket } from '../context/SocketContext';
-import OnlineUserCard from './ui/OnlineUserCard';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation } from 'react-router-dom';
+import {
+  selectClubChat,
+  setSelectedClubChat,
+} from '../app/features/clubChat/clubChatSlice';
 import { selectUser } from '../app/features/user/userSlice';
 
 const ClubChatSidebar = () => {
-  const { topic } = useSelector(selectClubChat);
-  const { usersInClubChat } = useSocket();
-  const { userId } = useSelector(selectUser);
+  const { chats } = useSelector(selectClubChat);
+  const { school } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const location = useLocation();
 
-  let topicRoute = topic;
-  if (topicRoute.includes('/')) {
-    topicRoute = topicRoute.substring(0, topicRoute.indexOf('/'));
-  }
-  const onlineUser = usersInClubChat
-    .filter((item) => item.user !== userId)
-    .map((user) => {
-      return (
-        <OnlineUserCard
-          key={user.user}
-          {...user.userData}
-          userData={user.userData}
-        />
-      );
-    });
-  console.log(onlineUser);
+  const listItem = chats.map((chat) => {
+    const isActive = location.pathname === `/clubchat/${chat._id}`;
+
+    return (
+      <li
+        key={chat._id}
+        className={`${
+          isActive ? 'bg-slate-600' : ''
+        } hover:bg-slate-600 rounded-md transition-colors duration-200`}
+        onClick={() => dispatch(setSelectedClubChat(chat))}
+      >
+        <Link to={`/clubchat/${chat._id}`} className="text-[15px] block p-2">
+          # {chat.chatTopic}
+        </Link>
+      </li>
+    );
+  });
 
   return (
-    <div className="sidebar border-r border-slate-500  flex flex-col w-1/4 max-[550px]:border-none max-[550px]:w-full relative">
-      <div className="h-full">
-        <ul className="menu bg-base-200 text-base-content min-h-full p-4">
-          {/* Sidebar content here */}
-          <li>
-            <Link to="/clubchat" className="text-[15px]">
-              # General
-            </Link>
-          </li>
-          <li>
-            <Link to={`/clubchat/${topicRoute}`} className="text-[15px]">
-              # {topic}
-            </Link>
-          </li>
-          <div className="divider m-0 mt-2 "></div>
-          <div className="mt-4">
-            <span className="ml-4 text-base">Online Users</span>
-            {onlineUser}
-          </div>
-        </ul>
+    <div className="sidebar border-r border-slate-500 flex flex-col w-1/4 max-[550px]:border-none max-[550px]:w-full relative bg-base-200">
+      <h2 className="pl-3 pt-3 font-semibold">
+        {school?.formattedName} Server
+      </h2>
+      <ul className="text-base-content p-4 max-h-[400px] flex flex-col overflow-auto">
+        {/* Sidebar content here */}
+        {listItem}
+      </ul>
+      <div className="divider m-0 mt-2"></div>
+      <div className="mt-4 flex-1">
+        <span className="ml-4 text-base">Online Users Here</span>
       </div>
     </div>
   );

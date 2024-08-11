@@ -21,11 +21,11 @@ import Contacts from './pages/Contacts';
 import { selectPopup } from './app/features/popup/popupSlice';
 import UserDetails from './components/UserDetails';
 import Settings from './pages/Settings';
-import { getActiveClubChat } from './app/features/clubChat/clubChatSlice';
 import LoadingScreen from './components/LoadingScreen';
 import ClubChat from './pages/ClubChat';
 import GeneralMessages from './pages/GeneralMessages';
 import SectionMessages from './pages/SectionMessages';
+import { getClubServer } from './app/features/clubChat/clubChatSlice';
 
 axios.defaults.withCredentials = true;
 
@@ -63,8 +63,7 @@ function App() {
       dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' })),
 
       dispatch(getConversations(chatFilter)),
-
-      dispatch(getActiveClubChat()),
+      dispatch(getClubServer()),
     ]);
   };
 
@@ -144,7 +143,7 @@ function App() {
           ></Route>
           <Route path="/clubchat" element={<ClubChat />}>
             <Route index element={<GeneralMessages />}></Route>
-            <Route path=":section" element={<SectionMessages />}></Route>
+            <Route path=":sectionId" element={<SectionMessages />}></Route>
           </Route>
         </Routes>
       )}

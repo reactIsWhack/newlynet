@@ -10,7 +10,6 @@ import ClubChatStats from '../components/ui/ClubChatStats';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
-import ClubChatInfo from '../components/ui/ClubChatInfo';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
@@ -19,7 +18,7 @@ const Home = ({ filter, setFilter }) => {
 
   const mobile = useDetectMobile();
   const { school } = useSelector(selectUser);
-  const { clubChatLoading, topic } = useSelector(selectClubChat);
+  const { clubChatLoading, serverId } = useSelector(selectClubChat);
 
   return (
     <div>
@@ -38,16 +37,15 @@ const Home = ({ filter, setFilter }) => {
         {!mobile && (
           <div className="home-right w-1/3 -ml-4 sticky py-4">
             <h2 className="mb-3 text-lg text-center my-0">
-              Current club hour at {school?.formattedName}
+              Main Club Server at {school?.formattedName}
             </h2>
-            {clubChatLoading && !topic ? (
+            {clubChatLoading && !serverId ? (
               <div className="flex justify-center mt-4">
                 <span className="loading loading-spinner loading-lg"></span>
               </div>
             ) : (
               <>
                 <ClubChatStats />
-                <ClubChatInfo />
               </>
             )}
           </div>

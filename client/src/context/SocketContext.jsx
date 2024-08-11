@@ -22,18 +22,15 @@ export const SocketContextProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [usersInClubChat, setUsersInClubChat] = useState([]);
-  const { isLoggedIn, userId, school, username } = useSelector(selectUser);
+  const { isLoggedIn, userId, school } = useSelector(selectUser);
   const { chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
 
-  console.log(username);
   useEffect(() => {
     if (isLoggedIn) {
       const socketVal = io('http://localhost:4000', {
         query: {
           userId,
-          school: school?.schoolId,
-          username,
         },
       });
       setSocket(socketVal);
@@ -44,7 +41,6 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       socketVal.on('usersInClubChat', (users) => {
-        console.log(users);
         const filteredUsers = users.filter(
           (user) =>
             user.school === school.schoolId &&
@@ -53,13 +49,12 @@ export const SocketContextProvider = ({ children }) => {
         setUsersInClubChat(filteredUsers);
       });
 
-      socketVal.on('clubChatJoin', (clubChat, user) => {
-        if (user.school.schoolId === school.schoolId)
-          dispatch(setClubChatMembers(clubChat));
+      socketVal.on('clubServerJoin', (clubServer, user) => {
+        if (clubServer.schoolAffiliation === school.schoolId)
+          dispatch(setClubChatMembers(clubServer.members));
       });
 
       socketVal.on('newChat', (chat, updatedNotifications) => {
-        console.log(chatFilter);
         if (
           chatFilter === chat.chatType ||
           (!chatFilter && chat.chatType === 'individual')
