@@ -3,15 +3,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import {
   getClubChatMessages,
+  resetClubChatMessages,
   selectClubChat,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import { selectUser } from '../app/features/user/userSlice';
 import OnlineUserCard from './ui/OnlineUserCard';
+import { resetMessages } from '../app/features/chats/chatSlice';
 
 const ClubChatSidebar = () => {
-  const { chats, onlineServerUsers, selectedClubChat } =
-    useSelector(selectClubChat);
+  const { chats, members, selectedClubChat } = useSelector(selectClubChat);
   const { school, userId } = useSelector(selectUser);
   const dispatch = useDispatch();
   const location = useLocation();
@@ -21,8 +22,10 @@ const ClubChatSidebar = () => {
     const isActive = location.pathname === `/clubchat/${chat._id}`;
 
     const handleClick = async () => {
+      if (sectionId !== selectedClubChat?._id) {
+        await dispatch(resetMessages());
+      }
       await dispatch(setSelectedClubChat(chat));
-      await dispatch(getClubChatMessages(sectionId));
     };
 
     return (
@@ -40,17 +43,10 @@ const ClubChatSidebar = () => {
     );
   });
 
-  const onlineServerUser = onlineServerUsers
-    .filter((user) => user.userData._id !== userId)
+  const memberCard = members
+    .filter((m) => m._id !== userId)
     .map((user) => {
-      return (
-        <OnlineUserCard
-          key={user.userId}
-          {...user.userData}
-          userData={user.userData}
-          chatSection={user.chatSection}
-        />
-      );
+      return <OnlineUserCard key={user.userId} {...user} userData={user} />;
     });
 
   return (
@@ -64,8 +60,8 @@ const ClubChatSidebar = () => {
       </ul>
       <div className="divider m-0 mt-2"></div>
       <div className="mt-4 flex-1">
-        <span className="ml-4 text-base">Online Users</span>
-        <div className="h-40 overflow-auto">{onlineServerUser}</div>
+        <span className="ml-4 text-base">Members</span>
+        <div className="h-40 overflow-auto">{memberCard}</div>
       </div>
     </div>
   );

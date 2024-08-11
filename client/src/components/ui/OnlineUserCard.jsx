@@ -4,15 +4,12 @@ import {
   setRenderModal,
   setViewingUserData,
 } from '../../app/features/popup/popupSlice';
+import { useSocket } from '../../context/SocketContext';
+import checkOnlineStatus from '../../utils/checkOnlineStatus';
 
-const OnlineUserCard = ({
-  profilePicture,
-  firstName,
-  lastName,
-  userData,
-  chatSection,
-}) => {
+const OnlineUserCard = ({ profilePicture, firstName, lastName, userData }) => {
   const dispatch = useDispatch();
+  const { onlineUsers } = useSocket();
 
   const openDetails = async () => {
     await dispatch(setViewingUserData(userData));
@@ -20,9 +17,11 @@ const OnlineUserCard = ({
     document.getElementById('my_modal_3').showModal();
   };
 
+  const isOnline = checkOnlineStatus(onlineUsers, userData._id);
+
   return (
     <div className="flex gap-2 items-center rounded ml-2 my-3 p-2">
-      <div className="avatar">
+      <div className={`avatar ${isOnline ? 'online' : 'offline'}`}>
         <div className="w-10 rounded-full">
           <img src={profilePicture} alt="user avatar" className="h-16" />
         </div>
@@ -34,7 +33,6 @@ const OnlineUserCard = ({
             {firstName + ' ' + lastName}
           </p>
         </div>
-        <span className="text-xs"># {chatSection}</span>
       </div>
       <button
         className="btn btn-ghost btn-xs max-[550px]:pr-0"

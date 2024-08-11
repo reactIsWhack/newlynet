@@ -8,7 +8,10 @@ const getClubServer = asyncHandler(async (req, res) => {
 
   const clubServer = await ClubServer.findOne({
     schoolAffiliation: user.school.schoolId,
-  }).populate([{ path: 'chats' }, { path: 'members', select: '-password' }]);
+  }).populate([
+    { path: 'chats' },
+    { path: 'members', select: '-password', populate: 'chats' },
+  ]);
 
   if (!clubServer) {
     res.status(404);
