@@ -13,7 +13,7 @@ const SectionMessages = () => {
   return (
     <>
       {selectedClubChat && (
-        <div className="flex-1  overflow-hidden  flex flex-col z-10">
+        <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20">
           {selectedClubChat && <ClubChatHeader />}
           <div className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full">
             {clubChatLoading &&
@@ -31,12 +31,10 @@ const SectionMessages = () => {
             )}
           </div>
 
-          <div className="mb-7 max-[550px]:mb-0">
-            <MessageInput
-              filePreview={filePreview}
-              setFilePreview={setFilePreview}
-            />
-          </div>
+          <MessageInput
+            filePreview={filePreview}
+            setFilePreview={setFilePreview}
+          />
         </div>
       )}
     </>

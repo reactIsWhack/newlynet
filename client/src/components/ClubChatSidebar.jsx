@@ -51,7 +51,7 @@ const ClubChatSidebar = () => {
       <h2 className="pl-3 pt-3 font-semibold">
         {school?.formattedName} Server
       </h2>
-      <ul className="text-base-content p-4 max-h-[400px] flex flex-col overflow-auto max-[550px]:max-h-[520px]">
+      <ul className="text-base-content p-4 max-h-[360px] flex flex-col overflow-auto max-[550px]:max-h-[520px]">
         {/* Sidebar content here */}
         {listItem}
       </ul>

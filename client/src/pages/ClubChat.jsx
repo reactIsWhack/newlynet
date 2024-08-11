@@ -42,9 +42,13 @@ const ClubChat = () => {
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
-      <div className="flex flex-1">
+      <div className="flex flex-1 overflow-hidden">
         {((mobile && !sectionId) || !mobile) && <ClubChatSidebar />}
-        {((mobile && sectionId) || !mobile) && <Outlet />}
+        {((mobile && sectionId) || !mobile) && (
+          <div className="flex-1 overflow-auto h-full">
+            <Outlet />
+          </div>
+        )}
       </div>
     </div>
   );
