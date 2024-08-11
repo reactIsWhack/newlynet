@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import { useSocket } from '../context/SocketContext';
 
@@ -8,6 +8,7 @@ const useLeaveClubServer = () => {
   const { pathname } = useLocation();
   const { selectedClubChat, serverId } = useSelector(selectClubChat);
   const { socket } = useSocket();
+  const { sectionId } = useParams();
 
   useEffect(() => {
     if (!pathname.includes('/clubchat'))
@@ -18,15 +19,19 @@ const useLeaveClubServer = () => {
           true,
           selectedClubChat.chatTopic
         );
-      } else {
+      }
+
+    if (selectedClubChat) {
+      return () => {
         socket?.emit(
           'leaveroom',
-          `clubserver-${serverId}-guide`,
+          `clubserver-${serverId}-${selectedClubChat._id}`,
           true,
-          'Guide'
+          selectedClubChat.chatTopic
         );
-      }
-  }, [pathname]);
+      };
+    }
+  }, [pathname, selectedClubChat, sectionId]);
 };
 
 export default useLeaveClubServer;
