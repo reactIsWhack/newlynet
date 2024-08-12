@@ -113,6 +113,9 @@ const clubChatSlice = createSlice({
     setDateQuery(state, action) {
       state.dateQuery = action.payload.dateQuery;
     },
+    resetClubChatState(state) {
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -193,6 +196,7 @@ export const {
   resetClubChatMessages,
   setclubChatMessages,
   setDateQuery,
+  resetClubChatState,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

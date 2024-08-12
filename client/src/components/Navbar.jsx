@@ -9,6 +9,7 @@ import NavLinks from './ui/NavLinks';
 import { Link } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 import { resetChatState } from '../app/features/chats/chatSlice';
+import { resetClubChatState } from '../app/features/clubChat/clubChatSlice';
 
 const Navbar = () => {
   const { profilePicture } = useSelector(selectUser);
@@ -18,6 +19,7 @@ const Navbar = () => {
   const handleLogout = () => {
     dispatch(resetUserState());
     dispatch(resetChatState());
+    dispatch(resetClubChatState());
     dispatch(logoutUser());
   };
 

@@ -7,6 +7,15 @@ const clubServerSchema = new mongoose.Schema(
     schoolAffiliation: {
       type: String,
     },
+    custom: {
+      type: Boolean,
+      default: false,
+    },
+    tags: Array,
+    serverName: {
+      type: String,
+      default: '',
+    },
   },
   { timestamps: true }
 );

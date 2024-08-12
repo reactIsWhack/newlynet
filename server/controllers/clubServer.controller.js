@@ -1,6 +1,7 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.model');
 const ClubServer = require('../models/clubServer.model');
+const ClubChat = require('../models/clubChat.model');
 const { io } = require('../socket/socket');
 
 const getClubServer = asyncHandler(async (req, res) => {
@@ -48,4 +49,41 @@ const joinClubServer = asyncHandler(async (req, res) => {
   res.status(200).json(clubServer);
 });
 
-module.exports = { getClubServer, joinClubServer };
+const createCustomClubServer = asyncHandler(async (req, res) => {
+  const { tags, serverName } = req.body;
+
+  if (!serverName) {
+    res.status(400);
+    throw new Error('Please provide a server name');
+  }
+
+  if (!tags.length) {
+    res.status(400);
+    throw new Error('Please input at least one tag');
+  }
+  const existingClubServer = await ClubServer.findOne({ serverName });
+
+  if (existingClubServer) {
+    res.status(400);
+    throw new Error('Server name already exists');
+  }
+
+  const user = await User.findById(req.userId);
+  const generalClubChat = await ClubChat.create({
+    chatTopic: 'General',
+    messages: [],
+  });
+
+  const customServer = await ClubServer.create({
+    serverName,
+    tags,
+    custom: true,
+    schoolAffiliation: user.school.schoolId,
+    chats: [generalClubChat],
+    members: [user],
+  }).then((item) => item.populate(['chats', 'members']));
+
+  res.status(201).json(customServer);
+});
+
+module.exports = { getClubServer, joinClubServer, createCustomClubServer };

@@ -35,8 +35,40 @@ beforeAll(async () => {
     query: { userId: user._id },
   });
 
+  console.log(clientSocket);
   secondUserSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: secondUser._id },
+  });
+});
+
+describe('POST /clubserver', () => {
+  it('Should create a new custom club server', async () => {
+    const response = await request(app)
+      .post('/api/clubserver')
+      .set('Cookie', [...jwt])
+      .send({ serverName: 'Test Server', tags: ['Computer Science'] })
+      .expect(201)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.chats[0].chatTopic).toBe('General');
+    expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
+    expect(response.body.serverName).toBe('Test Server');
+    expect(response.body.tags.length).toBe(1);
+    expect(response.body.tags).toContain('Computer Science');
+    expect(response.body.members.map((m) => String(m._id))).toEqual(
+      expect.arrayContaining([String(userInfo._id)])
+    );
+  });
+
+  it('Should fail to create an existing club server', async () => {
+    const response = await request(app)
+      .post('/api/clubserver')
+      .set('Cookie', [...jwt])
+      .send({ serverName: 'Test Server', tags: ['Computer Science'] })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe('Server name already exists');
   });
 });
 
