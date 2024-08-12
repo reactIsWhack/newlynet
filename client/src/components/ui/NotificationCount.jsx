@@ -1,13 +1,11 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
+import calculateUnreadMsgCount from '../../utils/calculateUnreadMsgCount';
 
 const NotificationCount = () => {
   const { unreadChats } = useSelector(selectUser);
-  const count = unreadChats.reduce((acc, current) => {
-    acc += current.messages.length || 1;
-    return acc;
-  }, 0);
+  const count = calculateUnreadMsgCount(unreadChats);
   console.log(count);
 
   return (

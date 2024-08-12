@@ -9,6 +9,7 @@ import { useSocket } from '../../context/SocketContext';
 import { selectUser } from '../../app/features/user/userSlice';
 import { useNavigate } from 'react-router-dom';
 import { setSelectedChat } from '../../app/features/chats/chatSlice';
+import calculateUnreadMsgCount from '../../utils/calculateUnreadMsgCount';
 
 const ClubChatStats = () => {
   const {
@@ -18,15 +19,15 @@ const ClubChatStats = () => {
     chats,
     selectedClubChat,
   } = useSelector(selectClubChat);
-  const { userId } = useSelector(selectUser);
+  const { userId, unreadClubChats } = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const userInClubServer = members.some((member) => member._id === userId);
 
   const join = async () => {
-    await dispatch(joinClubServer()).then(() => {
-      navigate(`/clubchat`);
+    await dispatch(joinClubServer()).then((res) => {
+      if (res.meta.requestStatus !== 'rejected') navigate(`/clubchat`);
     });
   };
 
@@ -37,6 +38,7 @@ const ClubChatStats = () => {
       navigate(`/clubchat/${chat._id}`);
     }
   };
+  const unreadMsgCount = calculateUnreadMsgCount(unreadClubChats);
 
   return (
     <>
@@ -66,7 +68,9 @@ const ClubChatStats = () => {
 
         <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title text-right w-full ">Unread Msg</div>
-          <div className="stat-value text-3xl text-right w-full">0</div>
+          <div className="stat-value text-3xl text-right w-full">
+            {unreadMsgCount}
+          </div>
         </div>
       </div>
     </>

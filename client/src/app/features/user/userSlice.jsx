@@ -19,6 +19,7 @@ const initialState = {
   isLoggedIn: false,
   commonNewStudents: [],
   unreadChats: [],
+  unreadClubChats: [],
   cursor: '',
   updateLoading: false,
 };
@@ -225,6 +226,7 @@ const userSlice = createSlice({
         state.unreadChats = action.payload.unreadChats;
         state.socialMediaInfo = action.payload.socialMediaUsernames;
         state.username = action.payload.username;
+        state.unreadClubChats = action.payload.unreadClubChatMessages;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;
