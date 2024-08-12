@@ -1,6 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import {
+  getClubChatMessages,
+  selectClubChat,
+} from '../app/features/clubChat/clubChatSlice';
 import ClubChatHeader from '../components/ClubChatHeader';
 import MessageSkeleton from '../components/ui/MessageSkeleton';
 import MessageInput from '../components/ui/MessageInput';
@@ -12,6 +15,7 @@ import {
   selectUser,
 } from '../app/features/user/userSlice';
 import UnreadMessageHeadline from '../components/ui/UnreadMessageHeadline';
+import useCheckVisibility from '../hooks/useCheckVisibility';
 
 const SectionMessages = () => {
   useListenClubServerMsg(); // listens for messages in real time
@@ -29,26 +33,7 @@ const SectionMessages = () => {
   );
   const chatMessages = new Set(chat?.messages.map((msg) => msg._id));
   const initialMessage = messages.find((msg) => chatMessages?.has(msg._id));
-  const [isVisible, setIsVisible] = useState(false);
-
-  const readUnreadMessages = () => {
-    if (lastMessageRef.current) {
-      const rect = lastMessageRef.current.getBoundingClientRect();
-      const isVisible =
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <=
-          (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <=
-          (window.innerWidth || document.documentElement.clientWidth);
-
-      if (isVisible && chat) setIsVisible(true);
-    }
-  };
-
-  useEffect(() => {
-    readUnreadMessages();
-  }, [initialMessage]);
+  const isVisible = useCheckVisibility(lastMessageRef, initialMessage);
 
   useEffect(() => {
     if (chat && isVisible) dispatch(readUnreadClubMessages(chat._id));
@@ -94,10 +79,7 @@ const SectionMessages = () => {
       {selectedClubChat && (
         <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20">
           {selectedClubChat && <ClubChatHeader />}
-          <div
-            className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full"
-            onScroll={readUnreadMessages}
-          >
+          <div className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full">
             {clubChatLoading &&
               !messages.length &&
               [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
