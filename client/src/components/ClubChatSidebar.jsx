@@ -10,6 +10,7 @@ import {
 import { selectUser } from '../app/features/user/userSlice';
 import OnlineUserCard from './ui/OnlineUserCard';
 import { resetMessages } from '../app/features/chats/chatSlice';
+import ServerLinkItem from './ui/ServerLinkItem';
 
 const ClubChatSidebar = () => {
   const { chats, members, selectedClubChat } = useSelector(selectClubChat);
@@ -21,26 +22,7 @@ const ClubChatSidebar = () => {
   const listItem = chats.map((chat) => {
     const isActive = location.pathname === `/clubchat/${chat._id}`;
 
-    const handleClick = async () => {
-      if (sectionId !== selectedClubChat?._id) {
-        await dispatch(resetMessages());
-      }
-      await dispatch(setSelectedClubChat(chat));
-    };
-
-    return (
-      <li
-        key={chat._id}
-        className={`${
-          isActive ? 'bg-slate-600' : ''
-        } hover:bg-slate-600 rounded-md transition-colors duration-200`}
-        onClick={handleClick}
-      >
-        <Link to={`/clubchat/${chat._id}`} className="text-[15px] block p-2">
-          # {chat.chatTopic}
-        </Link>
-      </li>
-    );
+    return <ServerLinkItem chat={chat} isActive={isActive} key={chat._id} />;
   });
 
   const memberCard = members
