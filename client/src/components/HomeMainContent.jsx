@@ -14,6 +14,8 @@ const HomeMainContent = ({ filter, setFilter }) => {
   const dispatch = useDispatch();
 
   const handleClick = async () => {
+    if (!commonNewStudents.length) return;
+
     const usersWithCommonInterests =
       filter === 'grade'
         ? commonNewStudents.filter((student) => {
