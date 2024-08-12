@@ -11,7 +11,7 @@ const { resetOnlineUsers } = require('../socket/socket');
 const ClubServer = require('../models/clubServer.model');
 config();
 
-const shuffledInterests = shuffle(interestOptions);
+const shuffledInterests = ['General', ...shuffle(interestOptions)];
 
 const generateGrade = (i) => {
   const randomGrade =
@@ -51,11 +51,7 @@ const generateClubChats = async () => {
       });
       clubChats.push(clubChat);
     }
-    const generalClubChat = await ClubChat.create({
-      messages: [],
-      chatTopic: 'General',
-    });
-    clubServer.chats = [...clubChats, generalClubChat];
+    clubServer.chats = clubChats;
     await clubServer.save();
   }
 };

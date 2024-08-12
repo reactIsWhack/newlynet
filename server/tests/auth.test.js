@@ -4,15 +4,22 @@ const { initializeMongoDB, disconnectMongoDB } = require('../db/connectTestDB');
 // const { app } = require('../socket/socket');
 const app = require('../index');
 const getSchool = require('../services/schoolService');
+const ClubServer = require('../models/clubServer.model');
 
 let school;
+let secondSchool;
 let token;
 beforeAll(async () => {
   await initializeMongoDB();
 
   school = await getSchool('PrincetonHighSchool');
+  console.log(school);
+  secondSchool = await getSchool('SouthBrunswickHighSchool');
+  console.log(secondSchool);
+
   await User.create({
-    fullName: 'j',
+    firstName: 'j',
+    lastName: 'k',
     username: 'jest',
     password: '123456',
     grade: 9,
@@ -27,7 +34,8 @@ describe('POST /signup', () => {
     const response = await request(app)
       .post('/api/auth/signup')
       .send({
-        fullName: 'test jest',
+        firstName: 'test',
+        lastName: 'jest',
         username: 'test',
         password: 'testjest',
         grade: 9,
@@ -37,20 +45,44 @@ describe('POST /signup', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
+    console.log(response.body);
     token = response.headers['set-cookie'];
     expect(response.header['set-cookie']).toBeTruthy(); // ensure the jwt was sent
-    expect(response.body.fullName).toBe('test jest');
     expect(response.body.username).toBe('test');
     expect(response.body.grade).toBe(9);
     expect(response.body.school.formattedName).toBe('Princeton High School');
     expect(response.body.interests[0]).toBe('computer science');
   });
 
+  it('Should create a new club server for a new school', async () => {
+    const response = await request(app)
+      .post('/api/auth/signup')
+      .send({
+        firstName: 'test',
+        lastName: 'jest',
+        username: 'testfdasfks',
+        password: 'testjest',
+        grade: 9,
+        school: secondSchool,
+        interests: ['computer science'],
+      })
+      // .expect(201)
+      .expect('Content-Type', /application\/json/);
+    console.log(response.body);
+
+    const clubServer = await ClubServer.findOne({
+      schoolAffiliation: secondSchool.schoolId,
+    });
+    expect(clubServer.schoolAffiliation).toBe(secondSchool.schoolId);
+    expect(clubServer.chats.length).toBe(28);
+  });
+
   it('Should fail to register a user if their password is less than six characters', async () => {
     const response = await request(app)
       .post('/api/auth/signup')
       .send({
-        fullName: 'test jest',
+        firstName: 'test jest',
+        lastName: 'afdsa',
         username: 'test',
         password: '1',
         grade: 9,
@@ -69,7 +101,8 @@ describe('POST /signup', () => {
     const response = await request(app)
       .post('/api/auth/signup')
       .send({
-        fullName: 'test jest',
+        firstName: 'test',
+        lastName: 'f',
         username: 'jest',
         password: '123456',
         grade: 9,
@@ -88,7 +121,8 @@ describe('POST /signup', () => {
     const response = await request(app)
       .post('/api/auth/signup')
       .send({
-        fullName: 'idk',
+        firstName: 'idk',
+        lastName: 'f',
         username: 'cool',
         password: '123456',
         grade: 9,
@@ -118,7 +152,6 @@ describe('POST /login', () => {
     token = response.headers['set-cookie'];
     expect(response.headers['set-cookie']).toBeTruthy();
     expect(response.body._id).toBeTruthy();
-    expect(response.body.fullName).toBe('j');
     expect(response.body.contacts.length).toBe(0);
   });
 

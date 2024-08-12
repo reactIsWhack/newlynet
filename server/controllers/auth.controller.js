@@ -2,6 +2,12 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const ClubServer = require('../models/clubServer.model');
+const shuffle = require('../utils/shuffleArray');
+const { interestOptions } = require('../db/data');
+const ClubChat = require('../models/clubChat.model');
+
+const shuffledInterests = ['General', ...shuffle(interestOptions)];
 
 const generateToken = (userId) => {
   return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -16,7 +22,7 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new Error('Please provide at least one club or sport interest');
   }
 
-  if (!school.description || !school.schoolId) {
+  if ((!school.description && !school.fullDescription) || !school.schoolId) {
     res.status(400);
     throw new Error('Please provide a valid school');
   }
@@ -28,6 +34,26 @@ const registerUser = asyncHandler(async (req, res) => {
   if (response.status !== 200) {
     res.status(400);
     throw new Error('Please provide a valid school');
+  }
+
+  const clubServerExists = await ClubServer.findOne({
+    schoolAffiliation: school.schoolId,
+  });
+
+  if (!clubServerExists) {
+    const chats = [];
+    for (const interest of shuffledInterests) {
+      const clubChat = await ClubChat.create({
+        messages: [],
+        chatTopic: interest,
+      });
+      chats.push(clubChat);
+    }
+    await ClubServer.create({
+      members: [],
+      chats,
+      schoolAffiliation: school.schoolId,
+    });
   }
 
   const user = await User.create({

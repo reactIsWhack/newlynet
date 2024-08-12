@@ -31,9 +31,10 @@ let initialInterest = '';
 
 describe('Generate club chats', () => {
   it('Should generate 27  chats based off interests', async () => {
+    const allChatTopics = [...interestOptions, 'General'];
     const clubChat = await ClubChat.findOne({});
     expect(clubChat._id).toBeTruthy();
-    expect(interestOptions).toContain(clubChat.chatTopic);
+    expect(allChatTopics).toContain(clubChat.chatTopic);
   });
 
   it('Should generate two club servers', async () => {
