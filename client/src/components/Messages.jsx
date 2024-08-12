@@ -46,7 +46,13 @@ const Messages = () => {
     if (dateQuery === '') return;
 
     if (e.target.scrollTop === 0) {
-      dispatch(getMessages(selectedConversation?._id));
+      dispatch(getMessages(selectedConversation?._id)).then((res) => {
+        if (res.payload.data.length) {
+          const firstMessageLoaded =
+            res.payload.data[res.payload.data.length - 1]._id;
+          document.getElementById(firstMessageLoaded).scrollIntoView();
+        }
+      });
     }
   };
 
