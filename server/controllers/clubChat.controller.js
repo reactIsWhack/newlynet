@@ -5,6 +5,7 @@ const { io } = require('../socket/socket');
 const User = require('../models/user.model');
 const { shuffledInterests } = require('../utils/seeds');
 const ClubServer = require('../models/clubServer.model');
+const appendUnreadServerMessages = require('../utils/appendUnreadServerMessages');
 
 const sendClubChatMessage = asyncHandler(async (req, res) => {
   const { message, chatSection } = req.body;
@@ -48,7 +49,10 @@ const sendClubChatMessage = asyncHandler(async (req, res) => {
   );
   const chat = await ClubChat.findById(serverChat._id);
   chat.messages = [...chat.messages, newMessage];
-  await chat.save();
+  await Promise.all([
+    chat.save(),
+    appendUnreadServerMessages(receivers, serverId, serverChat, newMessage),
+  ]);
 
   io.to(`clubserver-${clubServer._id}-${chat._id}`).emit(
     'newClubServerMsg',

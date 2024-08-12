@@ -111,7 +111,7 @@ const populateDB = async () => {
   // await ClubChat.deleteMany();
   // return;
   await generateClubChats();
-  // await generateFakeUsers();
+  await generateFakeUsers();
 };
 
 module.exports = {

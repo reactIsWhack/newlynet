@@ -7,6 +7,7 @@ const ioc = require('socket.io-client');
 const ClubChat = require('../models/clubChat.model');
 const ClubServer = require('../models/clubServer.model');
 const User = require('../models/user.model');
+const { populateDB } = require('../utils/seeds');
 
 let jwt;
 let userInfo;
@@ -14,6 +15,7 @@ let clientSocket;
 let secondSocket;
 let secondUser;
 let clubServer;
+let thirdUser;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -22,13 +24,14 @@ beforeAll(async () => {
   const { token, user } = await loginUser('test', 'test123');
   jwt = token;
   userInfo = user;
-  secondUser = await User.findOne({
+  [secondUser, thirdUser] = await User.find({
     'school.schoolId': user.school.schoolId,
+    _id: { $ne: user._id },
   });
-  const secondUserData = await loginUser(
-    secondUser.username,
-    process.env.FAKE_USER_PASSWORD
-  );
+  const [secondUserData, thirdUserData] = await Promise.all([
+    loginUser(secondUser.username, process.env.FAKE_USER_PASSWORD),
+    loginUser(thirdUser.username, process.env.FAKE_USER_PASSWORD),
+  ]);
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: user._id },
@@ -41,10 +44,10 @@ beforeAll(async () => {
   clubServer = await ClubServer.findOne({
     schoolAffiliation: user.school.schoolId,
   }).populate('chats');
-  for (let i = 0; i < 2; i++) {
+  for (let i = 0; i < 3; i++) {
     await joinClubServer(
       clubServer._id,
-      i === 0 ? token : secondUserData.token
+      i === 0 ? token : i === 1 ? secondUserData.token : thirdUserData.token
     );
   }
 
@@ -143,6 +146,17 @@ describe('GET /clubChat', () => {
     expect(response.body[0].author._id.toString()).toBe(
       userInfo._id.toString()
     );
+  });
+
+  it('Should ensure the third member has 3 unread club chat messages', async () => {
+    const user = await User.findById(thirdUser._id);
+
+    console.log(user);
+    expect(user.unreadClubChatMessages.length).toBe(1);
+    expect(user.unreadClubChatMessages[0].chat._id.toString()).toBe(
+      clubServer.chats[0]._id.toString()
+    );
+    expect(user.unreadClubChatMessages[0].messages.length).toBe(3);
   });
 });
 

@@ -55,11 +55,13 @@ const connectContactSockets = async (contactId, i) => {
 };
 
 const joinClubServer = async (clubServerId, jwt) => {
-  await request(app)
+  const response = await request(app)
     .patch(`/api/clubserver/${clubServerId}`)
     .set('Cookie', [...jwt])
     .expect(200)
     .expect('Content-Type', /application\/json/);
+
+  console.log(response.body);
 };
 
 module.exports = {

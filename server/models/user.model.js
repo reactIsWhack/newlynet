@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema(
       instagram: { type: String, default: '' },
     },
     chats: [{ type: mongoose.Schema.Types.ObjectId, ref: 'chat', default: [] }],
+    unreadClubChatMessages: [
+      {
+        chat: { type: mongoose.Schema.Types.ObjectId, ref: 'clubChat' },
+        messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
+      },
+    ],
   },
   { timestamps: true }
 );
