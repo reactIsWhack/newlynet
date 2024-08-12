@@ -111,8 +111,10 @@ const populateDB = async () => {
   // await ClubChat.deleteMany();
   // await Message.deleteMany();
   // return;
-  await generateClubChats();
-  // await generateFakeUsers();
+  if (process.env.NODE_ENV === 'test') {
+    await generateClubChats();
+    await generateFakeUsers();
+  }
 };
 
 module.exports = {

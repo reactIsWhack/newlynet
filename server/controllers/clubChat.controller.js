@@ -90,12 +90,14 @@ const getClubChatMessages = asyncHandler(async (req, res) => {
 
 const readClubChatMessages = asyncHandler(async (req, res) => {
   const { chatId } = req.params;
+  console.log(chatId);
 
   const user = await User.findById(req.userId);
 
   const updatedUnreadChats = user.unreadClubChatMessages.filter(
-    (chatItem) => String(chatItem.chat) !== String(chatId)
+    (chatItem) => String(chatItem._id) !== String(chatId)
   );
+  console.log(updatedUnreadChats);
 
   user.unreadClubChatMessages = updatedUnreadChats;
   await user.save().then((item) =>

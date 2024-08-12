@@ -153,6 +153,7 @@ describe('GET /clubChat', () => {
   it('Should ensure the third member has 3 unread club chat messages', async () => {
     const user = await User.findById(thirdUser._id);
 
+    thirdUser = user;
     console.log(user);
     expect(user.unreadClubChatMessages.length).toBe(1);
     expect(user.unreadClubChatMessages[0].chat._id.toString()).toBe(
@@ -165,7 +166,7 @@ describe('GET /clubChat', () => {
 describe('PATCH /clubChat', () => {
   it('Should have the third rember read their unread messages', async () => {
     const response = await request(app)
-      .patch(`/api/club-chat/${clubServer.chats[0]._id}`)
+      .patch(`/api/club-chat/${thirdUser.unreadClubChatMessages[0]._id}`)
       .set('Cookie', [...thirdToken])
       .expect(200)
       .expect('Content-Type', /application\/json/);
