@@ -15,7 +15,14 @@ const appendMessage = async (userId, serverChat, newMessage) => {
       { chat: serverChat, messages: [newMessage] },
     ];
   }
-  await user.save();
+  await user.save().then((item) =>
+    item.populate({
+      path: 'unreadClubChatMessages',
+      populate: [{ path: 'chat' }, { path: 'messages' }],
+    })
+  );
+  const socketId = getSocketId(userId);
+  io.to(socketId).emit('clubChatNotif', user.unreadClubChatMessages);
 };
 
 const appendUnreadServerMessages = async (
