@@ -17,7 +17,7 @@ const initialState = {
   selectedClubChat: null,
   onlineServerUsers: [],
   dateQuery: null,
-  createMsgLoading: false,
+  createClubMsgLoading: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -155,17 +155,17 @@ const clubChatSlice = createSlice({
         toast.error(action.payload);
       })
       .addCase(sendClubChatMessage.pending, (state) => {
-        state.createMsgLoading = true;
+        state.createClubMsgLoading = true;
       })
       .addCase(sendClubChatMessage.fulfilled, (state, action) => {
-        state.createMsgLoading = false;
+        state.createClubMsgLoading = false;
         const audio = new Audio(sendMessageSound);
         audio.play();
         state.messages = [...state.messages, action.payload];
       })
       .addCase(sendClubChatMessage.rejected, (state, action) => {
-        state.createMsgLoading = false;
-        toast.error(action.payload);
+        state.createClubMsgLoading = false;
+        toast.error(action.payload, { id: 'club-msg-error' });
       });
   },
 });

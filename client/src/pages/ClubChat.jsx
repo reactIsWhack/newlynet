@@ -3,15 +3,12 @@ import Navbar from '../components/Navbar';
 import useRedirectUser from '../hooks/useRedirectUser';
 import { useSocket } from '../context/SocketContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../app/features/user/userSlice';
 import ClubChatSidebar from '../components/ClubChatSidebar';
-import ClubChatHeader from '../components/ClubChatHeader';
 import {
   getClubChatMessages,
   selectClubChat,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
-import toast from 'react-hot-toast';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 

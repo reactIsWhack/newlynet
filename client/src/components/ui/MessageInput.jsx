@@ -22,7 +22,8 @@ const MessageInput = ({
   const dispatch = useDispatch();
   const { selectedConversation, createMsgLoading } = useSelector(selectChats);
   const { id } = useParams();
-  const { selectedClubChat } = useSelector(selectClubChat);
+  const { selectedClubChat, createClubMsgLoading } =
+    useSelector(selectClubChat);
 
   const handleChange = (e) => setMessage(e.target.value);
   const handleKeyDown = (e) => {
@@ -144,7 +145,7 @@ const MessageInput = ({
             rows={1}
           />
         </div>
-        {createMsgLoading ? (
+        {createMsgLoading || createClubMsgLoading ? (
           <span className="loading loading-spinner loading-sm absolute inset-y-0 right-4 flex items-center pe-3 disabled"></span>
         ) : (
           <button

@@ -11,6 +11,11 @@ const sendClubChatMessage = asyncHandler(async (req, res) => {
   const { message, chatSection } = req.body;
   const { serverId } = req.params;
 
+  if (!message) {
+    res.status(400);
+    throw new Error('Please provide a message');
+  }
+
   const clubServer = await ClubServer.findById(serverId).populate('chats');
   const user = await User.findById(req.userId);
 
