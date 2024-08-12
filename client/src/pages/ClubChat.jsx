@@ -7,6 +7,7 @@ import ClubChatSidebar from '../components/ClubChatSidebar';
 import {
   getClubChatMessages,
   selectClubChat,
+  setDateQuery,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
@@ -15,7 +16,7 @@ import useDetectMobile from '../hooks/useDetectMobile';
 const ClubChat = () => {
   useRedirectUser();
   const { socket } = useSocket();
-  const { members, serverId, selectedClubChat, chats } =
+  const { members, serverId, selectedClubChat, chats, dateQuery } =
     useSelector(selectClubChat);
   const { sectionId } = useParams();
   const dispatch = useDispatch();
@@ -47,10 +48,10 @@ const ClubChat = () => {
   }, [sectionId, selectedClubChat, chats]);
 
   useEffect(() => {
-    if (sectionId) {
+    if (sectionId && !dateQuery) {
       dispatch(getClubChatMessages(sectionId));
     }
-  }, [sectionId]);
+  }, []);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

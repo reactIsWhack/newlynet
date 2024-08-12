@@ -20,7 +20,7 @@ import useCheckVisibility from '../hooks/useCheckVisibility';
 const SectionMessages = () => {
   useListenClubServerMsg(); // listens for messages in real time
 
-  const { selectedClubChat, clubChatLoading, messages } =
+  const { selectedClubChat, clubChatLoading, messages, dateQuery, paginating } =
     useSelector(selectClubChat);
   const { unreadClubChats } = useSelector(selectUser);
   const [filePreview, setFilePreview] = useState('');
@@ -63,23 +63,41 @@ const SectionMessages = () => {
         });
       }, 200);
     } else {
-      setTimeout(() => {
-        lastMessageRef.current?.scrollIntoView({
-          block: 'nearest',
-          inline: 'center',
-          behavior: 'smooth',
-          alignToTop: false,
-        });
-      }, 200);
+      !paginating &&
+        setTimeout(() => {
+          lastMessageRef.current?.scrollIntoView({
+            block: 'nearest',
+            inline: 'center',
+            behavior: 'smooth',
+            alignToTop: false,
+          });
+        }, 200);
     }
   }, [selectedClubChat, sectionId, initialMessage, messages]);
+
+  const handleScroll = (e) => {
+    if (dateQuery === '') return;
+
+    if (e.target.scrollTop === 0) {
+      dispatch(getClubChatMessages(selectedClubChat._id)).then((res) => {
+        if (res.payload.data.length) {
+          const lastMessageLoaded =
+            res.payload.data[res.payload.data.length - 1]._id;
+          document.getElementById(lastMessageLoaded).scrollIntoView();
+        }
+      });
+    }
+  };
 
   return (
     <>
       {selectedClubChat && (
         <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20">
           {selectedClubChat && <ClubChatHeader />}
-          <div className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full">
+          <div
+            className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full"
+            onScroll={handleScroll}
+          >
             {clubChatLoading &&
               !messages.length &&
               [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}

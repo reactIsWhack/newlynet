@@ -18,6 +18,7 @@ const initialState = {
   onlineServerUsers: [],
   dateQuery: null,
   createClubMsgLoading: false,
+  paginating: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -50,15 +51,18 @@ export const joinClubServer = createAsyncThunk(
 export const getClubChatMessages = createAsyncThunk(
   'clubChat/getMessages',
   async (chatId, thunkAPI) => {
+    const {
+      clubChat: { dateQuery },
+    } = thunkAPI.getState();
     try {
-      const {
-        clubChat: { dateQuery },
-      } = thunkAPI.getState();
-      const date = dateQuery ? dateQuery : Date.parse(new Date(Date.now()));
+      const date = dateQuery
+        ? new Date(dateQuery)
+        : Date.parse(new Date(Date.now()));
       const response = await axios.get(
         `${baseURL}/api/club-chat/${chatId}/${date}`
       );
-      return response.data;
+      console.log(response.data);
+      return { data: response.data, paginating: dateQuery !== null };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -68,12 +72,10 @@ export const getClubChatMessages = createAsyncThunk(
 export const sendClubChatMessage = createAsyncThunk(
   'clubChat/sendMessage',
   async (formData, thunkAPI) => {
-    console.log(formData.get('message'));
     try {
       const {
         clubChat: { serverId },
       } = thunkAPI.getState();
-      console.log(serverId);
       const response = await axios.post(
         `${baseURL}/api/club-chat/${serverId}`,
         {
@@ -103,9 +105,13 @@ const clubChatSlice = createSlice({
     },
     resetClubChatMessages(state, action) {
       state.messages = [];
+      state.dateQuery = null;
     },
     setclubChatMessages(state, action) {
       state.messages = [...state.messages, action.payload];
+    },
+    setDateQuery(state, action) {
+      state.dateQuery = action.payload.dateQuery;
     },
   },
   extraReducers: (builder) => {
@@ -140,15 +146,23 @@ const clubChatSlice = createSlice({
       })
       .addCase(getClubChatMessages.fulfilled, (state, action) => {
         state.clubChatLoading = false;
-        if (!state.dateQuery) {
-          state.messages = action.payload.reverse();
+
+        if (!action.payload.paginating) {
+          state.messages = action.payload.data.reverse();
         } else {
-          state.messages = [...action.payload.reverse(), ...state.messages];
+          state.paginating = true;
+          state.messages = [
+            ...action.payload.data.reverse().map((msg) => {
+              msg.shouldShake = true;
+              return msg;
+            }),
+            ...state.messages,
+          ];
         }
 
-        if (action.payload.length === 20)
-          state.dateQuery = action.payload[action.payload.length - 1].createdAt;
-        else state.dateQuery = '';
+        if (action.payload.data.length) {
+          state.dateQuery = action.payload.data[0].createdAt;
+        } else state.dateQuery = '';
       })
       .addCase(getClubChatMessages.rejected, (state, action) => {
         state.clubChatLoading = false;
@@ -178,6 +192,7 @@ export const {
   setOnlineServerUsers,
   resetClubChatMessages,
   setclubChatMessages,
+  setDateQuery,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

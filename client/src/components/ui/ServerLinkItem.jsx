@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useParams } from 'react-router-dom';
 import {
+  getClubChatMessages,
+  resetClubChatMessages,
   selectClubChat,
   setSelectedClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
@@ -19,11 +21,14 @@ const ServerLinkItem = ({ chat, isActive }) => {
     (clubChat) => clubChat.chat._id === chat._id
   );
 
-  const handleClick = async () => {
+  const handleClick = async (e) => {
     if (sectionId !== selectedClubChat?._id) {
-      await dispatch(resetMessages());
     }
     await dispatch(setSelectedClubChat(chat));
+    await dispatch(resetClubChatMessages());
+    console.log(selectedClubChat);
+    console.log(e.target.id);
+    await dispatch(getClubChatMessages(e.target.id));
   };
 
   useEffect(() => {
@@ -43,6 +48,7 @@ const ServerLinkItem = ({ chat, isActive }) => {
         className={`text-[15px] block p-2 flex-1 ${
           isUnreadChat ? 'text-slate-200' : ''
         }`}
+        id={chat._id}
       >
         # {chat.chatTopic}
       </Link>
