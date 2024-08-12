@@ -6,7 +6,6 @@ import calculateUnreadMsgCount from '../../utils/calculateUnreadMsgCount';
 const NotificationCount = () => {
   const { unreadChats } = useSelector(selectUser);
   const count = calculateUnreadMsgCount(unreadChats);
-  console.log(count);
 
   return (
     <div className="w-6 h-6 rounded-full bg-red-500 absolute flex items-center justify-center text-white text-base -top-2 -right-2">

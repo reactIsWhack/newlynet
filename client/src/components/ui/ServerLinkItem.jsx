@@ -27,7 +27,6 @@ const ServerLinkItem = ({ chat, isActive }) => {
   };
 
   useEffect(() => {
-    console.log(isUnreadChat);
     if (isUnreadChat) setChatUnreadCount(isUnreadChat.messages.length);
   }, []);
 

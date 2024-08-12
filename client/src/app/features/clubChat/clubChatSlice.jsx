@@ -55,11 +55,9 @@ export const getClubChatMessages = createAsyncThunk(
         clubChat: { dateQuery },
       } = thunkAPI.getState();
       const date = dateQuery ? dateQuery : Date.parse(new Date(Date.now()));
-      console.log(date, chatId);
       const response = await axios.get(
         `${baseURL}/api/club-chat/${chatId}/${date}`
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -83,7 +81,6 @@ export const sendClubChatMessage = createAsyncThunk(
           chatSection: formData.get('chatSection'),
         }
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);

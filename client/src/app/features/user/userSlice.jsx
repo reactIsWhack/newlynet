@@ -139,6 +139,19 @@ export const updateProfile = createAsyncThunk(
   }
 );
 
+export const readUnreadClubMessages = createAsyncThunk(
+  'clubChat/readUnreads',
+  async (chatId, thunkAPI) => {
+    try {
+      const response = await axios.patch(`${baseUrl}/api/club-chat/${chatId}`);
+      console.log(response);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -289,6 +302,12 @@ const userSlice = createSlice({
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.updateLoading = false;
+        toast.error(action.payload);
+      })
+      .addCase(readUnreadClubMessages.fulfilled, (state, action) => {
+        state.unreadClubChats = action.payload.unreadClubChatMessages;
+      })
+      .addCase(readUnreadClubMessages.rejected, (state, action) => {
         toast.error(action.payload);
       });
   },

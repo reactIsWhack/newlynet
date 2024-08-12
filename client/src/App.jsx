@@ -57,7 +57,6 @@ function App() {
   });
   const [renderLoadingScreen, setRenderLoadingScreen] = useState(false);
 
-  console.log(renderLoadingScreen);
   const getData = async () => {
     if (isLoggedIn) setRenderLoadingScreen(true);
     await dispatch(getUserProfile()).then(() => setRenderLoadingScreen(false));

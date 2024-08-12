@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import ClubChatHeader from '../components/ClubChatHeader';
 import MessageSkeleton from '../components/ui/MessageSkeleton';
@@ -7,42 +7,68 @@ import MessageInput from '../components/ui/MessageInput';
 import ChatBubble from '../components/ui/ChatBubble';
 import useListenClubServerMsg from '../hooks/useListenClubServerMsg';
 import { useParams } from 'react-router-dom';
-import { selectUser } from '../app/features/user/userSlice';
+import {
+  readUnreadClubMessages,
+  selectUser,
+} from '../app/features/user/userSlice';
 import UnreadMessageHeadline from '../components/ui/UnreadMessageHeadline';
 
 const SectionMessages = () => {
-  useListenClubServerMsg();
+  useListenClubServerMsg(); // listens for messages in real time
+
   const { selectedClubChat, clubChatLoading, messages } =
     useSelector(selectClubChat);
   const { unreadClubChats } = useSelector(selectUser);
   const [filePreview, setFilePreview] = useState('');
   const lastMessageRef = useRef(null);
-  const initialUnreadMsgRef = useRef(null);
+  const dispatch = useDispatch();
   const { sectionId } = useParams();
 
   const chat = unreadClubChats.find(
     (chatItem) => chatItem.chat._id === selectedClubChat?._id
   );
-  const initialUnreadMsg = chat?.messages[0];
+  const chatMessages = new Set(chat?.messages.map((msg) => msg._id));
+  const initialMessage = messages.find((msg) => chatMessages?.has(msg._id));
+  const [isVisible, setIsVisible] = useState(false);
 
-  const chatBubble = messages.map((message) => {
-    let assignRef =
-      initialUnreadMsg?._id === message._id && unreadClubChats.length;
+  const readUnreadMessages = () => {
+    if (lastMessageRef.current) {
+      const rect = lastMessageRef.current.getBoundingClientRect();
+      const isVisible =
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <=
+          (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <=
+          (window.innerWidth || document.documentElement.clientWidth);
 
+      if (isVisible && chat) setIsVisible(true);
+    }
+  };
+
+  useEffect(() => {
+    readUnreadMessages();
+  }, [initialMessage]);
+
+  useEffect(() => {
+    if (chat) dispatch(readUnreadClubMessages(chat._id));
+  }, [isVisible]);
+
+  const chatBubble = messages.map((message, index) => {
     return (
       <div
         key={message._id}
         id={message._id}
-        ref={assignRef ? initialUnreadMsgRef : lastMessageRef}
+        ref={index + 1 === messages.length ? lastMessageRef : null}
       >
-        {assignRef && <UnreadMessageHeadline />}
+        {message._id === initialMessage?._id && <UnreadMessageHeadline />}
         <ChatBubble {...message} />
       </div>
     );
   });
 
   useEffect(() => {
-    if (!unreadClubChats.length && !clubChatLoading) {
+    if (!chat) {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({
           block: 'nearest',
@@ -51,15 +77,27 @@ const SectionMessages = () => {
           alignToTop: false,
         });
       }, 300);
+    } else {
+      setTimeout(() => {
+        document.getElementById(initialMessage?._id)?.scrollIntoView({
+          block: 'nearest',
+          inline: 'center',
+          behavior: 'smooth',
+          alignToTop: false,
+        });
+      }, 300);
     }
-  }, [selectedClubChat, sectionId]);
+  }, [selectedClubChat, sectionId, initialMessage]);
 
   return (
     <>
       {selectedClubChat && (
         <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20">
           {selectedClubChat && <ClubChatHeader />}
-          <div className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full">
+          <div
+            className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full"
+            onScroll={readUnreadMessages}
+          >
             {clubChatLoading &&
               !messages.length &&
               [...Array(3)].map((_, idx) => <MessageSkeleton key={idx} />)}
