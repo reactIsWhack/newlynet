@@ -15,7 +15,7 @@ const ServerLinkItem = ({ chat, isActive }) => {
   const dispatch = useDispatch();
   const [chatUnreadCount, setChatUnreadCount] = useState(null);
 
-  const isUnreadChat = unreadClubChats.find(
+  const isUnreadChat = unreadClubChats?.find(
     (clubChat) => clubChat.chat._id === chat._id
   );
 
@@ -27,8 +27,9 @@ const ServerLinkItem = ({ chat, isActive }) => {
   };
 
   useEffect(() => {
+    console.log(isUnreadChat);
     if (isUnreadChat) setChatUnreadCount(isUnreadChat.messages.length);
-  }, []);
+  }, [isUnreadChat]);
 
   return (
     <li

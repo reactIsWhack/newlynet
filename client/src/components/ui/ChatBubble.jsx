@@ -8,7 +8,7 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
   const chatBubbleRef = useRef(null);
   const [isOverflowing, setIsOverflowing] = useState(false);
 
-  const myMessage = author._id === userId;
+  const myMessage = author?._id === userId;
 
   const formattedDate = isToday(new Date(createdAt))
     ? format(new Date(createdAt), 'p') // e.g., 10:00 AM

@@ -177,6 +177,9 @@ const userSlice = createSlice({
     resetUserState(state) {
       return initialState;
     },
+    setUnreadClubChatMessages(state, action) {
+      state.unreadClubChats = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -322,6 +325,7 @@ export const {
   setUnreadChats,
   setChattingWith,
   resetUserState,
+  setUnreadClubChatMessages,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;

@@ -4,6 +4,7 @@ import {
   selectUser,
   setChattingWith,
   setUnreadChats,
+  setUnreadClubChatMessages,
 } from '../app/features/user/userSlice';
 import { io } from 'socket.io-client';
 import {
@@ -43,6 +44,10 @@ export const SocketContextProvider = ({ children }) => {
       socketVal.on('clubServerJoin', (clubServer, user) => {
         if (clubServer.schoolAffiliation === school.schoolId)
           dispatch(setClubChatMembers(clubServer.members));
+      });
+
+      socketVal.on('clubChatNotif', (unreadClubChats) => {
+        dispatch(setUnreadClubChatMessages(unreadClubChats));
       });
 
       socketVal.on('newChat', (chat, updatedNotifications) => {

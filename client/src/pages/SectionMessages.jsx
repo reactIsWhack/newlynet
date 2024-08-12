@@ -51,7 +51,7 @@ const SectionMessages = () => {
   }, [initialMessage]);
 
   useEffect(() => {
-    if (chat) dispatch(readUnreadClubMessages(chat._id));
+    if (chat && isVisible) dispatch(readUnreadClubMessages(chat._id));
   }, [isVisible]);
 
   const chatBubble = messages.map((message, index) => {
@@ -68,7 +68,16 @@ const SectionMessages = () => {
   });
 
   useEffect(() => {
-    if (!chat) {
+    if (initialMessage) {
+      setTimeout(() => {
+        document.getElementById(initialMessage._id)?.scrollIntoView({
+          block: 'nearest',
+          inline: 'center',
+          behavior: 'smooth',
+          alignToTop: false,
+        });
+      }, 200);
+    } else {
       setTimeout(() => {
         lastMessageRef.current?.scrollIntoView({
           block: 'nearest',
@@ -76,18 +85,9 @@ const SectionMessages = () => {
           behavior: 'smooth',
           alignToTop: false,
         });
-      }, 300);
-    } else {
-      setTimeout(() => {
-        document.getElementById(initialMessage?._id)?.scrollIntoView({
-          block: 'nearest',
-          inline: 'center',
-          behavior: 'smooth',
-          alignToTop: false,
-        });
-      }, 300);
+      }, 200);
     }
-  }, [selectedClubChat, sectionId, initialMessage]);
+  }, [selectedClubChat, sectionId, initialMessage, messages]);
 
   return (
     <>
