@@ -88,7 +88,28 @@ const getClubChatMessages = asyncHandler(async (req, res) => {
   res.status(200).json(messages);
 });
 
+const readClubChatMessages = asyncHandler(async (req, res) => {
+  const { chatId } = req.params;
+
+  const user = await User.findById(req.userId);
+
+  const updatedUnreadChats = user.unreadClubChatMessages.filter(
+    (chatItem) => String(chatItem.chat) !== String(chatId)
+  );
+
+  user.unreadClubChatMessages = updatedUnreadChats;
+  await user.save().then((item) =>
+    item.populate({
+      path: 'unreadClubChatMessages',
+      populate: [{ path: 'chat' }, { path: 'messages' }],
+    })
+  );
+
+  res.status(200).json(user);
+});
+
 module.exports = {
   sendClubChatMessage,
   getClubChatMessages,
+  readClubChatMessages,
 };

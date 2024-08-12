@@ -16,6 +16,7 @@ let secondSocket;
 let secondUser;
 let clubServer;
 let thirdUser;
+let thirdToken;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -32,6 +33,7 @@ beforeAll(async () => {
     loginUser(secondUser.username, process.env.FAKE_USER_PASSWORD),
     loginUser(thirdUser.username, process.env.FAKE_USER_PASSWORD),
   ]);
+  thirdToken = thirdUserData.token;
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: user._id },
@@ -157,6 +159,19 @@ describe('GET /clubChat', () => {
       clubServer.chats[0]._id.toString()
     );
     expect(user.unreadClubChatMessages[0].messages.length).toBe(3);
+  });
+});
+
+describe('PATCH /clubChat', () => {
+  it('Should have the third rember read their unread messages', async () => {
+    const response = await request(app)
+      .patch(`/api/club-chat/${clubServer.chats[0]._id}`)
+      .set('Cookie', [...thirdToken])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.unreadClubChatMessages.length).toBe(0);
+    expect(response.body.unreadClubChatMessages).toEqual([]);
   });
 });
 
