@@ -5,7 +5,6 @@ const interestOptions = [
   'English/Language Arts',
   'Finance',
   'Economics',
-  'Accounting',
   'History',
   'Engineering',
   'Machine Learning',
@@ -25,7 +24,6 @@ const interestOptions = [
   'Arts',
   'Film',
   'Video Production',
-  'Editing',
 ];
 
 export default interestOptions;

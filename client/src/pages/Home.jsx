@@ -7,9 +7,12 @@ import useDetectMobile from '../hooks/useDetectMobile';
 import useListenNotifications from '../hooks/useListenNotifications';
 import useUpdateStreak from '../hooks/useUpdateStreak';
 import ClubChatStats from '../components/ui/ClubChatStats';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import ClubServerMenu from '../components/ui/ClubServerMenu';
+import { selectPopup, setRenderModal } from '../app/features/popup/popupSlice';
+import CreateClubServerForm from '../components/CreateClubServerForm';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
@@ -19,6 +22,15 @@ const Home = ({ filter, setFilter }) => {
   const mobile = useDetectMobile();
   const { school } = useSelector(selectUser);
   const { clubChatLoading, serverId } = useSelector(selectClubChat);
+  const {
+    renderModal: { render, name },
+  } = useSelector(selectPopup);
+  const dispatch = useDispatch();
+
+  const handleClick = async () => {
+    await dispatch(setRenderModal({ render: true, name: 'create-server' }));
+    document.getElementById('my_modal_3').showModal();
+  };
 
   return (
     <div>
@@ -44,13 +56,22 @@ const Home = ({ filter, setFilter }) => {
                 <span className="loading loading-spinner loading-lg"></span>
               </div>
             ) : (
-              <>
+              <div className="flex flex-col">
                 <ClubChatStats />
-              </>
+                <button
+                  className="btn btn-wide mt-8 flex-1 mx-auto"
+                  onClick={handleClick}
+                >
+                  Create a Club Server
+                </button>
+                <div className="divider"></div>
+                <ClubServerMenu />
+              </div>
             )}
           </div>
         )}
       </div>{' '}
+      {render && name === 'create-server' && <CreateClubServerForm />}
     </div>
   );
 };
