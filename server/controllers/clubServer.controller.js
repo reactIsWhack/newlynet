@@ -130,9 +130,21 @@ const inviteUserToServer = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Invite(s) Sent!' });
 });
 
+const getUserClubServers = asyncHandler(async (req, res) => {
+  const user = await User.findById(req.userId);
+
+  const clubServers = await ClubServer.find({
+    members: { $in: [user._id] },
+    custom: true,
+  }).populate([{ path: 'members', select: '-password' }, { path: 'chats' }]);
+
+  res.status(200).json(clubServers);
+});
+
 module.exports = {
   getClubServer,
   joinClubServer,
   createCustomClubServer,
   inviteUserToServer,
+  getUserClubServers,
 };

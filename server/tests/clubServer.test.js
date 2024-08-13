@@ -88,6 +88,21 @@ describe('GET /clubserver', () => {
     expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
     expect(response.body.chats[0].chatTopic).toBe(shuffledInterests[0]);
   });
+
+  it('Should get the custom club servers a user is part of', async () => {
+    const response = await request(app)
+      .get('/api/clubserver/allservers')
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.length).toBe(1);
+    expect(response.body[0].chats.length).toBe(1);
+    expect(response.body[0].members[0]._id.toString()).toBe(
+      userInfo._id.toString()
+    );
+  });
 });
 
 describe('PATCH /clubserver', () => {
