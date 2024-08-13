@@ -22,6 +22,7 @@ const initialState = {
   unreadClubChats: [],
   cursor: '',
   updateLoading: false,
+  serverInvites: [],
 };
 
 export const signup = createAsyncThunk(
@@ -243,6 +244,7 @@ const userSlice = createSlice({
         state.socialMediaInfo = action.payload.socialMediaUsernames;
         state.username = action.payload.username;
         state.unreadClubChats = action.payload.unreadClubChatMessages;
+        state.serverInvites = action.payload.serverInvites;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
         state.isLoading = false;

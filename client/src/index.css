@@ -99,6 +99,9 @@ body {
   filter: blur(22px);
   z-index: -1;
 }
+.club-server-menu {
+  max-width: 300px;
+}
 
 @media screen and (max-width: 550px) {
   .nav-links {

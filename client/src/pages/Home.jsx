@@ -13,6 +13,7 @@ import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import ClubServerMenu from '../components/ui/ClubServerMenu';
 import { selectPopup, setRenderModal } from '../app/features/popup/popupSlice';
 import CreateClubServerForm from '../components/CreateClubServerForm';
+import CustomServerCard from '../components/ui/CustomServerCard';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
@@ -21,16 +22,16 @@ const Home = ({ filter, setFilter }) => {
 
   const mobile = useDetectMobile();
   const { school } = useSelector(selectUser);
-  const { clubChatLoading, serverId } = useSelector(selectClubChat);
+  const { clubChatLoading, serverId, customClubServers } =
+    useSelector(selectClubChat);
   const {
     renderModal: { render, name },
   } = useSelector(selectPopup);
   const dispatch = useDispatch();
 
-  const handleClick = async () => {
-    await dispatch(setRenderModal({ render: true, name: 'create-server' }));
-    document.getElementById('my_modal_3').showModal();
-  };
+  const customServerCard = customClubServers.map((server) => {
+    return <CustomServerCard key={server._id} {...server} />;
+  });
 
   return (
     <div>
@@ -58,14 +59,11 @@ const Home = ({ filter, setFilter }) => {
             ) : (
               <div className="flex flex-col">
                 <ClubChatStats />
-                <button
-                  className="btn btn-wide mt-8 flex-1 mx-auto"
-                  onClick={handleClick}
-                >
-                  Create a Club Server
-                </button>
-                <div className="divider"></div>
-                <ClubServerMenu />
+
+                <div className="flex mt-6">
+                  <ClubServerMenu />
+                </div>
+                {customServerCard}
               </div>
             )}
           </div>

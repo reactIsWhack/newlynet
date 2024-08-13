@@ -1,54 +1,38 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { selectClubChat } from '../../app/features/clubChat/clubChatSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectClubChat,
+  setClubChatFilter,
+} from '../../app/features/clubChat/clubChatSlice';
+import { IoIosCreate } from 'react-icons/io';
+import { setRenderModal } from '../../app/features/popup/popupSlice';
 
 const ClubServerMenu = () => {
   const { customClubServers } = useSelector(selectClubChat);
+  const dispatch = useDispatch();
+
+  const handleClick = async () => {
+    await dispatch(setRenderModal({ render: true, name: 'create-server' }));
+    document.getElementById('my_modal_3').showModal();
+  };
+
+  const handleChange = (e) => {
+    dispatch(setClubChatFilter(e.target.value));
+  };
 
   return (
-    <div role="tablist" className="tabs tabs-lifted mt-2">
-      <input
-        type="radio"
-        name="my_tabs_2"
-        role="tab"
-        className="tab"
-        aria-label="Suggested Servers"
-      />
-      <div
-        role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
-      >
-        Tab content 1
-      </div>
-
-      <input
-        type="radio"
-        name="my_tabs_2"
-        role="tab"
-        className="tab"
-        aria-label="Invites"
-        defaultChecked
-      />
-
-      <div
-        role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
-      >
-        INVITES
-      </div>
-
-      <input
-        type="radio"
-        name="my_tabs_2"
-        role="tab"
-        className="tab"
-        aria-label="My Servers"
-      />
-      <div
-        role="tabpanel"
-        className="tab-content bg-base-100 border-base-300 rounded-box p-6"
-      >
-        {customClubServers.length > 0 ? null : <span>No servers found</span>}
+    <div className="flex items-center flex-1 justify-between">
+      <h3>Club Server Info</h3>
+      <div className="flex items-center gap-3">
+        <select
+          className="select select-info  max-w-xs min-h-10 h-10"
+          onChange={handleChange}
+        >
+          <option value="suggested">Servers for you</option>
+          <option value="invites">Invites</option>
+          <option value="personal">My Servers</option>
+        </select>
+        <IoIosCreate size={20} cursor="pointer" onClick={handleClick} />
       </div>
     </div>
   );
