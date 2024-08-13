@@ -8,12 +8,19 @@ import { IoIosCreate } from 'react-icons/io';
 import { setRenderModal } from '../app/features/popup/popupSlice';
 
 const ClubServerInfo = () => {
-  const { customClubServers, clubChatFilter } = useSelector(selectClubChat);
+  const {
+    customClubServers,
+    clubChatFilter,
+    clubChatLoading,
+    suggestedClubServers,
+  } = useSelector(selectClubChat);
   const dispatch = useDispatch();
 
   const contentToRender = () => {
     if (clubChatFilter === 'suggested') {
-      return <span>Suggested Servers</span>;
+      return suggestedClubServers.slice(0, 2).map((server) => {
+        return <CustomServerCard key={server._id} {...server} />;
+      });
     } else if (clubChatFilter === 'invites') {
       return <span>Invites</span>;
     } else {
@@ -34,11 +41,19 @@ const ClubServerInfo = () => {
       <div className="divider -mb-2"></div>
 
       <h3 className="my-3">See all info at Club Server Page</h3>
-      <div className="flex  items-center mb-3 gap-3">
-        <ClubServerMenu />
-        <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />
-      </div>
-      {contentToRender()}
+      {clubChatLoading ? (
+        <div className="flex justify-center mt-4">
+          <span className="loading loading-spinner loading-lg"></span>
+        </div>
+      ) : (
+        <>
+          <div className="flex  items-center mb-3 gap-3">
+            <ClubServerMenu />
+            <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />
+          </div>
+          {contentToRender()}
+        </>
+      )}
     </>
   );
 };

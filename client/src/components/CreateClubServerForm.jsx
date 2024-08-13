@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   createCustomClubServer,
   selectClubChat,
+  setClubChatFilter,
 } from '../app/features/clubChat/clubChatSlice';
 import { setRenderModal } from '../app/features/popup/popupSlice';
 
@@ -46,6 +47,7 @@ const CreateClubServerForm = () => {
 
     dispatch(createCustomClubServer(reqData)).then((res) => {
       if (!res.meta.rejectedWithValue) {
+        dispatch(setClubChatFilter('personal'));
         dispatch(setRenderModal({ render: false, name: '' }));
       }
     });

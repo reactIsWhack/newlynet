@@ -27,6 +27,7 @@ import SectionMessages from './pages/SectionMessages';
 import {
   getClubServer,
   getCustomClubServers,
+  getSuggestedClubServers,
 } from './app/features/clubChat/clubChatSlice';
 import useUpdateClubServer from './hooks/useUpdateClubServer';
 import ClubChatGuide from './pages/ClubChatGuide';
@@ -69,6 +70,7 @@ function App() {
       dispatch(getConversations(chatFilter)),
       dispatch(getClubServer()),
       dispatch(getCustomClubServers()),
+      dispatch(getSuggestedClubServers()),
     ]);
   };
 

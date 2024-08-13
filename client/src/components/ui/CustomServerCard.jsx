@@ -1,6 +1,12 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../app/features/user/userSlice';
 
 const CustomServerCard = ({ members, serverName, tags }) => {
+  const { userId } = useSelector(selectUser);
+
+  const inServer = members.some((member) => member._id === userId);
+
   return (
     <div className="bg-base-100 text-white shadow-lg rounded-lg p-4 w-full mb-3">
       {/* Server Name */}
@@ -32,9 +38,15 @@ const CustomServerCard = ({ members, serverName, tags }) => {
         </div>
 
         {/* Chat Button */}
-        <div className="text-right">
-          <button className="btn btn-outline min-h-11 h-11">Chat</button>
-        </div>
+        {inServer ? (
+          <div className="text-right">
+            <button className="btn btn-outline min-h-11 h-11">Chat</button>
+          </div>
+        ) : (
+          <div className="text-right">
+            <button className="btn btn-outline min-h-11 h-11">Join</button>
+          </div>
+        )}
       </div>
     </div>
   );

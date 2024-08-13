@@ -20,6 +20,7 @@ const initialState = {
   createClubMsgLoading: false,
   paginating: false,
   customClubServers: [],
+  suggestedClubServers: [],
   clubChatFilter: 'suggested',
 };
 
@@ -109,6 +110,21 @@ export const createCustomClubServer = createAsyncThunk(
   async (formData, thunkAPI) => {
     try {
       const response = await axios.post(`${baseURL}/api/clubserver`, formData);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getSuggestedClubServers = createAsyncThunk(
+  'clubChat/suggestedServers',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/clubserver/suggestedservers`
+      );
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -230,8 +246,20 @@ const clubChatSlice = createSlice({
       .addCase(createCustomClubServer.fulfilled, (state, action) => {
         state.clubChatLoading = false;
         state.customClubServers = [action.payload, ...state.customClubServers];
+        toast.success('Club Server Created!');
       })
       .addCase(createCustomClubServer.rejected, (state, action) => {
+        state.clubChatLoading = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
+      })
+      .addCase(getSuggestedClubServers.pending, (state) => {
+        state.clubChatLoading = true;
+      })
+      .addCase(getSuggestedClubServers.fulfilled, (state, action) => {
+        state.clubChatLoading = false;
+        state.suggestedClubServers = action.payload;
+      })
+      .addCase(getSuggestedClubServers.rejected, (state, action) => {
         state.clubChatLoading = false;
         toast.error(action.payload, { id: 'club-custom-err' });
       });

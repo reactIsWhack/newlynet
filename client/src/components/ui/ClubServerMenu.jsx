@@ -7,7 +7,7 @@ import {
 import { IoIosCreate } from 'react-icons/io';
 
 const ClubServerMenu = () => {
-  const { customClubServers } = useSelector(selectClubChat);
+  const { clubChatFilter } = useSelector(selectClubChat);
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
@@ -23,6 +23,7 @@ const ClubServerMenu = () => {
           name="options"
           value="suggested"
           aria-label="Suggested"
+          checked={clubChatFilter === 'suggested'}
         />
         <input
           className="join-item btn"
@@ -30,6 +31,7 @@ const ClubServerMenu = () => {
           name="options"
           value="invites"
           aria-label="Invites"
+          checked={clubChatFilter === 'invites'}
         />
         <input
           className="join-item btn"
@@ -37,6 +39,7 @@ const ClubServerMenu = () => {
           name="options"
           value="personal"
           aria-label="My Servers"
+          checked={clubChatFilter === 'personal'}
         />
       </div>
     </>
