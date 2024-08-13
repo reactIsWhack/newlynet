@@ -14,6 +14,7 @@ import ClubServerMenu from '../components/ui/ClubServerMenu';
 import { selectPopup, setRenderModal } from '../app/features/popup/popupSlice';
 import CreateClubServerForm from '../components/CreateClubServerForm';
 import CustomServerCard from '../components/ui/CustomServerCard';
+import ClubServerInfo from '../components/ClubServerInfo';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
@@ -28,10 +29,6 @@ const Home = ({ filter, setFilter }) => {
     renderModal: { render, name },
   } = useSelector(selectPopup);
   const dispatch = useDispatch();
-
-  const customServerCard = customClubServers.map((server) => {
-    return <CustomServerCard key={server._id} {...server} />;
-  });
 
   return (
     <div>
@@ -57,13 +54,8 @@ const Home = ({ filter, setFilter }) => {
                 <span className="loading loading-spinner loading-lg"></span>
               </div>
             ) : (
-              <div className="flex flex-col">
-                <ClubChatStats />
-
-                <div className="flex mt-6">
-                  <ClubServerMenu />
-                </div>
-                {customServerCard}
+              <div className="flex flex-col items-center">
+                <ClubServerInfo />
               </div>
             )}
           </div>
