@@ -32,13 +32,15 @@ const Navbar = () => {
       </div>
       <NavLinks />
       <div className="flex-1 gap-2 flex items-center justify-end">
-        <div className="form-control">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-24 md:w-auto bg-gray-800 text-gray-200"
-          />
-        </div>
+        {!mobile && (
+          <div className="form-control">
+            <input
+              type="text"
+              placeholder="Search"
+              className="input input-bordered w-24 md:w-auto bg-gray-800 text-gray-200"
+            />
+          </div>
+        )}
         <div className="dropdown dropdown-end">
           <div
             tabIndex={0}

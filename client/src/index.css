@@ -102,6 +102,9 @@ body {
 .club-server-menu {
   max-width: 300px;
 }
+.transition-transform {
+  transition: transform 0.3s ease;
+}
 
 @media screen and (max-width: 550px) {
   .nav-links {

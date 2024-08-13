@@ -35,8 +35,8 @@ const Home = ({ filter, setFilter }) => {
       <Navbar />
       <div
         className={`py-8 ${
-          !mobile ? 'px-6' : ''
-        } flex gap-12 items-start max-[550px]:pt-2`}
+          !mobile ? 'px-6' : 'overflow-x-hidden'
+        } flex gap-12 items-start max-[550px]:pt-2 `}
       >
         {!mobile && window.screen.width > 1000 && (
           <div className="sticky primary-user-card">

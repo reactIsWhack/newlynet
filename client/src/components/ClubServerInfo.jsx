@@ -40,14 +40,13 @@ const ClubServerInfo = () => {
       <ClubChatStats />
       <div className="divider -mb-2"></div>
 
-      <h3 className="my-3">See all info at Club Server Page</h3>
       {clubChatLoading ? (
         <div className="flex justify-center mt-4">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       ) : (
         <>
-          <div className="flex  items-center mb-3 gap-3">
+          <div className="flex  items-center mb-3 gap-3 mt-5">
             <ClubServerMenu />
             <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />
           </div>

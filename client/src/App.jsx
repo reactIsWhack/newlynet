@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home';
+import ClubServerDetails from './pages/ClubServerDetails';
 import axios from 'axios';
 import InterestsSelect from './pages/InterestsSelect';
 import { useEffect, useState } from 'react';
@@ -152,6 +153,7 @@ function App() {
             <Route index element={<ClubChatGuide />}></Route>
             <Route path=":sectionId" element={<SectionMessages />}></Route>
           </Route>
+          <Route path="/clubserverinfo" element={<ClubServerDetails />}></Route>
         </Routes>
       )}
       <Toaster />

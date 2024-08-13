@@ -7,6 +7,7 @@ import NotificationCount from './NotificationCount';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import useDetectMobile from '../../hooks/useDetectMobile';
+import { BsWechat } from 'react-icons/bs';
 
 const NavLinks = () => {
   const setActiveClassName = ({ isActive }) =>
@@ -37,6 +38,12 @@ const NavLinks = () => {
           <NavLink to={`/contacts`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
             <FaUserFriends size={35} className="stroke-gray" />
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={`/clubserverinfo`} className={setActiveClassName}>
+            <div className="profile-link-border"></div>
+            <BsWechat size={35} className="stroke-gray" />
           </NavLink>
         </li>
       </ul>
