@@ -38,7 +38,7 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
           </div>
         )}
         <div className="divider mb-2 mt-3 max-[550px]:mt-2"></div>
-        <div>
+        <div className="overflow-auto max-h-96">
           <h3 className="text-center text-[17px] font-semi-bold mb-3">
             Your club servers
           </h3>

@@ -18,14 +18,20 @@ const ClubServerInfo = () => {
 
   const contentToRender = () => {
     if (clubChatFilter === 'suggested') {
-      return suggestedClubServers.slice(0, 2).map((server) => {
+      return suggestedClubServers.slice(0, 5).map((server) => {
         return <CustomServerCard key={server._id} {...server} />;
       });
     } else if (clubChatFilter === 'invites') {
       return <span>Invites</span>;
     } else {
-      return customClubServers.slice(0, 2).map((server) => {
-        return <CustomServerCard key={server._id} {...server} />;
+      return customClubServers.slice(0, 5).map((server) => {
+        return (
+          <CustomServerCard
+            key={server._id}
+            {...server}
+            renderUnreadCount={true}
+          />
+        );
       });
     }
   };
@@ -45,13 +51,13 @@ const ClubServerInfo = () => {
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       ) : (
-        <>
+        <div className="w-full flex flex-col items-center overflow-auto max-h-[380px] 2xl:pb-4">
           <div className="flex  items-center mb-3 gap-3 mt-5">
             <ClubServerMenu />
             <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />
           </div>
           {contentToRender()}
-        </>
+        </div>
       )}
     </>
   );

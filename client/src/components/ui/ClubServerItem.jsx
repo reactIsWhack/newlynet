@@ -1,6 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
+import { IoPersonAdd } from 'react-icons/io5';
+import ClubMsgCount from './ClubMsgCount';
 
 const ClubServerItem = ({ serverName, chats }) => {
   const { unreadClubChats } = useSelector(selectUser);
@@ -16,13 +18,14 @@ const ClubServerItem = ({ serverName, chats }) => {
       {/* Server Name */}
       <div className="flex items-center mb-2 justify-between">
         <div className="text-lg font-bold">{serverName}</div>
-        <div className="relative">
-          <button className="btn btn-primary min-h-10 h-10">Chat</button>
-          {unreadChats.length > 0 && (
-            <span className="w-5 h-5 rounded-full bg-red-500 absolute flex items-center justify-center text-white text-xs -top-3 -right-3">
-              {unreadChats.length}
-            </span>
-          )}
+        <div className="flex items-center gap-3">
+          <IoPersonAdd size={20} cursor="pointer" className="fill-slate-300" />
+          <div className="relative">
+            <button className="btn btn-primary min-h-10 h-10">Chat</button>
+            {unreadChats.length > 0 && (
+              <ClubMsgCount unreadChats={unreadChats} />
+            )}
+          </div>
         </div>
       </div>
     </div>
