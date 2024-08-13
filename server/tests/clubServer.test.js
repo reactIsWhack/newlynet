@@ -77,6 +77,27 @@ describe('POST /clubserver', () => {
 });
 
 describe('GET /clubserver', () => {
+  beforeAll(async () => {
+    await Promise.all([
+      ClubServer.create({
+        custom: true,
+        chats: [],
+        tags: ['art'],
+        members: [],
+        serverName: 'Test Server 2.0',
+        schoolAffiliation: userInfo.school.schoolId,
+      }),
+      ClubServer.create({
+        custom: true,
+        chats: [],
+        tags: ['Social'],
+        members: [],
+        serverName: 'Test Server 3.0',
+        schoolAffiliation: userInfo.school.schoolId,
+      }),
+    ]);
+  });
+
   it('Should get the club server for the princeton user', async () => {
     const response = await request(app)
       .get('/api/clubserver')
@@ -102,6 +123,19 @@ describe('GET /clubserver', () => {
     expect(response.body[0].members[0]._id.toString()).toBe(
       userInfo._id.toString()
     );
+  });
+
+  it('Should get the suggested server for the test user', async () => {
+    const response = await request(app)
+      .get('/api/clubserver/suggestedservers')
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.length).toBe(2);
+    expect(response.body[0].serverName).toBe('Test Server 2.0');
+    expect(response.body[1].serverName).toBe('Test Server 3.0');
   });
 });
 
