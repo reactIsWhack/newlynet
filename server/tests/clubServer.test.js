@@ -14,6 +14,8 @@ let clubServerId;
 let clientSocket;
 let secondUserSocket;
 let secondUserToken;
+let usersToInvite = [];
+let customServerId;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -22,9 +24,11 @@ beforeAll(async () => {
   const { token, user } = await loginUser('test', 'test123');
   jwt = token;
   userInfo = user;
-  const secondUser = await User.findOne({
+  const [secondUser, thirdUser] = await User.find({
     'school.schoolId': user.school.schoolId,
+    _id: { $ne: user._id },
   });
+  usersToInvite = [secondUser._id, thirdUser._id];
   const secondUserData = await loginUser(
     secondUser.username,
     process.env.FAKE_USER_PASSWORD
@@ -35,7 +39,6 @@ beforeAll(async () => {
     query: { userId: user._id },
   });
 
-  console.log(clientSocket);
   secondUserSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: secondUser._id },
   });
@@ -50,6 +53,7 @@ describe('POST /clubserver', () => {
       .expect(201)
       .expect('Content-Type', /application\/json/);
 
+    customServerId = response.body._id;
     expect(response.body.chats[0].chatTopic).toBe('General');
     expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
     expect(response.body.serverName).toBe('Test Server');
@@ -81,7 +85,6 @@ describe('GET /clubserver', () => {
       .expect('Content-Type', /application\/json/);
 
     clubServerId = response.body._id;
-    console.log(response.body);
     expect(response.body.schoolAffiliation).toBe(userInfo.school.schoolId);
     expect(response.body.chats[0].chatTopic).toBe(shuffledInterests[0]);
   });
@@ -110,6 +113,46 @@ describe('PATCH /clubserver', () => {
       userInfo._id.toString()
     );
     expect(joinEvent.newUser._id.toString()).toBe(userInfo._id.toString());
+  });
+
+  it('Should send club server invites to two users', async () => {
+    const response = await request(app)
+      .patch(`/api/clubserver/invite/${customServerId}`)
+      .set('Cookie', [...jwt])
+      .send({ users: usersToInvite })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const [secondUserUpdated, thirdUserUpdated] = await Promise.all([
+      User.findById(usersToInvite[0]._id).populate('serverInvites'),
+      User.findById(usersToInvite[1]._id).populate('serverInvites'),
+    ]);
+    console.log(secondUserUpdated, thirdUserUpdated);
+    expect(response.body.message).toBe('Invite(s) Sent!');
+    expect(secondUserUpdated.serverInvites[0]._id.toString()).toBe(
+      customServerId.toString()
+    );
+    expect(thirdUserUpdated.serverInvites[0]._id.toString()).toBe(
+      customServerId.toString()
+    );
+  });
+
+  it("Should update the second user's server invites when they join", async () => {
+    const response = await request(app)
+      .patch(`/api/clubserver/${customServerId}`)
+      .set('Cookie', [...secondUserToken])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    const secondUserUpdated = await User.findById(usersToInvite[0]._id);
+    expect(response.body.members.length).toBe(2);
+    expect(response.body.members.map((m) => String(m._id))).toEqual(
+      expect.arrayContaining([
+        String(userInfo._id),
+        String(secondUserUpdated._id),
+      ])
+    );
+    expect(secondUserUpdated.serverInvites.length).toBe(0);
   });
 });
 

@@ -56,6 +56,9 @@ const userSchema = new mongoose.Schema(
         messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
       },
     ],
+    serverInvites: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'clubServer' },
+    ],
   },
   { timestamps: true }
 );

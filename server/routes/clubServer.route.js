@@ -4,6 +4,7 @@ const {
   getClubServer,
   joinClubServer,
   createCustomClubServer,
+  inviteUserToServer,
 } = require('../controllers/clubServer.controller');
 
 const router = Router();
@@ -11,5 +12,6 @@ const router = Router();
 router.get('/', routeProtector, getClubServer);
 router.patch('/:serverId', routeProtector, joinClubServer);
 router.post('/', routeProtector, createCustomClubServer);
+router.patch('/invite/:serverId', routeProtector, inviteUserToServer);
 
 module.exports = router;

@@ -2,7 +2,7 @@ const asyncHandler = require('express-async-handler');
 const User = require('../models/user.model');
 const ClubServer = require('../models/clubServer.model');
 const ClubChat = require('../models/clubChat.model');
-const { io } = require('../socket/socket');
+const { io, getSocketId } = require('../socket/socket');
 
 const getClubServer = asyncHandler(async (req, res) => {
   const user = await User.findById(req.userId);
@@ -33,11 +33,22 @@ const joinClubServer = asyncHandler(async (req, res) => {
     throw new Error('Club server not found');
   }
 
+  if (
+    user.serverInvites.some((invite) => String(invite) === String(serverId))
+  ) {
+    user.serverInvites = user.serverInvites.filter(
+      (invite) => String(invite) !== String(serverId)
+    );
+  }
+
   clubServer.members = [...clubServer.members, user];
 
-  await clubServer
-    .save()
-    .then((item) => item.populate({ path: 'members', select: '-password' }));
+  await Promise.all([
+    clubServer
+      .save()
+      .then((item) => item.populate({ path: 'members', select: '-password' })),
+    user.save(),
+  ]);
 
   if (!clubServer) {
     res.status(500);
@@ -86,4 +97,42 @@ const createCustomClubServer = asyncHandler(async (req, res) => {
   res.status(201).json(customServer);
 });
 
-module.exports = { getClubServer, joinClubServer, createCustomClubServer };
+const inviteUserToServer = asyncHandler(async (req, res) => {
+  const { serverId } = req.params;
+  const { users } = req.body;
+
+  if (users.length > 8) {
+    res.status(400);
+    throw new Error('Max of 8 user invites at a time');
+  }
+
+  const sendInvite = async (userId) => {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      res.status(404);
+      throw new Error('User not found');
+    }
+
+    user.serverInvites = [...user.serverInvites, serverId];
+    await user.save().then((item) => item.populate('serverInvites'));
+
+    const socketId = getSocketId(user._id);
+    io.to(socketId).emit('serverInvite', user.serverInvites);
+  };
+
+  await Promise.all(
+    users.map(async (userId) => {
+      await sendInvite(userId);
+    })
+  );
+
+  res.status(200).json({ message: 'Invite(s) Sent!' });
+});
+
+module.exports = {
+  getClubServer,
+  joinClubServer,
+  createCustomClubServer,
+  inviteUserToServer,
+};
