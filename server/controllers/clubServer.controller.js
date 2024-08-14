@@ -141,7 +141,10 @@ const getUserClubServers = asyncHandler(async (req, res) => {
   const clubServers = await ClubServer.find({
     members: { $in: [user._id] },
     custom: true,
-  }).populate([{ path: 'members', select: '-password' }, { path: 'chats' }]);
+  }).populate([
+    { path: 'members', populate: { path: 'chats' }, select: '-password' },
+    { path: 'chats' },
+  ]);
 
   res.status(200).json(clubServers);
 });
