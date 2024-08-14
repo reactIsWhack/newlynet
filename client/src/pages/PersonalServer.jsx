@@ -81,9 +81,6 @@ const PersonalServer = () => {
 
     return () => {
       dispatch(setSelectedClubChat(null));
-      if (messages.length) {
-        dispatch(resetClubChatMessages());
-      }
     };
   }, []);
 
