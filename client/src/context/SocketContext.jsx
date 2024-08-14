@@ -63,6 +63,7 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       socketVal.on('serverInvite', (invites) => {
+        console.log(invites);
         dispatch(setServerInvites(invites));
         toast('New server invite');
       });

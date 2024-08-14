@@ -182,7 +182,7 @@ const userSlice = createSlice({
       state.unreadClubChats = action.payload;
     },
     setServerInvites(state, action) {
-      state.serverInvites = action.payload.invites;
+      state.serverInvites = action.payload;
     },
     setContactInvites(state, action) {
       const contact = state.contacts.find(
@@ -190,6 +190,11 @@ const userSlice = createSlice({
       );
       contact.serverInvites = action.payload.invites;
       console.log(contact);
+    },
+    removeServerInvite(state, action) {
+      state.serverInvites = state.serverInvites.filter(
+        (serverInvite) => serverInvite.server._id !== action.payload
+      );
     },
   },
   extraReducers: (builder) => {
@@ -341,6 +346,7 @@ export const {
   setUnreadClubChatMessages,
   setServerInvites,
   setContactInvites,
+  removeServerInvite,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;

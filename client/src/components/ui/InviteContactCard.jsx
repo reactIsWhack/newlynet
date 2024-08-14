@@ -22,7 +22,6 @@ const InviteContactCard = ({
     await dispatch(
       sendServerInvite({ userId: _id, serverId: viewingUserData._id })
     ).then((res) => {
-      console.log(res.payload);
       if (!res.meta.rejectedWithValue) {
         dispatch(
           setContactInvites({ _id, invites: res.payload.serverInvites })

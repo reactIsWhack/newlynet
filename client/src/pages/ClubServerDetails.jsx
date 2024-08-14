@@ -21,8 +21,23 @@ const ClubServerInfo = () => {
     renderModal: { render, name },
   } = useSelector(selectPopup);
 
-  const customServerCard = suggestedClubServers.map((server) => {
+  console.log(serverInvites);
+  const filteredSuggestions = suggestedClubServers.filter(
+    (suggestion) =>
+      !serverInvites.some((invite) => invite.server._id === suggestion._id)
+  );
+  const customServerCard = filteredSuggestions.map((server) => {
     return <CustomServerCard key={server._id} {...server} />;
+  });
+
+  const serverInviteCard = serverInvites.map((serverInvite) => {
+    return (
+      <CustomServerCard
+        key={serverInvite.server._id}
+        {...serverInvite.server}
+        sender={serverInvite.sender}
+      />
+    );
   });
 
   return (
@@ -44,12 +59,16 @@ const ClubServerInfo = () => {
               />
             )}
           </div>
-          {serverInvites.length > 0 ? null : <span>No pending invites</span>}
+          {serverInvites.length > 0 ? (
+            <div className="grid grid-cols-3 gap-4">{serverInviteCard}</div>
+          ) : (
+            <span>No pending invites</span>
+          )}
           <div className="divider"></div>
           <div className="mt-4">
             <h4 className="text-lg font-medium">Suggested Servers For You</h4>
             <div className="grid grid-cols-3 mt-4 gap-4">
-              {suggestedClubServers.length > 0 ? (
+              {filteredSuggestions.length > 0 ? (
                 customServerCard
               ) : (
                 <span>No server suggestions</span>

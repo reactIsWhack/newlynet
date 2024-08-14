@@ -1,12 +1,19 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser } from '../../app/features/user/userSlice';
+import {
+  removeServerInvite,
+  selectUser,
+} from '../../app/features/user/userSlice';
 import ClubMsgCount from './ClubMsgCount';
 import {
   joinClubServer,
   setCustomServer,
 } from '../../app/features/clubChat/clubChatSlice';
 import { useNavigate } from 'react-router-dom';
+import {
+  setRenderModal,
+  setViewingUserData,
+} from '../../app/features/popup/popupSlice';
 
 const CustomServerCard = ({
   members,
@@ -15,8 +22,9 @@ const CustomServerCard = ({
   renderUnreadCount,
   chats,
   _id,
+  sender,
 }) => {
-  const { userId, unreadClubChats } = useSelector(selectUser);
+  const { userId, unreadClubChats, serverInvites } = useSelector(selectUser);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -24,6 +32,9 @@ const CustomServerCard = ({
   const chatIds = new Set(chats.map((chat) => chat._id));
   const unreadChats = unreadClubChats.filter((unreadChat) =>
     chatIds.has(unreadChat._id)
+  );
+  const isServerInvite = serverInvites.some(
+    (serverInvite) => serverInvite.server._id === _id
   );
 
   const resumeChat = async () => {
@@ -36,13 +47,22 @@ const CustomServerCard = ({
   const joinServer = async () => {
     dispatch(joinClubServer(_id)).then((res) => {
       if (!res.meta.rejectedWithValue) {
+        if (isServerInvite) {
+          dispatch(removeServerInvite(_id));
+        }
         navigate(`/personalserver/${_id}`);
       }
     });
   };
 
+  const openUserDetails = async () => {
+    await dispatch(setViewingUserData(sender));
+    await dispatch(setRenderModal({ render: true, name: 'user-detail' }));
+    document.getElementById('my_modal_3').showModal();
+  };
+
   return (
-    <div className="bg-base-100 text-white shadow-lg rounded-lg p-4 max-w-[340px] w-full mb-3 xl:max-w-[390px]">
+    <div className="bg-base-100 text-white shadow-lg rounded-lg p-4 max-w-[340px] w-full mb-3 xl:max-w-[390px] flex flex-col">
       <div className="flex items-center mb-3 justify-between">
         <div className="text-lg font-bold">{serverName}</div>
         <div className="text-left flex items-center gap-2">
@@ -61,6 +81,17 @@ const CustomServerCard = ({
         ))}
       </div>
 
+      {isServerInvite && sender && (
+        <span className="text-center w-full mt-4 text-sm">
+          From:{' '}
+          <span
+            className="hover:underline cursor-pointer"
+            onClick={openUserDetails}
+          >
+            {sender.firstName} {sender.lastName}
+          </span>
+        </span>
+      )}
       <div className="flex-1 justify-center flex mt-5">
         {/* Members Count */}
         {inServer ? (
@@ -76,12 +107,19 @@ const CustomServerCard = ({
             )}{' '}
           </div>
         ) : (
-          <button
-            className="btn btn-outline min-h-11 h-11"
-            onClick={joinServer}
-          >
-            Join
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              className="btn btn-outline min-h-11 h-11"
+              onClick={joinServer}
+            >
+              Join
+            </button>
+            {isServerInvite && (
+              <button className="btn btn-outline btn-warning min-h-11 h-11">
+                Reject
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>
