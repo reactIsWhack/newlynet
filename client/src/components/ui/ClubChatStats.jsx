@@ -41,7 +41,11 @@ const ClubChatStats = () => {
       navigate(`/clubchat/${chat._id}`);
     }
   };
-  const unreadMsgCount = calculateUnreadMsgCount(unreadClubChats);
+  const unreadMsgCount = calculateUnreadMsgCount(
+    unreadClubChats.filter((clubChat) =>
+      chats.some((chat) => chat._id === clubChat.chat._id)
+    )
+  );
 
   return (
     <>

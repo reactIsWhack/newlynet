@@ -22,7 +22,7 @@ const MessageInput = ({
   const dispatch = useDispatch();
   const { selectedConversation, createMsgLoading } = useSelector(selectChats);
   const { id } = useParams();
-  const { selectedClubChat, createClubMsgLoading } =
+  const { selectedClubChat, createClubMsgLoading, serverId, customServer } =
     useSelector(selectClubChat);
 
   const handleChange = (e) => setMessage(e.target.value);
@@ -63,6 +63,7 @@ const MessageInput = ({
     formData.append('image', fileInput.data);
 
     if (messageType === 'standard') {
+      console.log('standard');
       if (!message) {
         return toast.error('Please enter a message', { id: 'msg-warning' });
       }
@@ -75,7 +76,13 @@ const MessageInput = ({
     } else {
       formData.append('chatSection', selectedClubChat.chatTopic);
       console.log(message);
-      dispatch(sendClubChatMessage(formData)).then((res) => {
+      dispatch(
+        sendClubChatMessage({
+          formData,
+          serverId: customServer.serverId || serverId,
+        })
+      ).then((res) => {
+        console.log(lastMessageRef.current);
         lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
       });
     }

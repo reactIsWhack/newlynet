@@ -76,11 +76,8 @@ export const getClubChatMessages = createAsyncThunk(
 
 export const sendClubChatMessage = createAsyncThunk(
   'clubChat/sendMessage',
-  async (formData, thunkAPI) => {
+  async ({ formData, serverId }, thunkAPI) => {
     try {
-      const {
-        clubChat: { serverId },
-      } = thunkAPI.getState();
       const response = await axios.post(
         `${baseURL}/api/club-chat/${serverId}`,
         {

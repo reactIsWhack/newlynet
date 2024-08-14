@@ -16,7 +16,7 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
 
   const chatIds = new Set(chats.map((chat) => chat._id));
   const unreadChats = unreadClubChats.filter((unreadChat) =>
-    chatIds.has(unreadChat._id)
+    chatIds.has(unreadChat.chat._id)
   );
 
   const handleClick = async () => {
