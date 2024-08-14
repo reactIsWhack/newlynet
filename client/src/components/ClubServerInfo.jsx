@@ -18,9 +18,13 @@ const ClubServerInfo = () => {
 
   const contentToRender = () => {
     if (clubChatFilter === 'suggested') {
-      return suggestedClubServers.slice(0, 5).map((server) => {
-        return <CustomServerCard key={server._id} {...server} />;
-      });
+      return suggestedClubServers.length > 0 ? (
+        suggestedClubServers.slice(0, 5).map((server) => {
+          return <CustomServerCard key={server._id} {...server} />;
+        })
+      ) : (
+        <span>No server suggestions</span>
+      );
     } else if (clubChatFilter === 'invites') {
       return <span>Invites</span>;
     } else {

@@ -41,11 +41,10 @@ export const getClubServer = createAsyncThunk(
 
 export const joinClubServer = createAsyncThunk(
   'clubServer/join',
-  async (_, thunkAPI) => {
+  async (serverId, thunkAPI) => {
     try {
-      const { clubChat } = thunkAPI.getState();
       const response = await axios.patch(
-        `${baseURL}/api/clubserver/${clubChat.serverId}`
+        `${baseURL}/api/clubserver/${serverId}`
       );
       return response.data;
     } catch (error) {
@@ -176,6 +175,12 @@ const clubChatSlice = createSlice({
         chats: [],
       };
     },
+    setCustomServerMembers(state, action) {
+      const customServer = state.customClubServers.find(
+        (server) => server._id === action.payload._id
+      );
+      customServer.members = action.payload.members;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -197,8 +202,16 @@ const clubChatSlice = createSlice({
       })
       .addCase(joinClubServer.fulfilled, (state, action) => {
         state.clubChatLoading = false;
-        state.members = action.payload.members;
-        toast.success("Welcome to your school's club server");
+        if (!action.payload.custom) {
+          state.members = action.payload.members;
+          toast.success("Welcome to your school's club server");
+        } else {
+          state.customClubServers = [
+            action.payload,
+            ...state.customClubServers,
+          ];
+          toast.success(`Joined ${action.payload.serverName} Server`);
+        }
       })
       .addCase(joinClubServer.rejected, (state, action) => {
         state.clubChatLoading = false;
@@ -294,6 +307,7 @@ export const {
   setClubChatFilter,
   setCustomServer,
   resetCustomServer,
+  setCustomServerMembers,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

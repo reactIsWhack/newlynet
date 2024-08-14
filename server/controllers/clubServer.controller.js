@@ -46,7 +46,12 @@ const joinClubServer = asyncHandler(async (req, res) => {
   await Promise.all([
     clubServer
       .save()
-      .then((item) => item.populate({ path: 'members', select: '-password' })),
+      .then((item) =>
+        item.populate([
+          { path: 'members', select: '-password' },
+          { path: 'chats' },
+        ])
+      ),
     user.save(),
   ]);
 

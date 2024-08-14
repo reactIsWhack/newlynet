@@ -31,7 +31,12 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
     <div className="bg-base-100 text-white shadow-lg rounded-lg py-4 px-5 w-full mb-3">
       {/* Server Name */}
       <div className="flex items-center mb-2 justify-between">
-        <div className="text-lg font-bold">{serverName}</div>
+        <div className="flex flex-col">
+          <span className="text-lg font-bold">{serverName}</span>
+          <span className="text-sm">
+            {members.length} {members.length === 1 ? 'member' : 'members'}
+          </span>
+        </div>
         <div className="flex items-center gap-3">
           <IoPersonAdd size={20} cursor="pointer" className="fill-slate-300" />
           <div className="relative">

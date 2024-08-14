@@ -21,13 +21,14 @@ const ClubChatStats = () => {
     selectedClubChat,
   } = useSelector(selectClubChat);
   const { userId, unreadClubChats } = useSelector(selectUser);
+  const { serverId } = useSelector(selectClubChat);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const userInClubServer = members.some((member) => member._id === userId);
 
   const join = async () => {
-    await dispatch(joinClubServer()).then((res) => {
+    await dispatch(joinClubServer(serverId)).then((res) => {
       if (res.meta.requestStatus !== 'rejected') navigate(`/clubchat`);
     });
   };

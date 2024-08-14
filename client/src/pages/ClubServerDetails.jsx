@@ -44,7 +44,11 @@ const ClubServerInfo = () => {
           <div className="mt-4">
             <h4 className="text-lg font-medium">Suggested Servers For You</h4>
             <div className="grid grid-cols-3 mt-4 gap-4">
-              {customServerCard}
+              {suggestedClubServers.length > 0 ? (
+                customServerCard
+              ) : (
+                <span>No server suggestions</span>
+              )}
             </div>
           </div>
         </div>

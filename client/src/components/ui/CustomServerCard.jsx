@@ -2,7 +2,10 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import ClubMsgCount from './ClubMsgCount';
-import { setCustomServer } from '../../app/features/clubChat/clubChatSlice';
+import {
+  joinClubServer,
+  setCustomServer,
+} from '../../app/features/clubChat/clubChatSlice';
 import { useNavigate } from 'react-router-dom';
 
 const CustomServerCard = ({
@@ -18,6 +21,7 @@ const CustomServerCard = ({
   const navigate = useNavigate();
 
   const inServer = members.some((member) => member._id === userId);
+  const chatIds = new Set(chats.map((chat) => chat._id));
   const unreadChats = unreadClubChats.filter((unreadChat) =>
     chatIds.has(unreadChat._id)
   );
@@ -27,6 +31,14 @@ const CustomServerCard = ({
       setCustomServer({ members, serverName, chats, serverId: _id })
     );
     navigate(`/personalserver/${_id}/${chats[0]._id}`);
+  };
+
+  const joinServer = async () => {
+    dispatch(joinClubServer(_id)).then((res) => {
+      if (!res.meta.rejectedWithValue) {
+        navigate(`/personalserver/${_id}`);
+      }
+    });
   };
 
   return (
@@ -64,7 +76,12 @@ const CustomServerCard = ({
             )}{' '}
           </div>
         ) : (
-          <button className="btn btn-outline min-h-11 h-11">Join</button>
+          <button
+            className="btn btn-outline min-h-11 h-11"
+            onClick={joinServer}
+          >
+            Join
+          </button>
         )}
       </div>
     </div>
