@@ -8,6 +8,10 @@ import {
   setCustomServer,
   setSelectedClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
+import {
+  setRenderModal,
+  setViewingUserData,
+} from '../../app/features/popup/popupSlice';
 
 const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
   const { unreadClubChats } = useSelector(selectUser);
@@ -27,6 +31,12 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
     navigate(`/personalserver/${_id}/${chats[0]._id}`);
   };
 
+  const toggleInviteForm = async () => {
+    await dispatch(setViewingUserData(server));
+    await dispatch(setRenderModal({ render: true, name: 'invite-form' }));
+    document.getElementById('my_modal_3')?.showModal();
+  };
+
   return (
     <div className="bg-base-100 text-white shadow-lg rounded-lg py-4 px-5 w-full mb-3">
       {/* Server Name */}
@@ -38,7 +48,12 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
           </span>
         </div>
         <div className="flex items-center gap-3">
-          <IoPersonAdd size={20} cursor="pointer" className="fill-slate-300" />
+          <IoPersonAdd
+            size={20}
+            cursor="pointer"
+            className="fill-slate-300"
+            onClick={toggleInviteForm}
+          />
           <div className="relative">
             <button
               className="btn btn-primary min-h-10 h-10"

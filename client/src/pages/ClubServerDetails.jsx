@@ -8,6 +8,8 @@ import { selectUser } from '../app/features/user/userSlice';
 import { IoArrowBack } from 'react-icons/io5';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import CustomServerCard from '../components/ui/CustomServerCard';
+import { selectPopup } from '../app/features/popup/popupSlice';
+import InviteForm from '../components/InviteForm';
 
 const ClubServerInfo = () => {
   useRedirectUser();
@@ -15,6 +17,9 @@ const ClubServerInfo = () => {
   const { serverInvites } = useSelector(selectUser);
   const mobile = useDetectMobile();
   const { suggestedClubServers } = useSelector(selectClubChat);
+  const {
+    renderModal: { render, name },
+  } = useSelector(selectPopup);
 
   const customServerCard = suggestedClubServers.map((server) => {
     return <CustomServerCard key={server._id} {...server} />;
@@ -53,6 +58,7 @@ const ClubServerInfo = () => {
           </div>
         </div>
       </div>
+      {render && name === 'invite-form' && <InviteForm />}
     </div>
   );
 };
