@@ -12,7 +12,7 @@ import { BsWechat } from 'react-icons/bs';
 const NavLinks = () => {
   const setActiveClassName = ({ isActive }) =>
     `${isActive ? 'nav-link-active' : 'nav-link-inactive'}`;
-  const { unreadChats } = useSelector(selectUser);
+  const { unreadChats, unreadClubChats } = useSelector(selectUser);
   const mobile = useDetectMobile();
 
   return (
@@ -32,7 +32,9 @@ const NavLinks = () => {
             <div className="profile-link-border"></div>
             <PiChatsFill size={35} className="stroke-gray" />
           </NavLink>
-          {unreadChats?.length > 0 && <NotificationCount />}
+          {unreadChats?.length > 0 && (
+            <NotificationCount array={unreadChats} includeInvites={false} />
+          )}
         </li>
         <li>
           <NavLink to={`/contacts`} className={setActiveClassName}>
@@ -40,11 +42,14 @@ const NavLinks = () => {
             <FaUserFriends size={35} className="stroke-gray" />
           </NavLink>
         </li>
-        <li>
+        <li className="relative">
           <NavLink to={`/clubserverinfo`} className={setActiveClassName}>
             <div className="profile-link-border"></div>
             <BsWechat size={35} className="stroke-gray" />
           </NavLink>
+          {unreadClubChats.length > 0 && (
+            <NotificationCount array={unreadClubChats} includeInvites={true} />
+          )}{' '}
         </li>
       </ul>
     </div>

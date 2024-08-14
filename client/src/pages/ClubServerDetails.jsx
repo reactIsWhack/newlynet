@@ -26,7 +26,6 @@ const ClubServerInfo = () => {
     renderModal: { render, name },
   } = useSelector(selectPopup);
 
-  console.log(serverInvites);
   const filteredSuggestions = suggestedClubServers.filter(
     (suggestion) =>
       !serverInvites.some((invite) => invite.server._id === suggestion._id)
@@ -54,7 +53,14 @@ const ClubServerInfo = () => {
         )}
         <div className="flex-1 overflow-auto py-6 px-4">
           <div className="flex items-center justify-between mb-4">
-            <h4 className="text-lg  font-medium">Server Invites</h4>
+            <div className="flex items-center gap-3">
+              <h4 className="text-lg  font-medium">Server Invites</h4>
+              {serverInvites.length > 0 && (
+                <span className="w-5 h-5 rounded-full bg-red-500 flex items-center justify-center text-white text-xs">
+                  {serverInvites.length}
+                </span>
+              )}
+            </div>
             {mobile && (
               <IoArrowBack
                 size={22}
@@ -65,14 +71,16 @@ const ClubServerInfo = () => {
             )}
           </div>
           {serverInvites.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4">{serverInviteCard}</div>
+            <div className="grid grid-cols-3 gap-4 max-[550px]:grid-cols-1">
+              {serverInviteCard}
+            </div>
           ) : (
             <span>No pending invites</span>
           )}
           <div className="divider"></div>
           <div className="mt-4">
             <h4 className="text-lg font-medium">Suggested Servers For You</h4>
-            <div className="grid grid-cols-3 mt-4 gap-4">
+            <div className="grid grid-cols-3 mt-4 gap-4 max-[550px]:grid-cols-1">
               {filteredSuggestions.length > 0 ? (
                 customServerCard
               ) : (
