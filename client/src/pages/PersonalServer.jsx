@@ -14,9 +14,14 @@ import { Outlet, useParams } from 'react-router-dom';
 import useRedirectUser from '../hooks/useRedirectUser';
 import { useSocket } from '../context/SocketContext';
 import { resetDateQuery } from '../app/features/chats/chatSlice';
+import useListenMessages from '../hooks/useListenMessages';
+import useListenNotifications from '../hooks/useListenNotifications';
 
 const PersonalServer = () => {
   useRedirectUser();
+  useListenMessages();
+  useListenNotifications();
+
   const {
     customServer,
     customClubServers,

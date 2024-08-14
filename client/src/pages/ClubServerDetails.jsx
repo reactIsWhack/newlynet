@@ -10,9 +10,14 @@ import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import CustomServerCard from '../components/ui/CustomServerCard';
 import { selectPopup } from '../app/features/popup/popupSlice';
 import InviteForm from '../components/InviteForm';
+import useListenMessages from '../hooks/useListenMessages';
+import useListenNotifications from '../hooks/useListenNotifications';
 
 const ClubServerInfo = () => {
   useRedirectUser();
+  useListenMessages();
+  useListenNotifications();
+
   const [renderSidebar, setRenderSidebar] = useState(true);
   const { serverInvites } = useSelector(selectUser);
   const mobile = useDetectMobile();
