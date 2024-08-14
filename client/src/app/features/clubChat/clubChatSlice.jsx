@@ -6,13 +6,10 @@ import sendMessageSound from '../../../assets/sendMessage.wav';
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
 const initialState = {
-  topic: '',
   members: [],
   messages: [],
   chats: [],
-  activatedAt: '',
   clubChatLoading: false,
-  nextTopic: '',
   serverId: '',
   selectedClubChat: null,
   onlineServerUsers: [],
@@ -22,6 +19,12 @@ const initialState = {
   customClubServers: [],
   suggestedClubServers: [],
   clubChatFilter: 'suggested',
+  customServer: {
+    members: [],
+    chats: [],
+    serverId: '',
+    serverName: '',
+  },
 };
 
 export const getClubServer = createAsyncThunk(
@@ -148,6 +151,7 @@ const clubChatSlice = createSlice({
     resetClubChatMessages(state, action) {
       state.messages = [];
       state.dateQuery = null;
+      state.paginating = false;
     },
     setclubChatMessages(state, action) {
       state.messages = [...state.messages, action.payload];
@@ -160,6 +164,17 @@ const clubChatSlice = createSlice({
     },
     setClubChatFilter(state, action) {
       state.clubChatFilter = action.payload;
+    },
+    setCustomServer(state, action) {
+      state.customServer = action.payload;
+    },
+    resetCustomServer(state, action) {
+      state.customServer = {
+        members: [],
+        serverId: '',
+        serverName: '',
+        chats: [],
+      };
     },
   },
   extraReducers: (builder) => {
@@ -277,6 +292,8 @@ export const {
   setDateQuery,
   resetClubChatState,
   setClubChatFilter,
+  setCustomServer,
+  resetCustomServer,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

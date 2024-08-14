@@ -12,7 +12,7 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
   const mobile = useDetectMobile();
 
   const customCard = customClubServers.map((server) => {
-    return <ClubServerItem key={server._id} {...server} />;
+    return <ClubServerItem key={server._id} {...server} server={server} />;
   });
 
   return (

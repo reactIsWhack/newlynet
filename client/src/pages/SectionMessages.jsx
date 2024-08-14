@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   getClubChatMessages,
   selectClubChat,
+  setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import ClubChatHeader from '../components/ClubChatHeader';
 import MessageSkeleton from '../components/ui/MessageSkeleton';

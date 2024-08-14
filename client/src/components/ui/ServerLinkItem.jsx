@@ -12,7 +12,7 @@ import { selectUser } from '../../app/features/user/userSlice';
 
 const ServerLinkItem = ({ chat, isActive }) => {
   const { sectionId } = useParams();
-  const { selectedClubChat } = useSelector(selectClubChat);
+  const { selectedClubChat, customServer } = useSelector(selectClubChat);
   const { unreadClubChats } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [chatUnreadCount, setChatUnreadCount] = useState(null);
@@ -22,12 +22,8 @@ const ServerLinkItem = ({ chat, isActive }) => {
   );
 
   const handleClick = async (e) => {
-    if (sectionId !== selectedClubChat?._id) {
-    }
     await dispatch(setSelectedClubChat(chat));
     await dispatch(resetClubChatMessages());
-    console.log(selectedClubChat);
-    console.log(e.target.id);
     await dispatch(getClubChatMessages(e.target.id));
   };
 
@@ -44,7 +40,11 @@ const ServerLinkItem = ({ chat, isActive }) => {
       onClick={handleClick}
     >
       <Link
-        to={`/clubchat/${chat._id}`}
+        to={
+          customServer.serverId
+            ? `/personalserver/${customServer.serverId}/${chat._id}`
+            : `/clubchat/${chat._id}`
+        }
         className={`text-[15px] block p-2 flex-1 ${
           isUnreadChat ? 'text-slate-200' : ''
         }`}

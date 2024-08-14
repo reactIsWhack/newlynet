@@ -6,8 +6,15 @@ import { CiSearch } from 'react-icons/ci';
 import { useNavigate } from 'react-router-dom';
 
 const ClubChatHeader = () => {
-  const { selectedClubChat } = useSelector(selectClubChat);
+  const { selectedClubChat, customServer } = useSelector(selectClubChat);
   const navigate = useNavigate();
+
+  const handleClick = () => {
+    if (customServer.serverId) {
+      return navigate(`/personalserver/${customServer.serverId}`);
+    }
+    navigate('/clubchat');
+  };
 
   return (
     <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white px-4 py-3 shadow-md flex justify-center items-center h-14">
@@ -16,7 +23,7 @@ const ClubChatHeader = () => {
         size={20}
         cursor="pointer"
         fill="#cbd5e1"
-        onClick={() => navigate('/clubchat')}
+        onClick={handleClick}
       />
       <h2 className="text-lg font-semibold mr-auto">
         #{' '}

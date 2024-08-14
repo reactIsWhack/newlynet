@@ -32,6 +32,8 @@ import {
 } from './app/features/clubChat/clubChatSlice';
 import useUpdateClubServer from './hooks/useUpdateClubServer';
 import ClubChatGuide from './pages/ClubChatGuide';
+import PersonalServer from './pages/PersonalServer';
+import PersonalServerIntro from './pages/PersonalServerIntro';
 
 axios.defaults.withCredentials = true;
 
@@ -154,6 +156,10 @@ function App() {
             <Route path=":sectionId" element={<SectionMessages />}></Route>
           </Route>
           <Route path="/clubserverinfo" element={<ClubServerDetails />}></Route>
+          <Route path="/personalserver/:serverId" element={<PersonalServer />}>
+            <Route index element={<PersonalServerIntro />}></Route>
+            <Route path=":chatId" element={<SectionMessages />}></Route>
+          </Route>
         </Routes>
       )}
       <Toaster />

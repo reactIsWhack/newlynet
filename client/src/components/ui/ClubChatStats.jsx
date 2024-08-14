@@ -32,6 +32,7 @@ const ClubChatStats = () => {
   };
 
   const resume = async () => {
+    console.log(selectedClubChat);
     if (selectedClubChat) navigate(`/clubchat/${selectedClubChat._id}`);
     else {
       const chat = chats.find((chat) => chat.chatTopic === 'General');

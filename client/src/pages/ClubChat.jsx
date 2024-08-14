@@ -6,12 +6,16 @@ import { useDispatch, useSelector } from 'react-redux';
 import ClubChatSidebar from '../components/ClubChatSidebar';
 import {
   getClubChatMessages,
+  resetClubChatMessages,
+  resetCustomServer,
   selectClubChat,
   setDateQuery,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
+import { selectUser } from '../app/features/user/userSlice';
+import { resetDateQuery } from '../app/features/chats/chatSlice';
 
 const ClubChat = () => {
   useRedirectUser();
@@ -21,7 +25,7 @@ const ClubChat = () => {
   const { sectionId } = useParams();
   const dispatch = useDispatch();
   const mobile = useDetectMobile();
-  const { pathname } = useLocation();
+  const { school } = useSelector(selectUser);
 
   useEffect(() => {
     const chat = chats.find((chat) => chat._id === sectionId);
@@ -48,16 +52,31 @@ const ClubChat = () => {
   }, [sectionId, selectedClubChat, chats]);
 
   useEffect(() => {
+    dispatch(resetCustomServer());
     if (sectionId && !dateQuery) {
       dispatch(getClubChatMessages(sectionId));
     }
+
+    return () => {
+      dispatch(resetClubChatMessages());
+    };
   }, []);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
       <Navbar />
       <div className="flex flex-1 overflow-hidden">
-        {((mobile && !sectionId) || !mobile) && <ClubChatSidebar />}
+        {((mobile && !sectionId) || !mobile) && (
+          <ClubChatSidebar
+            members={members}
+            chats={chats}
+            serverName={
+              school?.formattedName
+                ? `${school.formattedName} Server`
+                : 'Loading...'
+            }
+          />
+        )}
         {((mobile && sectionId) || !mobile) && (
           <div className="flex-1 overflow-auto h-full">
             <Outlet />
