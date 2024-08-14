@@ -14,7 +14,7 @@ const router = Router();
 router.get('/', routeProtector, getClubServer);
 router.patch('/:serverId', routeProtector, joinClubServer);
 router.post('/', routeProtector, createCustomClubServer);
-router.patch('/invite/:serverId', routeProtector, inviteUserToServer);
+router.patch('/invite/:serverId/:userId', routeProtector, inviteUserToServer);
 router.get('/allservers', routeProtector, getUserClubServers);
 router.get('/suggestedservers', routeProtector, getSuggestedServers);
 

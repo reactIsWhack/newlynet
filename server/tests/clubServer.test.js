@@ -164,25 +164,22 @@ describe('PATCH /clubserver', () => {
     expect(joinEvent.newUser._id.toString()).toBe(userInfo._id.toString());
   });
 
-  it('Should send club server invites to two users', async () => {
+  it('Should send club server invites to a user', async () => {
     const response = await request(app)
-      .patch(`/api/clubserver/invite/${customServerId}`)
+      .patch(`/api/clubserver/invite/${customServerId}/${usersToInvite[0]._id}`)
       .set('Cookie', [...jwt])
-      .send({ users: usersToInvite })
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    const [secondUserUpdated, thirdUserUpdated] = await Promise.all([
-      User.findById(usersToInvite[0]._id).populate('serverInvites'),
-      User.findById(usersToInvite[1]._id).populate('serverInvites'),
-    ]);
-    console.log(secondUserUpdated, thirdUserUpdated);
-    expect(response.body.message).toBe('Invite(s) Sent!');
-    expect(secondUserUpdated.serverInvites[0]._id.toString()).toBe(
+    const secondUserUpdated = await User.findById(
+      usersToInvite[0]._id
+    ).populate({ path: 'serverInvites', populate: ['server', 'sender'] });
+    expect(response.body.serverInvites.length).toBe(1);
+    expect(secondUserUpdated.serverInvites[0].server._id.toString()).toBe(
       customServerId.toString()
     );
-    expect(thirdUserUpdated.serverInvites[0]._id.toString()).toBe(
-      customServerId.toString()
+    expect(secondUserUpdated.serverInvites[0].sender._id.toString()).toBe(
+      userInfo._id.toString()
     );
   });
 

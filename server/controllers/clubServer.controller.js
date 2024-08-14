@@ -34,10 +34,12 @@ const joinClubServer = asyncHandler(async (req, res) => {
   }
 
   if (
-    user.serverInvites.some((invite) => String(invite) === String(serverId))
+    user.serverInvites.some(
+      (invite) => String(invite.server) === String(serverId)
+    )
   ) {
     user.serverInvites = user.serverInvites.filter(
-      (invite) => String(invite) !== String(serverId)
+      (invite) => String(invite.server) !== String(serverId)
     );
   }
 
@@ -103,36 +105,31 @@ const createCustomClubServer = asyncHandler(async (req, res) => {
 });
 
 const inviteUserToServer = asyncHandler(async (req, res) => {
-  const { serverId } = req.params;
-  const { users } = req.body;
+  const { serverId, userId } = req.params;
 
-  if (users.length > 8) {
-    res.status(400);
-    throw new Error('Max of 8 user invites at a time');
+  const user = await User.findById(userId);
+
+  if (!user) {
+    res.status(404);
+    throw new Error('User not found');
   }
 
-  const sendInvite = async (userId) => {
-    const user = await User.findById(userId);
-
-    if (!user) {
-      res.status(404);
-      throw new Error('User not found');
-    }
-
-    user.serverInvites = [...user.serverInvites, serverId];
-    await user.save().then((item) => item.populate('serverInvites'));
-
-    const socketId = getSocketId(user._id);
-    io.to(socketId).emit('serverInvite', user.serverInvites);
-  };
-
-  await Promise.all(
-    users.map(async (userId) => {
-      await sendInvite(userId);
+  user.serverInvites = [
+    ...user.serverInvites,
+    { server: serverId, sender: req.userId },
+  ];
+  await user.save().then((item) =>
+    item.populate({
+      path: 'serverInvites',
+      populate: ['server', 'sender'],
     })
   );
+  console.log(user);
 
-  res.status(200).json({ message: 'Invite(s) Sent!' });
+  const socketId = getSocketId(user._id);
+  io.to(socketId).emit('serverInvite', user.serverInvites);
+
+  res.status(200).json(user);
 });
 
 const getUserClubServers = asyncHandler(async (req, res) => {

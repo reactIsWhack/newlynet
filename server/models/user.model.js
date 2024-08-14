@@ -57,7 +57,10 @@ const userSchema = new mongoose.Schema(
       },
     ],
     serverInvites: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'clubServer' },
+      {
+        server: { type: mongoose.Schema.Types.ObjectId, ref: 'clubServer' },
+        sender: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+      },
     ],
   },
   { timestamps: true }
