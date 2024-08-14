@@ -25,6 +25,7 @@ const initialState = {
     serverId: '',
     serverName: '',
   },
+  invitePending: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -123,7 +124,22 @@ export const getSuggestedClubServers = createAsyncThunk(
       const response = await axios.get(
         `${baseURL}/api/clubserver/suggestedservers`
       );
-      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const sendServerInvite = createAsyncThunk(
+  'clubChat/sendInvite',
+  async ({ serverId, userId }, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `${baseURL}/api/clubserver/invite/${serverId}/${userId}`
+      );
+      console.log(serverId, userId);
+      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -286,6 +302,17 @@ const clubChatSlice = createSlice({
       })
       .addCase(getSuggestedClubServers.rejected, (state, action) => {
         state.clubChatLoading = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
+      })
+      .addCase(sendServerInvite.pending, (state) => {
+        state.invitePending = true;
+      })
+      .addCase(sendServerInvite.fulfilled, (state, action) => {
+        state.invitePending = false;
+        toast.success('Server invite sent!');
+      })
+      .addCase(sendServerInvite.rejected, (state, action) => {
+        state.invitePending = false;
         toast.error(action.payload, { id: 'club-custom-err' });
       });
   },

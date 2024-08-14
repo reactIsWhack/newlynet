@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   selectUser,
   setChattingWith,
+  setServerInvites,
   setUnreadChats,
   setUnreadClubChatMessages,
 } from '../app/features/user/userSlice';
@@ -59,6 +60,11 @@ export const SocketContextProvider = ({ children }) => {
 
       socketVal.on('clubChatNotif', (unreadClubChats) => {
         dispatch(setUnreadClubChatMessages(unreadClubChats));
+      });
+
+      socketVal.on('serverInvite', (invites) => {
+        dispatch(setServerInvites(invites));
+        toast('New server invite');
       });
 
       socketVal.on('newChat', (chat, updatedNotifications) => {

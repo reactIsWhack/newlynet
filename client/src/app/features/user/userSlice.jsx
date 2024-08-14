@@ -181,6 +181,16 @@ const userSlice = createSlice({
     setUnreadClubChatMessages(state, action) {
       state.unreadClubChats = action.payload;
     },
+    setServerInvites(state, action) {
+      state.serverInvites = action.payload.invites;
+    },
+    setContactInvites(state, action) {
+      const contact = state.contacts.find(
+        (contact) => contact._id === action.payload._id
+      );
+      contact.serverInvites = action.payload.invites;
+      console.log(contact);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -244,6 +254,7 @@ const userSlice = createSlice({
         state.socialMediaInfo = action.payload.socialMediaUsernames;
         state.username = action.payload.username;
         state.unreadClubChats = action.payload.unreadClubChatMessages;
+        console.log(action.payload.serverInvites);
         state.serverInvites = action.payload.serverInvites;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
@@ -328,6 +339,8 @@ export const {
   setChattingWith,
   resetUserState,
   setUnreadClubChatMessages,
+  setServerInvites,
+  setContactInvites,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;
