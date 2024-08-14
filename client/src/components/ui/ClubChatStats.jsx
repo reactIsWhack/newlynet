@@ -2,6 +2,7 @@ import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   joinClubServer,
+  resetClubChatMessages,
   selectClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
 import { format, add } from 'date-fns';
@@ -32,7 +33,7 @@ const ClubChatStats = () => {
   };
 
   const resume = async () => {
-    console.log(selectedClubChat);
+    dispatch(resetClubChatMessages());
     if (selectedClubChat) navigate(`/clubchat/${selectedClubChat._id}`);
     else {
       const chat = chats.find((chat) => chat.chatTopic === 'General');

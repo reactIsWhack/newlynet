@@ -4,9 +4,12 @@ import { selectUser } from '../../app/features/user/userSlice';
 import { IoPersonAdd } from 'react-icons/io5';
 import ClubMsgCount from './ClubMsgCount';
 import { useNavigate } from 'react-router-dom';
-import { setCustomServer } from '../../app/features/clubChat/clubChatSlice';
+import {
+  setCustomServer,
+  setSelectedClubChat,
+} from '../../app/features/clubChat/clubChatSlice';
 
-const ClubServerItem = ({ serverName, chats, members, _id }) => {
+const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
   const { unreadClubChats } = useSelector(selectUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -17,10 +20,11 @@ const ClubServerItem = ({ serverName, chats, members, _id }) => {
   );
 
   const handleClick = async () => {
+    await dispatch(setSelectedClubChat(chats[0]));
     await dispatch(
       setCustomServer({ chats, serverName, members, serverId: _id })
     );
-    navigate(`/personalserver/${_id}`);
+    navigate(`/personalserver/${_id}/${chats[0]._id}`);
   };
 
   return (

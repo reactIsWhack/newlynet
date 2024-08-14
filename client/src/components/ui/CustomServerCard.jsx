@@ -1,15 +1,33 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import ClubMsgCount from './ClubMsgCount';
+import { setCustomServer } from '../../app/features/clubChat/clubChatSlice';
+import { useNavigate } from 'react-router-dom';
 
-const CustomServerCard = ({ members, serverName, tags, renderUnreadCount }) => {
+const CustomServerCard = ({
+  members,
+  serverName,
+  tags,
+  renderUnreadCount,
+  chats,
+  _id,
+}) => {
   const { userId, unreadClubChats } = useSelector(selectUser);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const inServer = members.some((member) => member._id === userId);
   const unreadChats = unreadClubChats.filter((unreadChat) =>
     chatIds.has(unreadChat._id)
   );
+
+  const resumeChat = async () => {
+    await dispatch(
+      setCustomServer({ members, serverName, chats, serverId: _id })
+    );
+    navigate(`/personalserver/${_id}/${chats[0]._id}`);
+  };
 
   return (
     <div className="bg-base-100 text-white shadow-lg rounded-lg p-4 max-w-[340px] w-full mb-3 xl:max-w-[390px]">
@@ -35,7 +53,12 @@ const CustomServerCard = ({ members, serverName, tags, renderUnreadCount }) => {
         {/* Members Count */}
         {inServer ? (
           <div className="relative">
-            <button className="btn btn-outline min-h-11 h-11">Chat</button>
+            <button
+              className="btn btn-outline min-h-11 h-11"
+              onClick={resumeChat}
+            >
+              Chat
+            </button>
             {renderUnreadCount && unreadChats.length > 0 && (
               <ClubMsgCount unreadChats={unreadChats} />
             )}{' '}

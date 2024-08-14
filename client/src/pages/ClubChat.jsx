@@ -56,10 +56,6 @@ const ClubChat = () => {
     if (sectionId && !dateQuery) {
       dispatch(getClubChatMessages(sectionId));
     }
-
-    return () => {
-      dispatch(resetClubChatMessages());
-    };
   }, []);
 
   return (

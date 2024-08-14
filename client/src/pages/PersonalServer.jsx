@@ -35,8 +35,6 @@ const PersonalServer = () => {
       const server = customClubServers.find((item) => item._id === serverId);
 
       if (customClubServers.length) {
-        const chat = server.chats.find((item) => item._id === chatId);
-
         dispatch(
           setCustomServer({
             members: server.members,
@@ -45,7 +43,6 @@ const PersonalServer = () => {
             serverName: server.serverName,
           })
         );
-        dispatch(setSelectedClubChat(chat));
         setIsLoading(false);
       }
     }
@@ -72,13 +69,19 @@ const PersonalServer = () => {
   }, [chatId, serverId]);
 
   useEffect(() => {
+    const server = customClubServers.find((item) => item._id === serverId);
+    const chat = server.chats.find((item) => item._id === chatId);
+    dispatch(setSelectedClubChat(chat));
+
     if (chatId && serverId && !dateQuery) {
       dispatch(getClubChatMessages(chatId));
     }
 
     return () => {
       dispatch(setSelectedClubChat(null));
-      if (messages.length) dispatch(resetClubChatMessages());
+      if (messages.length) {
+        dispatch(resetClubChatMessages());
+      }
     };
   }, []);
 
