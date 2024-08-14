@@ -46,6 +46,12 @@ const PersonalServer = () => {
         setIsLoading(false);
       }
     }
+
+    if (chatId && serverId && customClubServers.length) {
+      const server = customClubServers.find((item) => item._id === serverId);
+      const chat = server.chats.find((item) => item._id === chatId);
+      dispatch(setSelectedClubChat(chat));
+    }
   }, [customClubServers]);
 
   useEffect(() => {
@@ -69,10 +75,6 @@ const PersonalServer = () => {
   }, [chatId, serverId]);
 
   useEffect(() => {
-    const server = customClubServers.find((item) => item._id === serverId);
-    const chat = server.chats.find((item) => item._id === chatId);
-    dispatch(setSelectedClubChat(chat));
-
     if (chatId && serverId && !dateQuery) {
       dispatch(getClubChatMessages(chatId));
     }
