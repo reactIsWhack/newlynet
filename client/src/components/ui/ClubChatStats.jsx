@@ -4,6 +4,7 @@ import {
   joinClubServer,
   resetClubChatMessages,
   selectClubChat,
+  setSelectedClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
 import { format, add } from 'date-fns';
 import { useSocket } from '../../context/SocketContext';
@@ -35,7 +36,9 @@ const ClubChatStats = () => {
 
   const resume = async () => {
     dispatch(resetClubChatMessages());
-    if (selectedClubChat) navigate(`/clubchat/${selectedClubChat._id}`);
+
+    if (selectedClubChat && !selectedClubChat.isCustom)
+      navigate(`/clubchat/${selectedClubChat._id}`);
     else {
       const chat = chats.find((chat) => chat.chatTopic === 'General');
       navigate(`/clubchat/${chat._id}`);

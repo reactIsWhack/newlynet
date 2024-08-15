@@ -55,7 +55,7 @@ const PersonalServer = () => {
     if (chatId && serverId && customClubServers.length) {
       const server = customClubServers.find((item) => item._id === serverId);
       const chat = server.chats.find((item) => item._id === chatId);
-      dispatch(setSelectedClubChat(chat));
+      dispatch(setSelectedClubChat({ ...chat, isCustom: true }));
     }
   }, [customClubServers]);
 
@@ -83,10 +83,6 @@ const PersonalServer = () => {
     if (chatId && serverId && !dateQuery) {
       dispatch(getClubChatMessages(chatId));
     }
-
-    return () => {
-      dispatch(setSelectedClubChat(null));
-    };
   }, [serverId, chatId]);
 
   return (

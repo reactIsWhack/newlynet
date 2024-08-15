@@ -7,7 +7,10 @@ import {
   selectClubChat,
   setSelectedClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
-import { resetMessages } from '../../app/features/chats/chatSlice';
+import {
+  resetMessages,
+  setSelectedChat,
+} from '../../app/features/chats/chatSlice';
 import { selectUser } from '../../app/features/user/userSlice';
 
 const ServerLinkItem = ({ chat, isActive }) => {
@@ -22,7 +25,11 @@ const ServerLinkItem = ({ chat, isActive }) => {
   );
 
   const handleClick = async (e) => {
-    await dispatch(setSelectedClubChat(chat));
+    if (customServer.serverId) {
+      await dispatch(setSelectedClubChat({ ...chat, isCustom: true }));
+    } else {
+      await dispatch(setSelectedChat(chat));
+    }
     await dispatch(resetClubChatMessages());
     await dispatch(getClubChatMessages(e.target.id));
   };
