@@ -1,13 +1,17 @@
 import { useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { useDispatch, useSelector } from 'react-redux';
-import { setclubChatMessages } from '../app/features/clubChat/clubChatSlice';
+import {
+  selectClubChat,
+  setclubChatMessages,
+} from '../app/features/clubChat/clubChatSlice';
 import { selectUser } from '../app/features/user/userSlice';
 
 const useListenClubServerMsg = () => {
   const { socket } = useSocket();
   const dispatch = useDispatch();
   const { userId } = useSelector(selectUser);
+  const { selectedClubChat } = useSelector(selectClubChat);
 
   useEffect(() => {
     socket?.on('newClubServerMsg', (clubChat, msg) => {
@@ -16,7 +20,7 @@ const useListenClubServerMsg = () => {
     });
 
     return () => socket?.off('newClubServerMSg');
-  }, [userId]);
+  }, [selectedClubChat]);
 };
 
 export default useListenClubServerMsg;

@@ -166,7 +166,9 @@ const clubChatSlice = createSlice({
       state.paginating = false;
     },
     setclubChatMessages(state, action) {
-      state.messages = [...state.messages, action.payload];
+      if (!state.messages.some((msg) => msg._id === action.payload._id)) {
+        state.messages = [...state.messages, action.payload];
+      }
     },
     setDateQuery(state, action) {
       state.dateQuery = action.payload.dateQuery;
