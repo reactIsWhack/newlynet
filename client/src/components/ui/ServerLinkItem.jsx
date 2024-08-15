@@ -19,12 +19,14 @@ const ServerLinkItem = ({ chat, isActive }) => {
   const { unreadClubChats } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [chatUnreadCount, setChatUnreadCount] = useState(null);
+  const { chatId } = useParams();
 
   const isUnreadChat = unreadClubChats?.find(
     (clubChat) => clubChat.chat._id === chat._id
   );
 
   const handleClick = async (e) => {
+    if (e.target.id === chatId) return;
     if (customServer.serverId) {
       await dispatch(setSelectedClubChat({ ...chat, isCustom: true }));
     } else {

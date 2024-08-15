@@ -91,7 +91,7 @@ const PersonalServer = () => {
     if (chatId && serverId && !dateQuery) {
       dispatch(getClubChatMessages(chatId));
     }
-  }, [serverId, chatId]);
+  }, []);
 
   return (
     <>
