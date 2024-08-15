@@ -22,6 +22,8 @@ import {
 import ConnectBtns from './ConnectBtns';
 import Badge from './Badge';
 import FireStreak from './FireStreak';
+import useDetectMobile from '../../hooks/useDetectMobile';
+import { selectPopup } from '../../app/features/popup/popupSlice';
 
 const Contact = ({
   firstName,
@@ -45,6 +47,10 @@ const Contact = ({
   const { contactConversations, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const mobile = useDetectMobile();
+  const {
+    renderModal: { name, render },
+  } = useSelector(selectPopup);
 
   const interestBtn = interests.map((interest, index) => {
     return (
@@ -104,7 +110,7 @@ const Contact = ({
 
   return (
     <div className={`card shadow-xl w-full ${bg} relative`}>
-      <div className="card-body py-8 px-0">
+      <div className="card-body max-[55px]:py-8 py-6 px-0">
         <div className="flex items-center gap-3 mb-2 px-8">
           <div className={`avatar ${online ? 'online' : 'offline'}`}>
             <div className="w-12 rounded-full">
@@ -125,6 +131,7 @@ const Contact = ({
             {socialMediaTag}
           </div>
         )}
+
         <div className="flex flex-wrap mb-4 gap-2 justify-center px-3">
           {interestBtn}
         </div>
@@ -132,9 +139,10 @@ const Contact = ({
           <ConnectBtns
             handleResumeChatting={handleResumeChatting}
             handleStartChatting={handleStartChatting}
+            highestStreak={highestStreak}
           />
         ) : (
-          <div className="card-actions justify-center h-full items-end">
+          <div className="card-actions justify-center h-full ">
             {chattingWith.includes(_id) &&
             contactConversations.some((contact) =>
               contact.members.some((member) => member._id === _id)
@@ -154,8 +162,14 @@ const Contact = ({
         )}
       </div>
       {highestStreak > 0 && (
-        <div className="absolute bottom-4 left-4 flex flex-col items-center">
-          <span className="flex items-center gap-2">
+        <div
+          className={`flex flex-col items-center ${
+            mobile && render && name === 'user-detail'
+              ? 'static -mt-2 mb-2'
+              : 'absolute bottom-3 left-3'
+          }`}
+        >
+          <span className="flex items-center w-full flex-1 justify-center">
             <FireStreak streak={highestStreak} />
           </span>
           <div className="text-[13.5px] italic">Max Streak</div>
