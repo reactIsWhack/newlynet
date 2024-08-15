@@ -197,6 +197,11 @@ const clubChatSlice = createSlice({
       );
       customServer.members = action.payload.members;
     },
+    removeSuggestedServer(state, action) {
+      state.suggestedClubServers = state.suggestedClubServers.filter(
+        (server) => server._id !== action.payload
+      );
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -335,6 +340,7 @@ export const {
   setCustomServer,
   resetCustomServer,
   setCustomServerMembers,
+  removeSuggestedServer,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

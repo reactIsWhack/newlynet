@@ -28,21 +28,24 @@ const ClubServerInfo = () => {
 
   const filteredSuggestions = suggestedClubServers.filter(
     (suggestion) =>
-      !serverInvites.some((invite) => invite.server._id === suggestion._id)
+      !serverInvites.some((invite) => invite.server?._id === suggestion._id)
   );
   const customServerCard = filteredSuggestions.map((server) => {
     return <CustomServerCard key={server._id} {...server} />;
   });
 
-  const serverInviteCard = serverInvites.map((serverInvite) => {
-    return (
-      <CustomServerCard
-        key={serverInvite.server._id}
-        {...serverInvite.server}
-        sender={serverInvite.sender}
-      />
-    );
-  });
+  let serverInviteCard;
+  if (serverInvites.length > 0) {
+    serverInviteCard = serverInvites.map((serverInvite) => {
+      return (
+        <CustomServerCard
+          key={serverInvite.server._id}
+          {...serverInvite.server}
+          sender={serverInvite.sender}
+        />
+      );
+    });
+  }
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">

@@ -7,6 +7,7 @@ import {
 import ClubMsgCount from './ClubMsgCount';
 import {
   joinClubServer,
+  removeSuggestedServer,
   resetClubChatMessages,
   setCustomServer,
 } from '../../app/features/clubChat/clubChatSlice';
@@ -55,6 +56,7 @@ const CustomServerCard = ({
         if (isServerInvite) {
           dispatch(removeServerInvite(_id));
         }
+        dispatch(removeSuggestedServer(_id));
         navigate(`/personalserver/${_id}`);
       }
     });
