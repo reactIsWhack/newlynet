@@ -16,6 +16,10 @@ const clubServerSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user',
+    },
   },
   { timestamps: true }
 );

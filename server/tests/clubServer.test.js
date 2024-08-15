@@ -62,6 +62,7 @@ describe('POST /clubserver', () => {
     expect(response.body.members.map((m) => String(m._id))).toEqual(
       expect.arrayContaining([String(userInfo._id)])
     );
+    expect(response.body.owner._id.toString()).toBe(userInfo._id.toString());
   });
 
   it('Should fail to create an existing club server', async () => {

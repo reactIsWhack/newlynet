@@ -99,7 +99,8 @@ const createCustomClubServer = asyncHandler(async (req, res) => {
     schoolAffiliation: user.school.schoolId,
     chats: [generalClubChat],
     members: [user],
-  }).then((item) => item.populate(['chats', 'members']));
+    owner: req.userId,
+  }).then((item) => item.populate(['chats', 'members', 'owner']));
 
   res.status(201).json(customServer);
 });
@@ -157,6 +158,13 @@ const getSuggestedServers = asyncHandler(async (req, res) => {
   }).populate([{ path: 'members', select: '-password' }, { path: 'chats' }]);
 
   res.status(200).json(clubServers);
+});
+
+const createServerChannel = asyncHandler(async (req, res) => {
+  const { serverId } = req.params;
+  const { channelName } = req.body;
+
+  const server = await ClubServer.findById(serverId);
 });
 
 module.exports = {
