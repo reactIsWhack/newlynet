@@ -18,11 +18,13 @@ import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
 import { selectPopup } from '../app/features/popup/popupSlice';
 import CreateChannel from '../components/CreateChannel';
+import useListenNewChannel from '../hooks/useListenNewChannel';
 
 const PersonalServer = () => {
   useRedirectUser();
   useListenMessages();
   useListenNotifications();
+  useListenNewChannel();
 
   const {
     customServer,

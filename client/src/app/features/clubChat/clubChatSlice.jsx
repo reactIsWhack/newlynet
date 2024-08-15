@@ -27,6 +27,7 @@ const initialState = {
     owner: null,
   },
   invitePending: false,
+  createChannelLoading: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -139,7 +140,24 @@ export const sendServerInvite = createAsyncThunk(
       const response = await axios.patch(
         `${baseURL}/api/clubserver/invite/${serverId}/${userId}`
       );
-      console.log(serverId, userId);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const createServerChannel = createAsyncThunk(
+  'clubServer/createChannel',
+  async (channelName, thunkAPI) => {
+    try {
+      const {
+        clubChat: { customServer },
+      } = thunkAPI.getState();
+      const response = await axios.patch(
+        `${baseURL}/api/clubserver/newchannel/${customServer.serverId}`,
+        { channelName }
+      );
       console.log(response);
       return response.data;
     } catch (error) {
@@ -201,6 +219,9 @@ const clubChatSlice = createSlice({
       state.suggestedClubServers = state.suggestedClubServers.filter(
         (server) => server._id !== action.payload
       );
+    },
+    setServerChannels(state, action) {
+      state.customServer.chats = action.payload.chats;
     },
   },
   extraReducers: (builder) => {
@@ -322,6 +343,18 @@ const clubChatSlice = createSlice({
       .addCase(sendServerInvite.rejected, (state, action) => {
         state.invitePending = false;
         toast.error(action.payload, { id: 'club-custom-err' });
+      })
+      .addCase(createServerChannel.pending, (state) => {
+        state.createChannelLoading = true;
+      })
+      .addCase(createServerChannel.fulfilled, (state, action) => {
+        state.createChannelLoading = false;
+        state.customServer.chats = action.payload.chats;
+        toast.success('Server channel created!');
+      })
+      .addCase(createServerChannel.rejected, (state, action) => {
+        state.createChannelLoading = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
       });
   },
 });
@@ -341,6 +374,7 @@ export const {
   resetCustomServer,
   setCustomServerMembers,
   removeSuggestedServer,
+  setServerChannels,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;
