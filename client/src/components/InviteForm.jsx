@@ -23,7 +23,15 @@ const InviteForm = () => {
       <h3 className="font-medium text-[17px]">
         Invite Contacts to the Server!
       </h3>
-      <div className="mt-1 max-h-96 overflow-auto">{inviteBtn}</div>
+      <div className="mt-1 max-h-96 overflow-auto flex flex-col">
+        {contactsNotInServer.length > 0 ? (
+          inviteBtn
+        ) : (
+          <span className="text-center w-full mt-2">
+            All contacts in server
+          </span>
+        )}
+      </div>
       <CloseModal />
     </Modal>
   );

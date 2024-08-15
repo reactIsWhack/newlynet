@@ -19,6 +19,7 @@ import useListenNotifications from '../hooks/useListenNotifications';
 import { selectPopup } from '../app/features/popup/popupSlice';
 import CreateChannel from '../components/CreateChannel';
 import useListenNewChannel from '../hooks/useListenNewChannel';
+import useDetectMobile from '../hooks/useDetectMobile';
 
 const PersonalServer = () => {
   useRedirectUser();
@@ -40,6 +41,7 @@ const PersonalServer = () => {
   const {
     renderModal: { name, render },
   } = useSelector(selectPopup);
+  const mobile = useDetectMobile();
 
   useEffect(() => {
     if (!customServer.serverId || !customServer.owner) {
@@ -98,13 +100,15 @@ const PersonalServer = () => {
       <div className="h-screen flex flex-col overflow-hidden">
         <Navbar />
         <div className="flex flex-1 overflow-hidden">
-          <ClubChatSidebar
-            members={customServer.members}
-            chats={customServer.chats}
-            serverName={customServer.serverName}
-            isLoading={isLoading}
-            owner={customServer.owner}
-          />
+          {(!mobile || (mobile && !chatId)) && (
+            <ClubChatSidebar
+              members={customServer.members}
+              chats={customServer.chats}
+              serverName={customServer.serverName}
+              isLoading={isLoading}
+              owner={customServer.owner}
+            />
+          )}
           <div className="flex-1 overflow-auto h-full">
             <Outlet />
           </div>
