@@ -163,8 +163,33 @@ const getSuggestedServers = asyncHandler(async (req, res) => {
 const createServerChannel = asyncHandler(async (req, res) => {
   const { serverId } = req.params;
   const { channelName } = req.body;
+  console.log(serverId);
+
+  if (!channelName) {
+    res.status(400);
+    throw new Error('Please provide a channel name');
+  }
 
   const server = await ClubServer.findById(serverId);
+
+  if (String(req.userId) !== String(server.owner)) {
+    res.status(400);
+    throw new Error('You are not permitted to create a channel');
+  }
+
+  const clubChat = await ClubChat.create({
+    messages: [],
+    chatTopic: channelName,
+  });
+  server.chats = [...server.chats, clubChat];
+  await server.save().then((item) => item.populate('chats'));
+
+  server.members.forEach((member) => {
+    const socketId = getSocketId(String(member._id));
+    io.to(socketId).emit('newChannel', server, clubChat);
+  });
+
+  res.status(200).json(server);
 });
 
 module.exports = {
@@ -174,4 +199,5 @@ module.exports = {
   inviteUserToServer,
   getUserClubServers,
   getSuggestedServers,
+  createServerChannel,
 };

@@ -201,6 +201,19 @@ describe('PATCH /clubserver', () => {
     );
     expect(secondUserUpdated.serverInvites.length).toBe(0);
   });
+
+  it('Should create a new server channel', async () => {
+    console.log(customServerId);
+    const response = await request(app)
+      .patch(`/api/clubserver/newchannel/${customServerId}`)
+      .set('Cookie', [...jwt])
+      .send({ channelName: 'Memes' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.chats.length).toBe(2);
+    expect(response.body.chats[1].chatTopic).toBe('Memes');
+  });
 });
 
 afterAll(async () => {
