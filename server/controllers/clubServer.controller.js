@@ -142,6 +142,7 @@ const getUserClubServers = asyncHandler(async (req, res) => {
   }).populate([
     { path: 'members', populate: { path: 'chats' }, select: '-password' },
     { path: 'chats' },
+    { path: 'owner', select: '-password' },
   ]);
 
   res.status(200).json(clubServers);

@@ -23,20 +23,24 @@ const ClubServerInfo = () => {
           return <CustomServerCard key={server._id} {...server} />;
         })
       ) : (
-        <span>No server suggestions</span>
+        <span>No server suggestions.</span>
       );
     } else if (clubChatFilter === 'invites') {
       return <span>Invites</span>;
     } else {
-      return customClubServers.slice(0, 5).map((server) => {
-        return (
-          <CustomServerCard
-            key={server._id}
-            {...server}
-            renderUnreadCount={true}
-          />
-        );
-      });
+      return customClubServers.length > 0 ? (
+        customClubServers.slice(0, 5).map((server) => {
+          return (
+            <CustomServerCard
+              key={server._id}
+              {...server}
+              renderUnreadCount={true}
+            />
+          );
+        })
+      ) : (
+        <span>You are not a part of any servers currently.</span>
+      );
     }
   };
 

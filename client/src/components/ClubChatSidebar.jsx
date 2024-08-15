@@ -3,14 +3,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import { selectUser } from '../app/features/user/userSlice';
 import OnlineUserCard from './ui/OnlineUserCard';
-import { resetMessages } from '../app/features/chats/chatSlice';
+import { IoIosAdd } from 'react-icons/io';
 import ServerLinkItem from './ui/ServerLinkItem';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import { setRenderModal } from '../app/features/popup/popupSlice';
 
-const ClubChatSidebar = ({ chats, members, serverName, isLoading }) => {
+const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
   const { userId } = useSelector(selectUser);
   const location = useLocation();
   const { customServer } = useSelector(selectClubChat);
+  const userIsOwner = userId === owner?._id;
+  const dispatch = useDispatch();
 
   const listItem = chats.map((chat) => {
     const isActive =
@@ -27,6 +30,11 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading }) => {
       return <OnlineUserCard key={user.userId} {...user} userData={user} />;
     });
 
+  const renderCreateChannelForm = async () => {
+    await dispatch(setRenderModal({ render: true, name: 'create-channel' }));
+    document.getElementById('my_modal_3').showModal();
+  };
+
   return (
     <div className="sidebar border-r border-slate-500 flex flex-col w-1/4 max-[550px]:border-none max-[550px]:w-full relative bg-base-200">
       {isLoading ? (
@@ -35,7 +43,15 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading }) => {
         </div>
       ) : (
         <>
-          <h2 className="pl-3 pt-3 font-semibold">{serverName}</h2>
+          <div className="flex pt-3 px-4 items-center justify-between">
+            <h2 className="font-semibold">{serverName}</h2>
+            <div
+              className="hover:bg-slate-700 rounded-full transition-colors cursor-pointer"
+              onClick={renderCreateChannelForm}
+            >
+              {userIsOwner && <IoIosAdd size={24} />}
+            </div>
+          </div>
           <ul className="text-base-content p-4 max-h-[360px] flex flex-col overflow-auto max-[550px]:max-h-[520px]">
             {/* Sidebar content here */}
             {listItem}

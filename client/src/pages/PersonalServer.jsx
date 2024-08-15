@@ -16,6 +16,8 @@ import { useSocket } from '../context/SocketContext';
 import { resetDateQuery } from '../app/features/chats/chatSlice';
 import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
+import { selectPopup } from '../app/features/popup/popupSlice';
+import CreateChannel from '../components/CreateChannel';
 
 const PersonalServer = () => {
   useRedirectUser();
@@ -33,9 +35,12 @@ const PersonalServer = () => {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const { socket } = useSocket();
+  const {
+    renderModal: { name, render },
+  } = useSelector(selectPopup);
 
   useEffect(() => {
-    if (!customServer.serverId) {
+    if (!customServer.serverId || !customServer.owner) {
       setIsLoading(true);
       const server = customClubServers.find((item) => item._id === serverId);
 
@@ -46,6 +51,7 @@ const PersonalServer = () => {
             chats: server.chats,
             serverId: server._id,
             serverName: server.serverName,
+            owner: server.owner,
           })
         );
         setIsLoading(false);
@@ -86,20 +92,24 @@ const PersonalServer = () => {
   }, [serverId, chatId]);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden">
-      <Navbar />
-      <div className="flex flex-1 overflow-hidden">
-        <ClubChatSidebar
-          members={customServer.members}
-          chats={customServer.chats}
-          serverName={customServer.serverName}
-          isLoading={isLoading}
-        />
-        <div className="flex-1 overflow-auto h-full">
-          <Outlet />
+    <>
+      <div className="h-screen flex flex-col overflow-hidden">
+        <Navbar />
+        <div className="flex flex-1 overflow-hidden">
+          <ClubChatSidebar
+            members={customServer.members}
+            chats={customServer.chats}
+            serverName={customServer.serverName}
+            isLoading={isLoading}
+            owner={customServer.owner}
+          />
+          <div className="flex-1 overflow-auto h-full">
+            <Outlet />
+          </div>
         </div>
       </div>
-    </div>
+      {name === 'create-channel' && render && <CreateChannel />}
+    </>
   );
 };
 

@@ -16,7 +16,7 @@ const ClubServerMenu = () => {
 
   return (
     <>
-      <div className="join mb-3" onChange={handleChange}>
+      <div className="join mb-3">
         <input
           className="join-item btn"
           type="radio"
@@ -24,6 +24,7 @@ const ClubServerMenu = () => {
           value="suggested"
           aria-label="Suggested"
           checked={clubChatFilter === 'suggested'}
+          onChange={handleChange}
         />
         <input
           className="join-item btn"
@@ -32,6 +33,7 @@ const ClubServerMenu = () => {
           value="invites"
           aria-label="Invites"
           checked={clubChatFilter === 'invites'}
+          onChange={handleChange}
         />
         <input
           className="join-item btn"
@@ -40,6 +42,7 @@ const ClubServerMenu = () => {
           value="personal"
           aria-label="My Servers"
           checked={clubChatFilter === 'personal'}
+          onChange={handleChange}
         />
       </div>
     </>

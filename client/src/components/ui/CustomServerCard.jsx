@@ -24,6 +24,7 @@ const CustomServerCard = ({
   chats,
   _id,
   sender,
+  owner,
 }) => {
   const { userId, unreadClubChats, serverInvites } = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -35,14 +36,15 @@ const CustomServerCard = ({
     chatIds.has(unreadChat._id)
   );
   const isServerInvite = serverInvites.some(
-    (serverInvite) => serverInvite.server._id === _id
+    (serverInvite) => serverInvite.server?._id === _id
   );
 
   const resumeChat = async () => {
     dispatch(resetClubChatMessages());
 
+    console.log(owner);
     await dispatch(
-      setCustomServer({ members, serverName, chats, serverId: _id })
+      setCustomServer({ members, serverName, chats, serverId: _id, owner })
     );
     navigate(`/personalserver/${_id}/${chats[0]._id}`);
   };

@@ -24,6 +24,7 @@ const initialState = {
     chats: [],
     serverId: '',
     serverName: '',
+    owner: null,
   },
   invitePending: false,
 };
@@ -205,7 +206,7 @@ const clubChatSlice = createSlice({
       .addCase(getClubServer.fulfilled, (state, action) => {
         state.clubChatLoading = false;
         state.members = action.payload.members;
-        state.chats = action.payload.chats.reverse();
+        state.chats = action.payload.chats;
         state.serverId = action.payload._id;
       })
       .addCase(getClubServer.rejected, (state, action) => {
