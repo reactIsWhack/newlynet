@@ -45,19 +45,6 @@ export const SocketContextProvider = ({ children }) => {
         setOnlineUsers(users);
       });
 
-      socketVal.on('clubServerJoin', (clubServer, user) => {
-        if (clubServer.schoolAffiliation === school.schoolId) {
-          if (clubServer.custom) {
-            dispatch(setCustomServerMembers(clubServer));
-            toast(
-              `${user.firstName} ${user.lastName} joined ${clubServer.serverName}!`
-            );
-          } else {
-            dispatch(setClubChatMembers(clubServer.members));
-          }
-        }
-      });
-
       socketVal.on('clubChatNotif', (unreadClubChats) => {
         dispatch(setUnreadClubChatMessages(unreadClubChats));
       });

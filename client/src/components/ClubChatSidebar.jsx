@@ -7,6 +7,7 @@ import { IoIosAdd } from 'react-icons/io';
 import ServerLinkItem from './ui/ServerLinkItem';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import { setRenderModal } from '../app/features/popup/popupSlice';
+import { useSocket } from '../context/SocketContext';
 
 const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
   const { userId } = useSelector(selectUser);
@@ -14,6 +15,7 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
   const { customServer } = useSelector(selectClubChat);
   const userIsOwner = userId === owner?._id;
   const dispatch = useDispatch();
+  const { clubServerUsers } = useSocket();
 
   const listItem = chats.map((chat) => {
     const isActive =
@@ -25,7 +27,7 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
   });
 
   const memberCard = members
-    .filter((m) => m._id !== userId)
+    .filter((m) => m._id !== userId && m._id !== owner?._id)
     .map((user) => {
       return <OnlineUserCard key={user.userId} {...user} userData={user} />;
     });
@@ -59,9 +61,17 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
         </>
       )}
       <div className="divider m-0 mt-2"></div>
-      <div className="mt-4 flex-1">
-        <span className="ml-4 text-base">Members</span>
-        <div className="h-40 overflow-auto">{memberCard}</div>
+      <div className="mt-1">
+        {owner && (
+          <div>
+            <span className="ml-4 text-base">Owner</span>
+            <OnlineUserCard key={owner._id} {...owner} userData={owner} />
+          </div>
+        )}
+        <div className="flex-1">
+          <span className="ml-4 text-base">Members</span>
+          <div className="h-40 overflow-auto">{memberCard}</div>
+        </div>
       </div>
     </div>
   );

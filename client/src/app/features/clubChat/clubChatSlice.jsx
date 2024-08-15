@@ -100,7 +100,10 @@ export const getCustomClubServers = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(`${baseURL}/api/clubserver/allservers`);
-      return response.data;
+      const {
+        user: { unreadClubChats },
+      } = thunkAPI.getState();
+      return { data: response.data, unreadClubChats };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -304,7 +307,7 @@ const clubChatSlice = createSlice({
       })
       .addCase(getCustomClubServers.fulfilled, (state, action) => {
         state.clubChatLoading = false;
-        state.customClubServers = action.payload;
+        state.customClubServers = action.payload.data;
       })
       .addCase(getCustomClubServers.rejected, (state, action) => {
         state.clubChatLoading = false;

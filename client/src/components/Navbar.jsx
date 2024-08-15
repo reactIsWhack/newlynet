@@ -56,12 +56,6 @@ const Navbar = () => {
             className="menu menu-sm dropdown-content bg-gray-800 rounded-box z-50 mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a className="justify-between text-gray-200">
-                Profile
-                <span className="badge">New</span>
-              </a>
-            </li>
-            <li>
               <Link to="/settings" className="text-gray-200">
                 Settings
               </Link>

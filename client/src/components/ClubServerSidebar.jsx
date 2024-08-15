@@ -1,15 +1,18 @@
 import React from 'react';
 import ClubChatStats from './ui/ClubChatStats';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { selectUser } from '../app/features/user/userSlice';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import ClubServerItem from './ui/ClubServerItem';
 import useDetectMobile from '../hooks/useDetectMobile';
+import { IoIosCreate } from 'react-icons/io';
+import { setRenderModal } from '../app/features/popup/popupSlice';
 
 const ClubServerSidebar = ({ setRenderSidebar }) => {
   const { school, serverInvites, unreadClubChats } = useSelector(selectUser);
   const { customClubServers, chats } = useSelector(selectClubChat);
   const mobile = useDetectMobile();
+  const dispatch = useDispatch();
 
   const unreadServers = unreadClubChats.filter(
     (server) => !chats.some((chat) => chat._id === server.chat._id)
@@ -17,7 +20,11 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
   const customCard = customClubServers.map((server) => {
     return <ClubServerItem key={server._id} {...server} server={server} />;
   });
-  console.log(unreadServers);
+
+  const handleClick = async () => {
+    await dispatch(setRenderModal({ render: true, name: 'create-server' }));
+    document.getElementById('my_modal_3').showModal();
+  };
 
   return (
     <div className="border-r border-slate-400 p-6">
@@ -47,6 +54,7 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
             <h3 className="text-center text-[17px] font-semi-bold">
               Your club servers
             </h3>
+            <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />
           </div>
 
           {customCard}

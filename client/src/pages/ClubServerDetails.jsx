@@ -12,6 +12,7 @@ import { selectPopup } from '../app/features/popup/popupSlice';
 import InviteForm from '../components/InviteForm';
 import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
+import CreateClubServerForm from '../components/CreateClubServerForm';
 
 const ClubServerInfo = () => {
   useRedirectUser();
@@ -94,6 +95,7 @@ const ClubServerInfo = () => {
         </div>
       </div>
       {render && name === 'invite-form' && <InviteForm />}
+      {render && name === 'create-server' && <CreateClubServerForm />}
     </div>
   );
 };

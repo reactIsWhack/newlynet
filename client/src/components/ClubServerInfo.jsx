@@ -6,6 +6,7 @@ import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import CustomServerCard from './ui/CustomServerCard';
 import { IoIosCreate } from 'react-icons/io';
 import { setRenderModal } from '../app/features/popup/popupSlice';
+import { selectUser } from '../app/features/user/userSlice';
 
 const ClubServerInfo = () => {
   const {
@@ -15,6 +16,7 @@ const ClubServerInfo = () => {
     suggestedClubServers,
   } = useSelector(selectClubChat);
   const dispatch = useDispatch();
+  const { serverInvites } = useSelector(selectUser);
 
   const contentToRender = () => {
     if (clubChatFilter === 'suggested') {
@@ -26,7 +28,23 @@ const ClubServerInfo = () => {
         <span>No server suggestions.</span>
       );
     } else if (clubChatFilter === 'invites') {
-      return <span>Invites</span>;
+      let serverInviteCard;
+      if (serverInvites.length > 0) {
+        serverInviteCard = serverInvites.map((serverInvite) => {
+          return (
+            <CustomServerCard
+              key={serverInvite.server._id}
+              {...serverInvite.server}
+              sender={serverInvite.sender}
+            />
+          );
+        });
+      }
+      return serverInvites.length > 0 ? (
+        serverInviteCard
+      ) : (
+        <span>No pending server invites</span>
+      );
     } else {
       return customClubServers.length > 0 ? (
         customClubServers.slice(0, 5).map((server) => {

@@ -39,7 +39,7 @@ const FireStreak = ({ streak }) => {
       </svg>
 
       <FaFire style={{ fill: `url(#${fireRef})` }} size={fireStyles.size} />
-      <span className={`${fireStyles.textColor}`}>{streak}</span>
+      <span className={`${fireStyles.textColor} ml-1`}>{streak}</span>
     </>
   );
 };
