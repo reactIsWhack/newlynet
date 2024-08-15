@@ -5,6 +5,7 @@ import { IoPersonAdd } from 'react-icons/io5';
 import ClubMsgCount from './ClubMsgCount';
 import { useNavigate } from 'react-router-dom';
 import {
+  resetClubChatMessages,
   setCustomServer,
   setSelectedClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
@@ -24,6 +25,7 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
   );
 
   const handleClick = async () => {
+    await dispatch(resetClubChatMessages());
     await dispatch(setSelectedClubChat(chats[0]));
     await dispatch(
       setCustomServer({ chats, serverName, members, serverId: _id })

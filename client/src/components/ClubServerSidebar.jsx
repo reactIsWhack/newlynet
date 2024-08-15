@@ -11,12 +11,12 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
   const { customClubServers, chats } = useSelector(selectClubChat);
   const mobile = useDetectMobile();
 
-  const customCard = customClubServers.map((server) => {
-    return <ClubServerItem key={server._id} {...server} server={server} />;
-  });
   const unreadServers = unreadClubChats.filter(
     (server) => !chats.some((chat) => chat._id === server.chat._id)
   );
+  const customCard = customClubServers.map((server) => {
+    return <ClubServerItem key={server._id} {...server} server={server} />;
+  });
   console.log(unreadServers);
 
   return (
@@ -47,11 +47,6 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
             <h3 className="text-center text-[17px] font-semi-bold">
               Your club servers
             </h3>
-            {unreadServers.length > 0 && (
-              <span className="w-5 h-5 text-xs rounded-full bg-red-500 text-white flex items-center justify-center">
-                {unreadServers.length}
-              </span>
-            )}
           </div>
 
           {customCard}

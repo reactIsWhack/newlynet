@@ -7,6 +7,7 @@ import {
 import ClubMsgCount from './ClubMsgCount';
 import {
   joinClubServer,
+  resetClubChatMessages,
   setCustomServer,
 } from '../../app/features/clubChat/clubChatSlice';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +39,8 @@ const CustomServerCard = ({
   );
 
   const resumeChat = async () => {
+    dispatch(resetClubChatMessages());
+
     await dispatch(
       setCustomServer({ members, serverName, chats, serverId: _id })
     );

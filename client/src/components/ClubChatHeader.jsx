@@ -1,6 +1,9 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  resetClubChatMessages,
+  selectClubChat,
+} from '../app/features/clubChat/clubChatSlice';
 import { IoIosArrowBack } from 'react-icons/io';
 import { CiSearch } from 'react-icons/ci';
 import { useNavigate } from 'react-router-dom';
@@ -8,8 +11,10 @@ import { useNavigate } from 'react-router-dom';
 const ClubChatHeader = () => {
   const { selectedClubChat, customServer } = useSelector(selectClubChat);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClick = () => {
+    dispatch(resetClubChatMessages());
     if (customServer.serverId) {
       return navigate(`/personalserver/${customServer.serverId}`);
     }

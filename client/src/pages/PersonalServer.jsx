@@ -87,7 +87,7 @@ const PersonalServer = () => {
     return () => {
       dispatch(setSelectedClubChat(null));
     };
-  }, []);
+  }, [serverId, chatId]);
 
   return (
     <div className="h-screen flex flex-col overflow-hidden">
