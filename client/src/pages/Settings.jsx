@@ -96,7 +96,7 @@ const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
               <div className="w-full flex items-center justify-between">
                 <span className="text-base label-text">Interests</span>
                 <span
-                  className="text-sm hover:underline hover:text-blue-600"
+                  className="text-sm hover:underline hover:text-blue-600 cursor-pointer"
                   onClick={handleClick}
                 >
                   Select your interests {`-->`}
