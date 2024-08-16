@@ -2,6 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import sendMessageSound from '../../../assets/sendMessage.wav';
+import sortByNewest from '../../../utils/sortByNewest';
 
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
@@ -102,10 +103,11 @@ export const getCustomClubServers = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(`${baseURL}/api/clubserver/allservers`);
-      const {
-        user: { unreadClubChats },
-      } = thunkAPI.getState();
-      return { data: response.data, unreadClubChats };
+      const { user } = thunkAPI.getState();
+      return {
+        data: response.data,
+        unreadClubChats: user.unreadClubChats,
+      };
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
@@ -329,7 +331,27 @@ const clubChatSlice = createSlice({
       })
       .addCase(getCustomClubServers.fulfilled, (state, action) => {
         state.clubChatLoading = false;
-        state.customClubServers = action.payload.data;
+        if (action.payload.unreadClubChats.length > 0) {
+          const unreadServerIds = new Set(
+            action.payload.unreadClubChats.map(
+              (unreadChat) => unreadChat.server._id
+            )
+          );
+          const unreadServers = action.payload.data.filter((server) =>
+            unreadServerIds.has(server._id)
+          );
+          state.customClubServers = [
+            ...unreadServers,
+            ...action.payload.data.filter(
+              (server) => !unreadServerIds.has(server._id)
+            ),
+          ];
+        } else {
+          state.customClubServers = action.payload.data.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+          );
+        }
       })
       .addCase(getCustomClubServers.rejected, (state, action) => {
         state.clubChatLoading = false;

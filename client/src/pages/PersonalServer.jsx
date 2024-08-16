@@ -20,6 +20,7 @@ import { selectPopup } from '../app/features/popup/popupSlice';
 import CreateChannel from '../components/CreateChannel';
 import useListenNewChannel from '../hooks/useListenNewChannel';
 import useDetectMobile from '../hooks/useDetectMobile';
+import { selectUser } from '../app/features/user/userSlice';
 
 const PersonalServer = () => {
   useRedirectUser();

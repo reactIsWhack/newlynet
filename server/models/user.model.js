@@ -54,6 +54,7 @@ const userSchema = new mongoose.Schema(
       {
         chat: { type: mongoose.Schema.Types.ObjectId, ref: 'clubChat' },
         messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'message' }],
+        server: { type: mongoose.Schema.Types.ObjectId, ref: 'clubServer' },
       },
     ],
     serverInvites: [

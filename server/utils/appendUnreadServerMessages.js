@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 const { io, getSocketId } = require('../socket/socket');
 
-const appendMessage = async (userId, serverChat, newMessage) => {
+const appendMessage = async (userId, serverChat, newMessage, serverId) => {
   console.log(serverChat._id);
   const user = await User.findById(userId);
   const unreadChat = user.unreadClubChatMessages.find(
@@ -12,13 +12,13 @@ const appendMessage = async (userId, serverChat, newMessage) => {
   } else {
     user.unreadClubChatMessages = [
       ...user.unreadClubChatMessages,
-      { chat: serverChat, messages: [newMessage] },
+      { chat: serverChat, messages: [newMessage], server: serverId },
     ];
   }
   await user.save().then((item) =>
     item.populate({
       path: 'unreadClubChatMessages',
-      populate: [{ path: 'chat' }, { path: 'messages' }],
+      populate: [{ path: 'chat' }, { path: 'messages' }, { path: 'server' }],
     })
   );
   const socketId = getSocketId(userId);
@@ -42,7 +42,7 @@ const appendUnreadServerMessages = async (
 
   await Promise.all(
     usersNotInRoom.map(async (userId) => {
-      await appendMessage(userId, serverChat, newMessage);
+      await appendMessage(userId, serverChat, newMessage, serverId);
     })
   );
 };

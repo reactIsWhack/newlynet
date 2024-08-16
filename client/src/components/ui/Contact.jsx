@@ -111,7 +111,7 @@ const Contact = ({
   return (
     <div className={`card shadow-xl w-full ${bg} relative`}>
       <div className="card-body max-[55px]:py-8 py-6 px-0">
-        <div className="flex items-center gap-3 mb-2 px-8">
+        <div className="flex items-center gap-3 mb-2 px-6">
           <div className={`avatar ${online ? 'online' : 'offline'}`}>
             <div className="w-12 rounded-full">
               <img src={profilePicture} />
@@ -148,13 +148,16 @@ const Contact = ({
               contact.members.some((member) => member._id === _id)
             ) ? (
               <button
-                className="btn btn-primary min-h-10 h-10"
+                className="btn btn-primary min-h-10 h-10 mt-auto"
                 onClick={handleResumeChatting}
               >
                 Resume Chatting
               </button>
             ) : (
-              <button className="btn btn-neutral" onClick={handleStartChatting}>
+              <button
+                className="btn btn-neutral mt-auto"
+                onClick={handleStartChatting}
+              >
                 Start Chatting
               </button>
             )}

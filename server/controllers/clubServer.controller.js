@@ -52,6 +52,8 @@ const joinClubServer = asyncHandler(async (req, res) => {
         item.populate([
           { path: 'members', select: '-password' },
           { path: 'chats' },
+          { path: 'owner', select: '-password' },
+          { path: 'admins', select: '-password' },
         ])
       ),
     user.save(),

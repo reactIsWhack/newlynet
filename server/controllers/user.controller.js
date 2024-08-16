@@ -88,7 +88,7 @@ const getPersonalProfile = asyncHandler(async (req, res) => {
     },
     {
       path: 'unreadClubChatMessages',
-      populate: [{ path: 'chat' }, { path: 'messages' }],
+      populate: [{ path: 'chat' }, { path: 'messages' }, { path: 'server' }],
     },
     {
       path: 'serverInvites',
