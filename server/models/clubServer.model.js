@@ -20,6 +20,7 @@ const clubServerSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
     },
+    admins: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
   },
   { timestamps: true }
 );

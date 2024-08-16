@@ -16,6 +16,7 @@ let secondUserSocket;
 let secondUserToken;
 let usersToInvite = [];
 let customServerId;
+let secondUserId;
 
 beforeAll(async () => {
   await initializeMongoDB();
@@ -34,6 +35,7 @@ beforeAll(async () => {
     process.env.FAKE_USER_PASSWORD
   );
   secondUserToken = secondUserData.token;
+  secondUserId = String(secondUser._id);
 
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
     query: { userId: user._id },
@@ -167,14 +169,15 @@ describe('PATCH /clubserver', () => {
 
   it('Should send club server invites to a user', async () => {
     const response = await request(app)
-      .patch(`/api/clubserver/invite/${customServerId}/${usersToInvite[0]._id}`)
+      .patch(`/api/clubserver/invite/${customServerId}/${secondUserId}`)
       .set('Cookie', [...jwt])
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    const secondUserUpdated = await User.findById(
-      usersToInvite[0]._id
-    ).populate({ path: 'serverInvites', populate: ['server', 'sender'] });
+    const secondUserUpdated = await User.findById(secondUserId).populate({
+      path: 'serverInvites',
+      populate: ['server', 'sender'],
+    });
     expect(response.body.serverInvites.length).toBe(1);
     expect(secondUserUpdated.serverInvites[0].server._id.toString()).toBe(
       customServerId.toString()
@@ -191,7 +194,7 @@ describe('PATCH /clubserver', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    const secondUserUpdated = await User.findById(usersToInvite[0]._id);
+    const secondUserUpdated = await User.findById(secondUserId);
     expect(response.body.members.length).toBe(2);
     expect(response.body.members.map((m) => String(m._id))).toEqual(
       expect.arrayContaining([
@@ -213,6 +216,30 @@ describe('PATCH /clubserver', () => {
 
     expect(response.body.chats.length).toBe(2);
     expect(response.body.chats[1].chatTopic).toBe('Memes');
+  });
+
+  it('Should create a new server admin', async () => {
+    const response = await request(app)
+      .patch(`/api/clubserver/addadmin/${customServerId}/${secondUserId}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.admins.length).toBe(1);
+    expect(response.body.admins[0]._id.toString()).toBe(secondUserId);
+  });
+
+  it('Should let the admin create new channels', async () => {
+    const response = await request(app)
+      .patch(`/api/clubserver/newchannel/${customServerId}`)
+      .set('Cookie', [...secondUserToken])
+      .send({ channelName: 'Study Corner' })
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.chats.length).toBe(3);
+    expect(response.body.chats[2].chatTopic).toBe('Study Corner');
   });
 });
 

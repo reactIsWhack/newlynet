@@ -172,7 +172,10 @@ const createServerChannel = asyncHandler(async (req, res) => {
 
   const server = await ClubServer.findById(serverId);
 
-  if (String(req.userId) !== String(server.owner)) {
+  if (
+    String(req.userId) !== String(server.owner) &&
+    !server.admins.some((admin) => String(admin) === String(req.userId))
+  ) {
     res.status(400);
     throw new Error('You are not permitted to create a channel');
   }
@@ -194,6 +197,29 @@ const createServerChannel = asyncHandler(async (req, res) => {
   res.status(200).json(server);
 });
 
+const addServerAdmin = asyncHandler(async (req, res) => {
+  const { serverId, userId } = req.params;
+
+  const server = await ClubServer.findById(serverId);
+
+  if (!server) {
+    res.status(404);
+    throw new Error('Server not found');
+  }
+
+  server.admins = [userId, ...server.admins];
+  await server.save().then((item) => item.populate('admins'));
+
+  for (let i = 0; i < server.members.length; i++) {
+    const memberId = server.members[i];
+    const socketId = getSocketId(String(memberId));
+    if (!socketId) continue;
+    io.to(socketId).emit('newAdmin', server.admins);
+  }
+
+  res.status(200).json(server);
+});
+
 module.exports = {
   getClubServer,
   joinClubServer,
@@ -202,4 +228,5 @@ module.exports = {
   getUserClubServers,
   getSuggestedServers,
   createServerChannel,
+  addServerAdmin,
 };
