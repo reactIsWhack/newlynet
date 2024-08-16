@@ -10,17 +10,43 @@ import { Link } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 import { resetChatState } from '../app/features/chats/chatSlice';
 import { resetClubChatState } from '../app/features/clubChat/clubChatSlice';
+import SearchWindow from './ui/SearchWindow';
 
 const Navbar = () => {
   const { profilePicture } = useSelector(selectUser);
   const dispatch = useDispatch();
   const mobile = useDetectMobile();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const [windowMounted, setWindowMounted] = useState(false);
 
   const handleLogout = () => {
     dispatch(resetUserState());
     dispatch(resetChatState());
     dispatch(resetClubChatState());
     dispatch(logoutUser());
+  };
+
+  // Simulated fetch for search results based on query
+  useEffect(() => {
+    if (searchQuery) {
+      // Simulate fetching results
+      const trimmedQuery = searchQuery.split(' ').join('');
+      console.log(trimmedQuery);
+      setSearchResults(['Result 1', 'Result 2', 'Result 3', 'Result 4']);
+    } else {
+      setSearchResults([]);
+    }
+  }, [searchQuery]);
+
+  const handleFocus = () => {
+    setIsFocused(true);
+    setWindowMounted(true);
+  };
+
+  const handleBlur = () => {
+    setWindowMounted(false);
   };
 
   return (
@@ -33,12 +59,24 @@ const Navbar = () => {
       <NavLinks />
       <div className="flex-1 gap-2 flex items-center justify-end">
         {!mobile && (
-          <div className="form-control">
+          <div className="form-control relative">
             <input
               type="text"
               placeholder="Search"
               className="input input-bordered w-24 md:w-auto bg-gray-800 text-gray-200"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onBlur={handleBlur}
+              onFocus={handleFocus}
             />
+            {isFocused && (
+              <SearchWindow
+                searchResults={searchResults}
+                searchQuery={searchQuery}
+                windowMounted={windowMounted}
+                setIsFocused={setIsFocused}
+              />
+            )}
           </div>
         )}
         <div className="dropdown dropdown-end">
