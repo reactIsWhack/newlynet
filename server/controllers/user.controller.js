@@ -193,7 +193,12 @@ const addSocialMediaInfo = asyncHandler(async (req, res) => {
 
 const searchForUser = asyncHandler(async (req, res) => {
   const { searchQuery } = req.params;
-  const trimmedQuery = searchQuery.trim();
+
+  if (searchQuery.includes('/')) {
+    res.status(400);
+    console.log('/error');
+    throw new Error('Please remove all / characters');
+  }
 
   const user = await User.findById(req.userId);
 
@@ -201,13 +206,13 @@ const searchForUser = asyncHandler(async (req, res) => {
     $or: [
       {
         firstName: {
-          $regex: `^${trimmedQuery}`,
+          $regex: `^${searchQuery}`,
           $options: 'i',
         },
       },
       {
         lastName: {
-          $regex: `^${trimmedQuery}`,
+          $regex: `^${searchQuery}`,
           $options: 'i',
         },
       },

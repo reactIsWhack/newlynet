@@ -156,3 +156,9 @@ body {
     visibility: hidden;
   }
 }
+
+@media screen and (max-width: 550px) {
+  .search-input {
+    width: 5rem;
+  }
+}

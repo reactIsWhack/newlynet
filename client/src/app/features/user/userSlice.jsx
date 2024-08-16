@@ -23,6 +23,8 @@ const initialState = {
   cursor: '',
   updateLoading: false,
   serverInvites: [],
+  searchResults: [],
+  searchLoading: false,
 };
 
 export const signup = createAsyncThunk(
@@ -145,9 +147,24 @@ export const readUnreadClubMessages = createAsyncThunk(
   async (chatId, thunkAPI) => {
     try {
       const response = await axios.patch(`${baseUrl}/api/club-chat/${chatId}`);
-      console.log(response);
       return response.data;
     } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const searchUsers = createAsyncThunk(
+  'user/search',
+  async (searchQuery, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${baseUrl}/api/users/search/${searchQuery}`
+      );
+      return response.data;
+    } catch (error) {
+      if (searchQuery.includes('/'))
+        return thunkAPI.rejectWithValue('Please remove all / characters');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -195,6 +212,9 @@ const userSlice = createSlice({
       state.serverInvites = state.serverInvites.filter(
         (serverInvite) => serverInvite.server._id !== action.payload
       );
+    },
+    resetSearchResults(state, action) {
+      state.searchResults = [];
     },
   },
   extraReducers: (builder) => {
@@ -330,6 +350,17 @@ const userSlice = createSlice({
       })
       .addCase(readUnreadClubMessages.rejected, (state, action) => {
         toast.error(action.payload);
+      })
+      .addCase(searchUsers.pending, (state) => {
+        state.searchLoading = true;
+      })
+      .addCase(searchUsers.fulfilled, (state, action) => {
+        state.searchLoading = false;
+        state.searchResults = action.payload;
+      })
+      .addCase(searchUsers.rejected, (state, action) => {
+        state.searchLoading = false;
+        toast.error(action.payload, { id: '/-error' });
       });
   },
 });
@@ -346,6 +377,7 @@ export const {
   setUnreadClubChatMessages,
   setServerInvites,
   setContactInvites,
+  resetSearchResults,
   removeServerInvite,
 } = userSlice.actions;
 
