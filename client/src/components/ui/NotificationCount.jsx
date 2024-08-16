@@ -2,17 +2,11 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectUser } from '../../app/features/user/userSlice';
 import calculateUnreadMsgCount from '../../utils/calculateUnreadMsgCount';
-import { selectClubChat } from '../../app/features/clubChat/clubChatSlice';
 
 const NotificationCount = ({ array, includeInvites }) => {
   const { serverInvites, unreadClubChats } = useSelector(selectUser);
-  const { chats } = useSelector(selectClubChat);
-  const unreadServers = unreadClubChats.filter(
-    (server) => !chats.some((chat) => chat._id === server.chat._id)
-  );
-
   const count = includeInvites
-    ? unreadServers.length
+    ? unreadClubChats.length
     : calculateUnreadMsgCount(array);
 
   return (
