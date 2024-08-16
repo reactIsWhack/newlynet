@@ -131,7 +131,7 @@ const updateProfile = asyncHandler(async (req, res) => {
   }
 
   let schoolDetails;
-  if (school.schoolId !== user.school.schoolId) {
+  if (school && school.schoolId !== user.school.schoolId) {
     const response = await fetch(
       `https://places.googleapis.com/v1/places/${school.schoolId}?fields=id,displayName&key=${process.env.API_KEY}`
     );
@@ -191,10 +191,55 @@ const addSocialMediaInfo = asyncHandler(async (req, res) => {
   res.status(200).json(user);
 });
 
+const searchForUser = asyncHandler(async (req, res) => {
+  const { searchQuery } = req.params;
+  const trimmedQuery = searchQuery.trim();
+
+  const user = await User.findById(req.userId);
+
+  let users = await User.find({
+    $or: [
+      {
+        firstName: {
+          $regex: `^${trimmedQuery}`,
+          $options: 'i',
+        },
+      },
+      {
+        lastName: {
+          $regex: `^${trimmedQuery}`,
+          $options: 'i',
+        },
+      },
+    ],
+    'school.schoolId': user.school.schoolId,
+  });
+
+  if (!users.length) {
+    users = await User.aggregate()
+      .addFields({
+        fullName: { $concat: ['$firstName', '$lastName'] },
+      })
+      .match({
+        fullName: { $regex: searchQuery, $options: 'i' },
+        'school.schoolId': user.school.schoolId,
+      })
+      .lookup({
+        from: 'chats',
+        localField: 'chats',
+        foreignField: '_id',
+        as: 'chats',
+      });
+  }
+
+  res.status(200).json(users);
+});
+
 module.exports = {
   addContact,
   getCommonNewStudents,
   getPersonalProfile,
   updateProfile,
   addSocialMediaInfo,
+  searchForUser,
 };

@@ -6,6 +6,7 @@ const {
   getPersonalProfile,
   updateProfile,
   addSocialMediaInfo,
+  searchForUser,
 } = require('../controllers/user.controller');
 const uploader = require('../utils/fileUpload');
 const fileErrorHandler = require('../middleware/multerErrorHandler');
@@ -23,5 +24,6 @@ router.patch(
   updateProfile
 );
 router.patch('/addsocialmedia', routeProtector, addSocialMediaInfo);
+router.get('/search/:searchQuery', routeProtector, searchForUser);
 
 module.exports = router;

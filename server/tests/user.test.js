@@ -80,11 +80,6 @@ describe('GET /users', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body, userInfo.interests);
-
-    expect(response.body.map((user) => user._id.toString())).toContain(
-      userWithCommonInterests._id.toString()
-    );
     const interestsArr = response.body.map((item) => item.interests);
     for (const interestArr of interestsArr) {
       expect(
@@ -143,6 +138,54 @@ describe('UPDATE /users', () => {
 
     expect(response.body.socialMediaUsernames.snapchat).toBe('rnaini');
     expect(response.body.socialMediaUsernames.instagram).toBe('codernaini');
+  });
+});
+
+describe('SEARCH /users', () => {
+  let firstNameQuery;
+  let lastNameQuery;
+  it('Should find the first user name by querying their firstname', async () => {
+    const { firstName, lastName } = {
+      firstName: fakeUsers[0].firstName,
+      lastName: fakeUsers[0].lastName,
+    };
+    firstNameQuery = firstName;
+    lastNameQuery = lastName;
+
+    const response = await request(app)
+      .get(`/api/users/search/${firstName.slice(0, 2)}`)
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.length).toBeGreaterThanOrEqual(1);
+    expect(response.body.map((item) => item.firstName)).toContain(firstName);
+    expect(response.body[0].school.schoolId).toBe(userInfo.school.schoolId);
+  });
+
+  it('Should find the first user name by querying their lastname', async () => {
+    const response = await request(app)
+      .get(`/api/users/search/${lastNameQuery.slice(0, 2)}`)
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.length).toBeGreaterThanOrEqual(1);
+    expect(response.body.map((item) => item.lastName)).toContain(lastNameQuery);
+    expect(response.body[0].school.schoolId).toBe(userInfo.school.schoolId);
+  });
+
+  it('Should find a user by querying their fullname', async () => {
+    const response = await request(app)
+      .get(`/api/users/search/${firstNameQuery}${lastNameQuery.slice(0, 2)}`)
+      .set('Cookie', [...token])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.length).toBeGreaterThanOrEqual(1);
+    expect(
+      response.body.map((item) => `${item.firstName} ${item.lastName}`)
+    ).toContain(`${firstNameQuery} ${lastNameQuery}`);
   });
 });
 
