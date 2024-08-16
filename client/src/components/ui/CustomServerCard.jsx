@@ -26,6 +26,7 @@ const CustomServerCard = ({
   _id,
   sender,
   owner,
+  admins,
 }) => {
   const { userId, unreadClubChats, serverInvites } = useSelector(selectUser);
   const dispatch = useDispatch();
@@ -45,7 +46,14 @@ const CustomServerCard = ({
 
     console.log(owner);
     await dispatch(
-      setCustomServer({ members, serverName, chats, serverId: _id, owner })
+      setCustomServer({
+        members,
+        serverName,
+        chats,
+        serverId: _id,
+        owner,
+        admins,
+      })
     );
     navigate(`/personalserver/${_id}/${chats[0]._id}`);
   };

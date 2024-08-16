@@ -17,6 +17,7 @@ import toast from 'react-hot-toast';
 import {
   setClubChatMembers,
   setCustomServerMembers,
+  setServerAdmins,
 } from '../app/features/clubChat/clubChatSlice';
 
 const SocketContext = createContext();
@@ -75,6 +76,11 @@ export const SocketContextProvider = ({ children }) => {
                 chat.members.length === 3 ? 'other' : 'others'
               }`;
         toast(toastMsg);
+      });
+
+      socketVal.on('newAdmin', (server) => {
+        dispatch(setServerAdmins(server.admins));
+        toast(`You have been made an admin in ${server.serverName}`);
       });
 
       return () => {

@@ -25,9 +25,11 @@ const initialState = {
     serverId: '',
     serverName: '',
     owner: null,
+    admins: [],
   },
   invitePending: false,
   createChannelLoading: false,
+  promotionPending: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -169,6 +171,23 @@ export const createServerChannel = createAsyncThunk(
   }
 );
 
+export const promoteToAdmin = createAsyncThunk(
+  'clubServer/addAdmin',
+  async (userId, thunkAPI) => {
+    try {
+      const {
+        clubChat: { customServer },
+      } = thunkAPI.getState();
+      const response = await axios.patch(
+        `${baseURL}/api/clubserver/addadmin/${customServer.serverId}/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const clubChatSlice = createSlice({
   name: 'clubChat',
   initialState,
@@ -225,6 +244,9 @@ const clubChatSlice = createSlice({
     },
     setServerChannels(state, action) {
       state.customServer.chats = action.payload.chats;
+    },
+    setServerAdmins(state, action) {
+      state.customServer.admins = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -358,6 +380,18 @@ const clubChatSlice = createSlice({
       .addCase(createServerChannel.rejected, (state, action) => {
         state.createChannelLoading = false;
         toast.error(action.payload, { id: 'club-custom-err' });
+      })
+      .addCase(promoteToAdmin.pending, (state) => {
+        state.promotionPending = true;
+      })
+      .addCase(promoteToAdmin.fulfilled, (state, action) => {
+        state.promotionPending = false;
+        state.customServer.admins = action.payload.admins;
+        toast.success('User added as an admin!');
+      })
+      .addCase(promoteToAdmin.rejected, (state, action) => {
+        state.promotionPending = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
       });
   },
 });
@@ -378,6 +412,7 @@ export const {
   setCustomServerMembers,
   removeSuggestedServer,
   setServerChannels,
+  setServerAdmins,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

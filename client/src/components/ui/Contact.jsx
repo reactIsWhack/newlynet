@@ -166,7 +166,7 @@ const Contact = ({
           className={`flex flex-col items-center ${
             mobile && render && name === 'user-detail'
               ? 'static -mt-2 mb-2'
-              : 'absolute bottom-3 left-3'
+              : 'absolute bottom-3 left-2'
           }`}
         >
           <span className="flex items-center w-full flex-1 justify-center">

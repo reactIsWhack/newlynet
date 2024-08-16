@@ -56,6 +56,7 @@ const PersonalServer = () => {
             serverId: server._id,
             serverName: server.serverName,
             owner: server.owner,
+            admins: server.admins,
           })
         );
         setIsLoading(false);
@@ -107,6 +108,7 @@ const PersonalServer = () => {
               serverName={customServer.serverName}
               isLoading={isLoading}
               owner={customServer.owner}
+              admins={customServer.admins}
             />
           )}
           <div className="flex-1 overflow-auto h-full">

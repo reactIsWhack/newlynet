@@ -73,6 +73,7 @@ const ClubChat = () => {
                 ? `${school.formattedName} Server`
                 : 'Loading...'
             }
+            admins={[]}
           />
         )}
         {((mobile && sectionId) || !mobile) && (

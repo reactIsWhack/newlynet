@@ -14,7 +14,14 @@ import {
   setViewingUserData,
 } from '../../app/features/popup/popupSlice';
 
-const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
+const ClubServerItem = ({
+  serverName,
+  chats,
+  members,
+  _id,
+  server,
+  admins,
+}) => {
   const { unreadClubChats } = useSelector(selectUser);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -28,7 +35,7 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
     await dispatch(resetClubChatMessages());
     await dispatch(setSelectedClubChat(chats[0]));
     await dispatch(
-      setCustomServer({ chats, serverName, members, serverId: _id })
+      setCustomServer({ chats, serverName, members, serverId: _id, admins })
     );
     navigate(`/personalserver/${_id}/${chats[0]._id}`);
   };
@@ -49,7 +56,7 @@ const ClubServerItem = ({ serverName, chats, members, _id, server }) => {
             {members.length} {members.length === 1 ? 'member' : 'members'}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 disabled">
           <IoPersonAdd
             size={20}
             cursor="pointer"

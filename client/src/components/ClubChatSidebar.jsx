@@ -9,13 +9,20 @@ import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import { setRenderModal } from '../app/features/popup/popupSlice';
 import { useSocket } from '../context/SocketContext';
 
-const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
+const ClubChatSidebar = ({
+  chats,
+  members,
+  serverName,
+  isLoading,
+  owner,
+  admins,
+}) => {
   const { userId } = useSelector(selectUser);
   const location = useLocation();
   const { customServer } = useSelector(selectClubChat);
-  const userIsOwner = userId === owner?._id;
   const dispatch = useDispatch();
-  const { clubServerUsers } = useSocket();
+  const userIsOwner = userId === owner?._id;
+  const isAdmin = admins.some((admin) => admin._id === userId);
 
   const listItem = chats.map((chat) => {
     const isActive =
@@ -27,10 +34,32 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
   });
 
   const memberCard = members
-    .filter((m) => m._id !== userId && m._id !== owner?._id)
+    .filter(
+      (m) =>
+        m._id !== userId &&
+        m._id !== owner?._id &&
+        !admins.some((admin) => admin._id === m._id)
+    )
     .map((user) => {
-      return <OnlineUserCard key={user.userId} {...user} userData={user} />;
+      return (
+        <OnlineUserCard
+          key={user.userId}
+          {...user}
+          userData={user}
+          advancedPermission={userIsOwner || isAdmin || false}
+        />
+      );
     });
+  const adminCard = admins.map((user) => {
+    return (
+      <OnlineUserCard
+        key={user.userId}
+        {...user}
+        userData={user}
+        advancedPermission={userIsOwner || isAdmin || false}
+      />
+    );
+  });
 
   const renderCreateChannelForm = async () => {
     await dispatch(setRenderModal({ render: true, name: 'create-channel' }));
@@ -51,26 +80,39 @@ const ClubChatSidebar = ({ chats, members, serverName, isLoading, owner }) => {
               className="hover:bg-slate-700 rounded-full transition-colors cursor-pointer"
               onClick={renderCreateChannelForm}
             >
-              {userIsOwner && <IoIosAdd size={24} />}
+              {(userIsOwner || isAdmin) && <IoIosAdd size={24} />}
             </div>
           </div>
-          <ul className="text-base-content p-4 max-h-[360px] flex flex-col overflow-auto max-[550px]:max-h-[520px]">
+          <ul className="text-base-content p-4 max-h-[370px] flex flex-col overflow-auto max-[550px]:max-h-[520px]">
             {/* Sidebar content here */}
             {listItem}
           </ul>
         </>
       )}
       <div className="divider m-0 mt-2"></div>
-      <div className="mt-1">
+      <div className="mt-1 overflow-auto max-h-full flex-1">
         {owner && (
           <div>
             <span className="ml-4 text-base">Owner</span>
-            <OnlineUserCard key={owner._id} {...owner} userData={owner} />
+            <OnlineUserCard
+              key={owner._id}
+              {...owner}
+              userData={owner}
+              advancedPermission={userIsOwner || isAdmin || false}
+            />
+          </div>
+        )}
+        {customServer.serverId && (
+          <div className="flex-1 mb-3">
+            <span className="ml-4 text-base">
+              Admins {admins.length === 0 ? '(none)' : ''}
+            </span>
+            <div className="mt-2">{adminCard}</div>
           </div>
         )}
         <div className="flex-1">
           <span className="ml-4 text-base">Members</span>
-          <div className="h-40 overflow-auto">{memberCard}</div>
+          <div className=" overflow-auto">{memberCard}</div>
         </div>
       </div>
     </div>

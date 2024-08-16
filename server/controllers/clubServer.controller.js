@@ -143,6 +143,7 @@ const getUserClubServers = asyncHandler(async (req, res) => {
     { path: 'members', populate: { path: 'chats' }, select: '-password' },
     { path: 'chats' },
     { path: 'owner', select: '-password', populate: 'chats' },
+    { path: 'admins', select: '-password', populate: 'chats' },
   ]);
 
   res.status(200).json(clubServers);
@@ -202,6 +203,11 @@ const addServerAdmin = asyncHandler(async (req, res) => {
 
   const server = await ClubServer.findById(serverId);
 
+  if (server.admins.length === 4) {
+    res.status(400);
+    throw new Error('Server can only have up to 4 admins');
+  }
+
   if (!server) {
     res.status(404);
     throw new Error('Server not found');
@@ -212,9 +218,10 @@ const addServerAdmin = asyncHandler(async (req, res) => {
 
   for (let i = 0; i < server.members.length; i++) {
     const memberId = server.members[i];
+    if (memberId.toString() === req.userId.toString()) continue;
     const socketId = getSocketId(String(memberId));
     if (!socketId) continue;
-    io.to(socketId).emit('newAdmin', server.admins);
+    io.to(socketId).emit('newAdmin', server);
   }
 
   res.status(200).json(server);
