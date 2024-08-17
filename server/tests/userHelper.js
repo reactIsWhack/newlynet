@@ -3,10 +3,10 @@ const app = require('../index');
 const User = require('../models/user.model');
 const ioc = require('socket.io-client');
 
-const loginUser = async (username, password) => {
+const loginUser = async (email, password) => {
   const response = await request(app)
     .post('/api/auth/login')
-    .send({ username, password });
+    .send({ email, password });
 
   return { token: response.headers['set-cookie'], user: response.body };
 };
@@ -15,13 +15,14 @@ const createTestUser = async (interests, school) => {
   const user = await User.create({
     firstName: 'test',
     lastName: 'jest',
-    username: 'test',
+    email: 'test@gmail.com',
     password: 'test123',
     grade: 9,
     school,
     interests,
     contacts: [],
   });
+  console.log(user);
   return user;
 };
 

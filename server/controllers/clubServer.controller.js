@@ -67,7 +67,7 @@ const joinClubServer = asyncHandler(async (req, res) => {
   for (const member of clubServer.members) {
     if (member._id.toString() !== req.userId.toString()) {
       const socketId = getSocketId(String(member._id));
-      io.to(socketId).emit('clubServerJoin', clubServer, user);
+      io.to(socketId).emit('serverMemberChange', clubServer, user);
     }
   }
 
@@ -234,6 +234,33 @@ const addServerAdmin = asyncHandler(async (req, res) => {
   res.status(200).json(server);
 });
 
+const leaveClubServer = asyncHandler(async (req, res) => {
+  const { serverId } = req.params;
+
+  const server = await ClubServer.findById(serverId);
+  const user = await User.findById(req.userId);
+
+  if (!server) {
+    res.status(404);
+    throw new Error('Server not found');
+  }
+
+  const updatedMembers = server.members.filter(
+    (memberId) => String(memberId) !== String(req.userId)
+  );
+  server.members = updatedMembers;
+
+  await server.save().then((item) => item.populate('members'));
+
+  for (let i = 0; i < server.members.length; i++) {
+    const member = server.members[i];
+    const socketId = getSocketId(member._id.toString());
+    io.to(socketId).emit('serverMemberChange', server, user);
+  }
+
+  res.status(200).json(server);
+});
+
 module.exports = {
   getClubServer,
   joinClubServer,
@@ -243,4 +270,5 @@ module.exports = {
   getSuggestedServers,
   createServerChannel,
   addServerAdmin,
+  leaveClubServer,
 };

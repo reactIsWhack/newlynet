@@ -56,7 +56,7 @@ export const SocketContextProvider = ({ children }) => {
         toast('New server invite');
       });
 
-      socketVal.on('clubServerJoin', (clubServer, user) => {
+      socketVal.on('serverMemberChange', (clubServer, user) => {
         if (!clubServer.custom) {
           dispatch(setClubChatMembers(clubServer.members));
         } else {

@@ -103,8 +103,8 @@ const generateFakeUsers = async () => {
 
 const populateDB = async () => {
   resetOnlineUsers();
-  // await generateClubChats();
-  // await generateFakeUsers();
+  await generateClubChats();
+  await generateFakeUsers();
 };
 
 module.exports = {

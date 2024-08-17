@@ -22,7 +22,7 @@ beforeAll(async () => {
   await initializeMongoDB();
   const school = await getSchool('PrincetonHighSchool');
   await createTestUser(['art'], school); // create a test user and log them in
-  const { token, user } = await loginUser('test', 'test123');
+  const { token, user } = await loginUser('test@gmail.com', 'test123');
   jwt = token;
   userInfo = user;
   const [secondUser, thirdUser] = await User.find({
@@ -31,7 +31,7 @@ beforeAll(async () => {
   });
   usersToInvite = [secondUser._id, thirdUser._id];
   const secondUserData = await loginUser(
-    secondUser.username,
+    secondUser.email,
     process.env.FAKE_USER_PASSWORD
   );
   secondUserToken = secondUserData.token;
@@ -145,7 +145,7 @@ describe('GET /clubserver', () => {
 describe('PATCH /clubserver', () => {
   it('Should have the user join their club server', async () => {
     const joinPromise = new Promise((resolve) => {
-      secondUserSocket.on('clubServerJoin', (clubServer, newUser) => {
+      secondUserSocket.on('serverMemberChange', (clubServer, newUser) => {
         resolve({ clubServer, newUser });
       });
     });
@@ -240,6 +240,20 @@ describe('PATCH /clubserver', () => {
 
     expect(response.body.chats.length).toBe(3);
     expect(response.body.chats[2].chatTopic).toBe('Study Corner');
+  });
+
+  it('Should have the user leave the club server', async () => {
+    const response = await request(app)
+      .patch(`/api/clubserver/leaveserver/${customServerId}`)
+      .set('Cookie', [...jwt])
+      .expect(200)
+      .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.members.length).toBe(1);
+    expect(response.body.members.map((m) => m._id.toString())).not.toContain(
+      userInfo._id.toString()
+    );
   });
 });
 
