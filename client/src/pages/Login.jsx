@@ -11,7 +11,7 @@ const Login = ({ setFormData }) => {
   const dispatch = useDispatch();
   const { isLoading } = useSelector(selectUser);
   const navigate = useNavigate();
-  const [data, setData] = useState({ username: '', password: '' });
+  const [data, setData] = useState({ email: '', password: '' });
 
   const handleChange = (e) => {
     setData((prevData) => ({
@@ -29,7 +29,7 @@ const Login = ({ setFormData }) => {
   useEffect(() => {
     setFormData({
       fullName: '',
-      username: '',
+      email: '',
       password: '',
       school: { description: '', placeId: '' },
       grade: null,
@@ -50,20 +50,24 @@ const Login = ({ setFormData }) => {
             <span className="text-blue-500"> NewlyNet</span>
           </h1>
 
-          <form className="min-w-96 mt-6" onSubmit={handleSubmit}>
+          <form
+            className="min-w-96 mt-6"
+            onSubmit={handleSubmit}
+            autoComplete="off"
+          >
             <fieldset disabled={isLoading ? true : false}>
               <div className="max-[550px]:px-3">
                 <label className="label">
-                  <span className="text-base label-text">Username</span>
+                  <span className="text-base label-text">Email</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="Enter username"
+                  placeholder="Enter email"
                   className="w-full input input-bordered h-10"
                   onChange={handleChange}
                   required
-                  name="username"
-                  value={data.username}
+                  name="email"
+                  value={data.email}
                 />
               </div>
               <div className="max-[550px]:px-3">

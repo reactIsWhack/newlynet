@@ -13,9 +13,9 @@ const userErrorHandler = (err, req, res, next) => {
     });
   }
 
-  if (err.errors && err.errors.username) {
+  if (err.errors && err.errors.email) {
     return res.status(400).json({
-      message: err.errors.username.properties.message,
+      message: err.errors.email.properties.message,
       stack: err.stack,
     });
   }
@@ -45,7 +45,7 @@ const userErrorHandler = (err, req, res, next) => {
 
   if (err.code === 11000) {
     return res.status(400).json({
-      message: 'User with username already registered, please login',
+      message: 'User with email already registered, please login',
       stack: err.stack,
     });
   }

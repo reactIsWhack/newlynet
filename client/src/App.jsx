@@ -42,7 +42,7 @@ function App() {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
-    username: '',
+    email: '',
     password: '',
     school: { description: '', placeId: '' },
     grade: null,

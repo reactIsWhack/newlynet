@@ -20,7 +20,7 @@ beforeAll(async () => {
   await User.create({
     firstName: 'j',
     lastName: 'k',
-    username: 'jest',
+    email: 'jest@gmail.com',
     password: '123456',
     grade: 9,
     school,
@@ -36,7 +36,7 @@ describe('POST /signup', () => {
       .send({
         firstName: 'test',
         lastName: 'jest',
-        username: 'test',
+        email: 'test@gmail.com',
         password: 'testjest',
         grade: 9,
         school,
@@ -48,7 +48,7 @@ describe('POST /signup', () => {
     console.log(response.body);
     token = response.headers['set-cookie'];
     expect(response.header['set-cookie']).toBeTruthy(); // ensure the jwt was sent
-    expect(response.body.username).toBe('test');
+    expect(response.body.email).toBe('test@gmail.com');
     expect(response.body.grade).toBe(9);
     expect(response.body.school.formattedName).toBe('Princeton High School');
     expect(response.body.interests[0]).toBe('computer science');
@@ -60,13 +60,13 @@ describe('POST /signup', () => {
       .send({
         firstName: 'test',
         lastName: 'jest',
-        username: 'testfdasfks',
+        email: 'test2@gmail.com',
         password: 'testjest',
         grade: 9,
         school: secondSchool,
         interests: ['computer science'],
       })
-      // .expect(201)
+      .expect(201)
       .expect('Content-Type', /application\/json/);
     console.log(response.body);
 
@@ -83,7 +83,7 @@ describe('POST /signup', () => {
       .send({
         firstName: 'test jest',
         lastName: 'afdsa',
-        username: 'test',
+        email: 'test3@gmail.com',
         password: '1',
         grade: 9,
         school,
@@ -103,7 +103,7 @@ describe('POST /signup', () => {
       .send({
         firstName: 'test',
         lastName: 'f',
-        username: 'jest',
+        email: 'jest@gmail.com',
         password: '123456',
         grade: 9,
         school,
@@ -113,8 +113,26 @@ describe('POST /signup', () => {
       .expect('Content-Type', /application\/json/);
 
     expect(response.body.message).toBe(
-      'User with username already registered, please login'
+      'User with email already registered, please login'
     );
+  });
+
+  it('Should fail to register a user with an invalid email', async () => {
+    const response = await request(app)
+      .post('/api/auth/signup')
+      .send({
+        firstName: 'test',
+        lastName: 'f',
+        email: 'coolbeans',
+        password: '123456',
+        grade: 9,
+        school,
+        interests: ['computer science'],
+      })
+      .expect(400)
+      .expect('Content-Type', /application\/json/);
+
+    expect(response.body.message).toBe('Invalid Email Address');
   });
 
   it('Should fail to register a user if they supply no interests', async () => {
@@ -123,7 +141,7 @@ describe('POST /signup', () => {
       .send({
         firstName: 'idk',
         lastName: 'f',
-        username: 'cool',
+        email: 'cool@gmail.com',
         password: '123456',
         grade: 9,
         school,
@@ -143,7 +161,7 @@ describe('POST /login', () => {
     const response = await request(app)
       .post('/api/auth/login')
       .send({
-        username: 'jest',
+        email: 'jest@gmail.com',
         password: '123456',
       })
       .expect(200)
@@ -169,7 +187,7 @@ describe('POST /login', () => {
     const response = await request(app)
       .post('/api/auth/login')
       .send({
-        username: 'jest',
+        email: 'jest@gmail.com',
         password: '12345',
       })
       .expect(400)
@@ -182,7 +200,7 @@ describe('POST /login', () => {
     const response = await request(app)
       .post('/api/auth/login')
       .send({
-        username: 'dafasdfasfasd',
+        email: 'dafasdfasfasd',
         password: '12345',
       })
       .expect(400)
@@ -197,7 +215,7 @@ describe('POST /login', () => {
     const response = await request(app)
       .post('/api/auth/login')
       .send({
-        username: '',
+        email: '',
         password: '12345',
       })
       .expect(400)

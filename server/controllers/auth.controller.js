@@ -14,7 +14,7 @@ const generateToken = (userId) => {
 };
 
 const registerUser = asyncHandler(async (req, res) => {
-  const { firstName, lastName, username, password, grade, school, interests } =
+  const { firstName, lastName, email, password, grade, school, interests } =
     req.body;
 
   if (!interests.length) {
@@ -59,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     firstName,
     lastName,
-    username,
+    email,
     password,
     grade,
     school: {
@@ -84,7 +84,7 @@ const registerUser = asyncHandler(async (req, res) => {
       _id: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
-      username: user.username,
+      email: user.email,
       grade: user.grade,
       school: user.school,
       interests: user.interests,
@@ -95,14 +95,14 @@ const registerUser = asyncHandler(async (req, res) => {
 });
 
 const loginUser = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     res.status(400);
     throw new Error('Please fill in all fields');
   }
 
-  const user = await User.findOne({ username }).populate('contacts');
+  const user = await User.findOne({ email }).populate('contacts');
 
   if (!user) {
     res.status(400);
@@ -128,7 +128,7 @@ const loginUser = asyncHandler(async (req, res) => {
     _id: user._id,
     firstName: user.firstName,
     lastName: user.lastName,
-    username: user.username,
+    email: user.email,
     grade: user.grade,
     school: user.school,
     interests: user.interests,

@@ -75,7 +75,7 @@ const generateFakeUsers = async () => {
       const fakeUser = {
         firstName,
         lastName,
-        username: firstName,
+        email: `${firstName}${i}@gmail.com`,
         password: process.env.FAKE_USER_PASSWORD,
         profilePicture: `https://eu.ui-avatars.com/api/?name=${firstName}+${lastName}&size=100`,
         school: schoolInfo,
