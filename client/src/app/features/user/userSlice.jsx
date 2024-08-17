@@ -170,6 +170,20 @@ export const searchUsers = createAsyncThunk(
   }
 );
 
+export const sendForgetPasswordEmail = createAsyncThunk(
+  'user/forgetPassword',
+  async (email, thunkAPI) => {
+    try {
+      const response = await axios.post(`${baseUrl}/api/auth/forgetpassword`, {
+        email,
+      });
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -360,6 +374,17 @@ const userSlice = createSlice({
       })
       .addCase(searchUsers.rejected, (state, action) => {
         state.searchLoading = false;
+        toast.error(action.payload, { id: '/-error' });
+      })
+      .addCase(sendForgetPasswordEmail.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(sendForgetPasswordEmail.fulfilled, (state, action) => {
+        state.isLoading = false;
+        toast.success(action.payload.message);
+      })
+      .addCase(sendForgetPasswordEmail.rejected, (state, action) => {
+        state.isLoading = false;
         toast.error(action.payload, { id: '/-error' });
       });
   },

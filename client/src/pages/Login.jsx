@@ -93,6 +93,14 @@ const Login = ({ setFormData }) => {
               <div className="max-[550px]:px-3">
                 <button className="btn btn-block btn-sm mt-2">Login</button>
               </div>
+              <div className="text-center mt-3">
+                <Link
+                  to="/forgetpassword"
+                  className=" hover:underline hover:text-blue-600 mt-1 inline-block"
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </fieldset>
           </form>
         </div>

@@ -34,6 +34,8 @@ import useUpdateClubServer from './hooks/useUpdateClubServer';
 import ClubChatGuide from './pages/ClubChatGuide';
 import PersonalServer from './pages/PersonalServer';
 import PersonalServerIntro from './pages/PersonalServerIntro';
+import ForgetPassword from './pages/ForgetPassword';
+import ResetPassword from './pages/ResetPassword';
 
 axios.defaults.withCredentials = true;
 
@@ -160,6 +162,11 @@ function App() {
             <Route index element={<PersonalServerIntro />}></Route>
             <Route path=":chatId" element={<SectionMessages />}></Route>
           </Route>
+          <Route path="/forgetpassword" element={<ForgetPassword />}></Route>
+          <Route
+            path="/reset-password/:token"
+            element={<ResetPassword />}
+          ></Route>
         </Routes>
       )}
       <Toaster />
