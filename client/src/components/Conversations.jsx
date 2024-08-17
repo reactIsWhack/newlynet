@@ -10,12 +10,12 @@ import {
 } from '../app/features/chats/chatSlice';
 import checkOnlineStatus from '../utils/checkOnlineStatus';
 
-const Conversations = () => {
+const Conversations = ({ conversationsToRender }) => {
   const { conversations, chatsLoading, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const conversation = conversations.map((conversation, index) => {
+  const conversation = conversationsToRender.map((conversation, index) => {
     return (
       <Conversation
         key={conversation._id}
@@ -45,11 +45,11 @@ const Conversations = () => {
         </select>
       </div>
       <div className="flex flex-col gap-2 overflow-auto  max-h-screen scrollbar scrollbar-thumb-gray-900 scrollbar-track-gray-700">
-        {chatsLoading && !conversations.length ? (
+        {chatsLoading && !conversationsToRender.length ? (
           <div className="flex justify-center mt-4">
             <span className="loading loading-spinner loading-lg"></span>
           </div>
-        ) : conversations.length > 0 ? (
+        ) : conversationsToRender.length > 0 ? (
           conversation
         ) : (
           <div className="text-center mt-5">No conversations found</div>

@@ -5,7 +5,7 @@ import {
   selectClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import { IoIosArrowBack } from 'react-icons/io';
-import { CiSearch } from 'react-icons/ci';
+import { RxExit } from 'react-icons/rx';
 import { useNavigate } from 'react-router-dom';
 
 const ClubChatHeader = () => {
@@ -37,7 +37,7 @@ const ClubChatHeader = () => {
         </span>
       </h2>
       <div className="hover:bg-slate-700 transition-colors duration-500 h-9 w-9 rounded-full flex items-center justify-center cursor-pointer">
-        <CiSearch size={20} fill="#cbd5e1" cursor="pointer" />
+        <RxExit size={20} fill="#cbd5e1" cursor="pointer" />
       </div>
     </div>
   );

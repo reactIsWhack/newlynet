@@ -51,7 +51,6 @@ function App() {
     interests: [],
   });
   const [schoolQuery, setSchoolQuery] = useState('');
-  console.log(formData, schoolQuery);
   const { isLoggedIn, grade, interests, school } = useSelector(selectUser);
   const { selectedConversation, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
@@ -99,8 +98,6 @@ function App() {
         school: school,
       }));
   }, [grade, interests, school]);
-
-  console.log(updatingInterests);
 
   return (
     <>

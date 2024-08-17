@@ -100,7 +100,7 @@ const Conversation = ({
 
         <div className="flex flex-col flex-1">
           <div className="flex gap-3 justify-between">
-            <p className="font-bold text-gray-200">
+            <p className="font-bold text-gray-200 capitalize">
               {chatType === 'group'
                 ? getChatName(chatName, members, userId)
                 : receivingMember.firstName + ' ' + receivingMember.lastName}

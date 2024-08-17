@@ -5,7 +5,7 @@ import { setRenderModal } from '../../app/features/popup/popupSlice';
 import { selectChats } from '../../app/features/chats/chatSlice';
 import { selectUser } from '../../app/features/user/userSlice';
 
-const SearchChat = () => {
+const SearchChat = ({ setConversationsToRender, conversationsToRender }) => {
   const dispatch = useDispatch();
   const { conversations, chatFilter } = useSelector(selectChats);
   const { userId } = useSelector(selectUser);
@@ -16,27 +16,29 @@ const SearchChat = () => {
   };
 
   const searchChat = (e) => {
-    const searchQuery = e.target.value;
+    const searchQuery = e.target.value.trim().toLowerCase();
 
-    const results = conversations.filter((conversation) => {
-      if (chatFilter === 'individual') {
-        const otherMember = conversation.members.find((m) => m._id !== userId);
-        if (
-          searchQuery &&
-          ((otherMember.firstName
-            .toLowerCase()
-            .indexOf(searchQuery[0].toLowerCase()) === 0 &&
-            otherMember.firstName.toLowerCase().includes(searchQuery)) ||
-            (otherMember.lastName
-              .toLowerCase()
-              .indexOf(searchQuery[0].toLowerCase()) === 0 &&
-              otherMember.lastName.toLowerCase().includes(searchQuery)))
-        ) {
-          return conversation;
+    // Create a regular expression that matches the search query sequentially at the start of any word
+    const regex = new RegExp(`\\b${searchQuery.split('').join('.*')}`, 'i');
+
+    const results = [];
+    conversations.forEach((conversation) => {
+      const members = conversation.members.filter((m) => m._id !== userId);
+      members.forEach((member) => {
+        const { firstName, lastName } = member;
+        const fullName = `${firstName.toLowerCase()} ${lastName.toLowerCase()}`;
+        // Check if the regex matches the full name
+        if (regex.test(fullName)) {
+          results.push(conversation);
         }
-      }
+      });
     });
-    console.log(results);
+
+    if (searchQuery) {
+      setConversationsToRender(results);
+    } else {
+      setConversationsToRender(conversations);
+    }
   };
 
   return (
