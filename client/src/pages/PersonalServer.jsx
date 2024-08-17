@@ -10,7 +10,7 @@ import {
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import ClubChatSidebar from '../components/ClubChatSidebar';
-import { Outlet, useParams } from 'react-router-dom';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import useRedirectUser from '../hooks/useRedirectUser';
 import { useSocket } from '../context/SocketContext';
 import { resetDateQuery } from '../app/features/chats/chatSlice';
@@ -21,6 +21,7 @@ import CreateChannel from '../components/CreateChannel';
 import useListenNewChannel from '../hooks/useListenNewChannel';
 import useDetectMobile from '../hooks/useDetectMobile';
 import { selectUser } from '../app/features/user/userSlice';
+import toast from 'react-hot-toast';
 
 const PersonalServer = () => {
   useRedirectUser();
@@ -43,11 +44,17 @@ const PersonalServer = () => {
     renderModal: { name, render },
   } = useSelector(selectPopup);
   const mobile = useDetectMobile();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!customServer.serverId || !customServer.owner) {
       setIsLoading(true);
       const server = customClubServers.find((item) => item._id === serverId);
+
+      if (!server) {
+        navigate('/clubserverinfo');
+        toast.error('No server found', { id: 'no-server' });
+      }
 
       if (customClubServers.length) {
         dispatch(

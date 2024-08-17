@@ -64,7 +64,12 @@ const joinClubServer = asyncHandler(async (req, res) => {
     throw new Error('Failed to join club server');
   }
 
-  io.emit('clubServerJoin', clubServer, user);
+  for (const member of clubServer.members) {
+    if (member._id.toString() !== req.userId.toString()) {
+      const socketId = getSocketId(String(member._id));
+      io.to(socketId).emit('clubServerJoin', clubServer, user);
+    }
+  }
 
   res.status(200).json(clubServer);
 });

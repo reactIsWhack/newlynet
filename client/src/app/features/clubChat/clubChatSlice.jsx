@@ -233,12 +233,6 @@ const clubChatSlice = createSlice({
         chats: [],
       };
     },
-    setCustomServerMembers(state, action) {
-      const customServer = state.customClubServers.find(
-        (server) => server._id === action.payload._id
-      );
-      customServer.members = action.payload.members;
-    },
     removeSuggestedServer(state, action) {
       state.suggestedClubServers = state.suggestedClubServers.filter(
         (server) => server._id !== action.payload
@@ -249,6 +243,12 @@ const clubChatSlice = createSlice({
     },
     setServerAdmins(state, action) {
       state.customServer.admins = action.payload;
+    },
+    setCustomServerMembers(state, action) {
+      const server = state.customClubServers.find(
+        (server) => server._id === action.payload._id
+      );
+      server.members = action.payload.members;
     },
   },
   extraReducers: (builder) => {

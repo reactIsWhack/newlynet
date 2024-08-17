@@ -56,6 +56,17 @@ export const SocketContextProvider = ({ children }) => {
         toast('New server invite');
       });
 
+      socketVal.on('clubServerJoin', (clubServer, user) => {
+        if (!clubServer.custom) {
+          dispatch(setClubChatMembers(clubServer.members));
+        } else {
+          dispatch(setCustomServerMembers(clubServer));
+          toast(
+            `${user.firstName} ${user.lastName} joined ${clubServer.serverName}`
+          );
+        }
+      });
+
       socketVal.on('newChat', (chat, updatedNotifications) => {
         if (
           chatFilter === chat.chatType ||

@@ -126,11 +126,12 @@ const Contact = ({
             </div>
           </div>
         </div>
-        {contactHasUserInContacts && (
-          <div className="flex items-center flex-wrap justify-center mb-4 mt-2 gap-2">
-            {socialMediaTag}
-          </div>
-        )}
+        {contactHasUserInContacts &&
+          (socialMediaTag.snapchat || socialMediaTag.instagram) && (
+            <div className="flex items-center flex-wrap justify-center mb-4 gap-2">
+              {socialMediaTag}
+            </div>
+          )}
 
         <div className="flex flex-wrap mb-4 gap-2 justify-center px-3">
           {interestBtn}
