@@ -29,14 +29,6 @@ const useRedirectUser = (blockInterstsPage) => {
 
     if ((pathname === '/login' || pathname === '/signup') && response.data)
       navigate('/');
-
-    if (
-      response.data &&
-      pathname === '/select-interests' &&
-      !blockInterstsPage
-    ) {
-      navigate('/settings');
-    }
   };
 
   useEffect(() => {

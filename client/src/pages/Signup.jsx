@@ -29,12 +29,8 @@ const Signup = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await dispatch(signup({ formData, navigate }));
+    navigate('/select-interests');
   };
-
-  useEffect(() => {
-    setSchoolQuery('');
-  }, []);
 
   return (
     <div className="flex items-center justify-center">
@@ -50,91 +46,87 @@ const Signup = ({
           </h1>
 
           <form
-            className="min-w-96 mt-6"
+            className="min-w-96 mt-6 max-[550px]:px-4"
             onSubmit={handleSubmit}
             autoComplete="off"
           >
-            <fieldset disabled={isLoading ? true : false}>
-              <div className="flex items-center gap-3 max-[550px]:px-3">
-                <div>
-                  <label className="label p-2">
-                    <span className="text-base label-text">First name</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter first name"
-                    className="w-full input input-bordered h-10"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="max-[550px]:px-3">
-                  <label className="label p-2">
-                    <span className="text-base label-text">Last name</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter last name"
-                    className="w-full input input-bordered h-10"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                  />
-                </div>
+            <div className="flex items-center gap-3 ">
+              <div>
+                <label className="label p-2">
+                  <span className="text-base label-text">First name</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter first name"
+                  className="w-full input input-bordered h-10"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <div className="flex items-center gap-3 max-[550px]:px-3">
-                <div className="max-[550px]:px-3">
-                  <label className="label p-2">
-                    <span className="text-base label-text">Email</span>
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter email"
-                    className="w-full input input-bordered h-10"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div>
-                  <label className="label">
-                    <span className="text-base label-text">Password</span>
-                  </label>
-                  <input
-                    type="password"
-                    placeholder="Enter password"
-                    className="w-full input input-bordered h-10"
-                    name="password"
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                </div>
+              <div>
+                <label className="label p-2">
+                  <span className="text-base label-text">Last name</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter last name"
+                  className="w-full input input-bordered h-10"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <SchoolSelect
-                setFormData={setFormData}
-                formData={formData}
-                schoolQuery={schoolQuery}
-                setSchoolQuery={setSchoolQuery}
-              />
-              <div className="flex items-center justify-between mb-2">
-                <Link
-                  to="/login"
-                  className="text-sm hover:underline hover:text-blue-600 mt-4 inline-block max-[550px]:px-3"
-                >
-                  Already have an account?
-                </Link>
-                <Link
-                  to="/select-interests"
-                  className="text-sm hover:underline hover:text-blue-600 mt-4 inline-block max-[550px]:px-3"
-                >
-                  Select your interests {`-->`}
-                </Link>
+            </div>
+            <div className="flex items-center gap-3 ">
+              <div>
+                <label className="label p-2">
+                  <span className="text-base label-text">Email</span>
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter email"
+                  className="w-full input input-bordered h-10"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-              <div className="max-[550px]:px-3">
-                <button className="btn btn-block btn-sm mt-2">Sign up</button>
+              <div>
+                <label className="label">
+                  <span className="text-base label-text">Password</span>
+                </label>
+                <input
+                  type="password"
+                  placeholder="Enter password"
+                  className="w-full input input-bordered h-10"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
               </div>
-            </fieldset>
+            </div>
+            <SchoolSelect
+              setFormData={setFormData}
+              formData={formData}
+              schoolQuery={schoolQuery}
+              setSchoolQuery={setSchoolQuery}
+            />
+            <div className="flex items-center justify-between mb-2">
+              <Link
+                to="/login"
+                className="text-sm hover:underline hover:text-blue-600 mt-4"
+              >
+                Already have an account?
+              </Link>
+            </div>
+            <div className="">
+              <button className="btn btn-block btn-sm mt-2">Continue</button>
+            </div>
           </form>
         </div>
       </div>

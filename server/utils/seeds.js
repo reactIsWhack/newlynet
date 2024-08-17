@@ -75,7 +75,7 @@ const generateFakeUsers = async () => {
       const fakeUser = {
         firstName,
         lastName,
-        email: `${firstName}${i}@gmail.com`,
+        email: `${firstName}${lastName}@gmail.com`,
         password: process.env.FAKE_USER_PASSWORD,
         profilePicture: `https://eu.ui-avatars.com/api/?name=${firstName}+${lastName}&size=100`,
         school: schoolInfo,
@@ -103,15 +103,8 @@ const generateFakeUsers = async () => {
 
 const populateDB = async () => {
   resetOnlineUsers();
-  // await User.deleteMany();
-  // await ClubServer.deleteMany();
-  // await ClubChat.deleteMany();
-  // await Message.deleteMany();
-  return;
-  if (process.env.NODE_ENV === 'test') {
-    await generateClubChats();
-    await generateFakeUsers();
-  }
+  // await generateClubChats();
+  // await generateFakeUsers();
 };
 
 module.exports = {

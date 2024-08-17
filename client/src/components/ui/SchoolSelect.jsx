@@ -27,8 +27,8 @@ const SchoolSelect = ({
   };
 
   return (
-    <div className="flex items-center gap-3 max-[550px]:gap-0">
-      <div className="max-[550px]:px-3 w-2/3 max-[550px]:w-3/5">
+    <div className="flex items-center gap-3 ">
+      <div className="w-2/3 ">
         <label className="label">
           <span className="text-base label-text">School</span>
         </label>
@@ -39,7 +39,7 @@ const SchoolSelect = ({
           formData={formData}
         />
       </div>
-      <div className="max-[550px]:px-3 w-1/3 max-[550px]:w-2/5">
+      <div className="w-1/3">
         <label className="label p-2">
           <span className="text-base label-text">Grade</span>
         </label>

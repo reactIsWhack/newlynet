@@ -12,6 +12,7 @@ describe('Generate Fake Users', () => {
   it('Should generate anywhere between 15 and 50 fake users as students', async () => {
     const sampleFakeUser = await User.findOne({});
     const grades = [5, 6, 7, 8, 9, 10, 11, 12];
+    console.log(sampleFakeUser);
 
     expect(sampleFakeUser.firstName).toBeTruthy();
     expect(sampleFakeUser.lastName).toBeTruthy();

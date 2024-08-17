@@ -51,6 +51,7 @@ function App() {
     interests: [],
   });
   const [schoolQuery, setSchoolQuery] = useState('');
+  console.log(formData, schoolQuery);
   const { isLoggedIn, grade, interests, school } = useSelector(selectUser);
   const { selectedConversation, chatFilter } = useSelector(selectChats);
   const dispatch = useDispatch();
@@ -95,6 +96,8 @@ function App() {
       }));
   }, [grade, interests, school]);
 
+  console.log(updatingInterests);
+
   return (
     <>
       {renderLoadingScreen ? (
@@ -127,7 +130,8 @@ function App() {
                 setFormData={updatingInterests ? setSettingsData : setFormData}
                 formData={updatingInterests ? settingsData : formData}
                 route={updatingInterests ? '/settings' : '/signup'}
-                updatingInterests={updatingInterests}
+                updatingInterests={updatingInterests && isLoggedIn}
+                setSchoolQuery={setSchoolQuery}
               />
             }
           ></Route>

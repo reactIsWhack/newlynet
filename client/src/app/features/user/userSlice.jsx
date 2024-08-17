@@ -268,7 +268,7 @@ const userSlice = createSlice({
       })
       .addCase(signup.rejected, (state, action) => {
         state.isLoading = false;
-        toast.error(action.payload);
+        toast.error(action.payload, { id: 'signup-err' });
       })
       .addCase(loginUser.pending, (state) => {
         state.isLoading = true;
