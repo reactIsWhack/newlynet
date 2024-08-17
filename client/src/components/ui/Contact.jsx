@@ -107,6 +107,7 @@ const Contact = ({
   }
   const streakArr = chats.map((chat) => chat.highestStreak);
   const highestStreak = Math.max(...streakArr);
+  console.log(socialMediaUsernames);
 
   return (
     <div className={`card shadow-xl w-full ${bg} relative`}>
@@ -127,7 +128,7 @@ const Contact = ({
           </div>
         </div>
         {contactHasUserInContacts &&
-          (socialMediaTag.snapchat || socialMediaTag.instagram) && (
+          (socialMediaUsernames.snapchat || socialMediaUsernames.instagram) && (
             <div className="flex items-center flex-wrap justify-center mb-4 gap-2">
               {socialMediaTag}
             </div>

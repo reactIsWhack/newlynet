@@ -50,7 +50,7 @@ const joinClubServer = asyncHandler(async (req, res) => {
       .save()
       .then((item) =>
         item.populate([
-          { path: 'members', select: '-password' },
+          { path: 'members', select: '-password', populate: 'chats' },
           { path: 'chats' },
           { path: 'owner', select: '-password' },
           { path: 'admins', select: '-password' },
@@ -132,7 +132,6 @@ const inviteUserToServer = asyncHandler(async (req, res) => {
       populate: ['server', 'sender'],
     })
   );
-  console.log(user);
 
   const socketId = getSocketId(user._id);
   io.to(socketId).emit('serverInvite', user.serverInvites);
@@ -164,6 +163,7 @@ const getSuggestedServers = asyncHandler(async (req, res) => {
     $or: [{ tags: { $in: user.interests } }, { tags: { $in: ['Social'] } }],
     members: { $nin: [user._id] },
     schoolAffiliation: user.school.schoolId,
+    _id: { $nin: user.serverInvites.map((server) => server.server) },
   }).populate([{ path: 'members', select: '-password' }, { path: 'chats' }]);
 
   res.status(200).json(clubServers);
