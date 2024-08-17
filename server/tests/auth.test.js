@@ -251,6 +251,31 @@ describe('AUTH /routeprotector', () => {
   });
 });
 
+describe('AUTH /forgetpassword', () => {
+  beforeAll(async () => {
+    await User.create({
+      firstName: 'test',
+      lastName: 'jest',
+      email: process.env.EMAIL,
+      password: '123456',
+      grade: 9,
+      school,
+      interests: ['Computer Science'],
+    });
+  });
+
+  it('Should send a forget password email with reset link to a user', async () => {
+    const response = await request(app)
+      .post('/api/users/forgetpassword')
+      .send({ email: process.env.EMAIL });
+    // .expect(200)
+    // .expect('Content-Type', /application\/json/);
+
+    console.log(response.body);
+    expect(response.body.message).toBe('Email sent!');
+  });
+});
+
 afterAll(async () => {
   await disconnectMongoDB();
 });

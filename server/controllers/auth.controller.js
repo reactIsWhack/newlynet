@@ -6,6 +6,7 @@ const ClubServer = require('../models/clubServer.model');
 const shuffle = require('../utils/shuffleArray');
 const { interestOptions } = require('../db/data');
 const ClubChat = require('../models/clubChat.model');
+const nodemailer = require('nodemailer');
 
 const shuffledInterests = ['General', ...shuffle(interestOptions)];
 
@@ -163,4 +164,98 @@ const getLoginStatus = asyncHandler(async (req, res) => {
   }
 });
 
-module.exports = { registerUser, loginUser, logoutUser, getLoginStatus };
+const forgetPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    res.status(400);
+    throw new Error('Please provide an email');
+  }
+  console.log(email);
+
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    console.log('no user');
+    res.status(404);
+    throw new Error('User not found');
+  }
+
+  // Generate a unique JWT token for the user that contains the user's id
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: '10m',
+  });
+
+  // Send the token to the user's email
+  const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD_APP_EMAIL,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
+  });
+
+  // Email configuration
+  const mailOptions = {
+    from: process.env.EMAIL,
+    to: email,
+    subject: 'Reset Password',
+    html: `<h1>Reset Your Password</h1>
+    <p>Click on the following link to reset your password:</p>
+    <a href="${process.env.CLIENT_URL}/reset-password/${token}">${process.env.CLIENT_URL}/reset-password/${token}</a>
+    <p>The link will expire in 10 minutes.</p>
+    <p>If you didn't request a password reset, please ignore this email.</p>`,
+  };
+
+  // Send the email
+  transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      res.status(500);
+      throw new Error('Failed to send email, try again later');
+    }
+    res.status(200).send({ message: 'Email sent' });
+  });
+});
+
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { newPassword } = req.body;
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+    // If the token is invalid, return an error
+    if (!decodedToken) {
+      res.status(401);
+      throw new Error('Invalid token');
+    }
+
+    // find the user with the id from the token
+    const user = await User.findOne({ _id: decodedToken.userId });
+    if (!user) {
+      res.status(401);
+      throw new Error('No authorized user found');
+    }
+
+    // Update user's password, clear reset token and expiration time
+    user.password = newPassword;
+    await user.save();
+
+    // Send success response
+    res.status(200).json({ message: 'Password updated' });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  getLoginStatus,
+  forgetPassword,
+  resetPassword,
+};
