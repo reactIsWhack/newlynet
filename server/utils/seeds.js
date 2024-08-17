@@ -103,10 +103,10 @@ const generateFakeUsers = async () => {
 
 const populateDB = async () => {
   resetOnlineUsers();
-  await User.deleteMany();
-  await ClubServer.deleteMany();
-  await ClubChat.deleteMany();
-  await Message.deleteMany();
+  // await User.deleteMany();
+  // await ClubServer.deleteMany();
+  // await ClubChat.deleteMany();
+  // await Message.deleteMany();
   return;
   if (process.env.NODE_ENV === 'test') {
     await generateClubChats();

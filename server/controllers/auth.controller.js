@@ -224,31 +224,27 @@ const resetPassword = asyncHandler(async (req, res) => {
   const { token } = req.params;
   const { newPassword } = req.body;
 
-  try {
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+  const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
-    // If the token is invalid, return an error
-    if (!decodedToken) {
-      res.status(401);
-      throw new Error('Invalid token');
-    }
-
-    // find the user with the id from the token
-    const user = await User.findOne({ _id: decodedToken.userId });
-    if (!user) {
-      res.status(401);
-      throw new Error('No authorized user found');
-    }
-
-    // Update user's password, clear reset token and expiration time
-    user.password = newPassword;
-    await user.save();
-
-    // Send success response
-    res.status(200).json({ message: 'Password updated' });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  // If the token is invalid, return an error
+  if (!decodedToken) {
+    res.status(401);
+    throw new Error('Invalid token');
   }
+
+  // find the user with the id from the token
+  const user = await User.findOne({ _id: decodedToken.userId });
+  if (!user) {
+    res.status(401);
+    throw new Error('No authorized user found');
+  }
+
+  // Update user's password, clear reset token and expiration time
+  user.password = newPassword;
+  await user.save();
+
+  // Send success response
+  res.status(200).json({ message: 'Password updated' });
 });
 
 module.exports = {
