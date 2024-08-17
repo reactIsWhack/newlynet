@@ -27,6 +27,7 @@ const initialState = {
     serverName: '',
     owner: null,
     admins: [],
+    leaving: false,
   },
   invitePending: false,
   createChannelLoading: false,
@@ -182,6 +183,23 @@ export const promoteToAdmin = createAsyncThunk(
       } = thunkAPI.getState();
       const response = await axios.patch(
         `${baseURL}/api/clubserver/addadmin/${customServer.serverId}/${userId}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const leaveClubServer = createAsyncThunk(
+  'clubServer/leave',
+  async (_, thunkAPI) => {
+    try {
+      const {
+        clubChat: { customServer },
+      } = thunkAPI.getState();
+      const response = await axios.patch(
+        `${baseURL}/api/clubserver/leaveserver/${customServer.serverId}`
       );
       return response.data;
     } catch (error) {
@@ -413,6 +431,33 @@ const clubChatSlice = createSlice({
       })
       .addCase(promoteToAdmin.rejected, (state, action) => {
         state.promotionPending = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
+      })
+      .addCase(leaveClubServer.pending, (state) => {
+        state.clubChatLoading = true;
+      })
+      .addCase(leaveClubServer.fulfilled, (state, action) => {
+        state.clubChatLoading = false;
+        state.customServer = {
+          members: [],
+          chats: [],
+          serverId: '',
+          serverName: '',
+          owner: null,
+          admins: [],
+          laeving: true,
+        };
+        const server = state.customClubServers.find(
+          (server) => server._id === action.payload._id
+        );
+        server.members = action.payload.members;
+        state.customClubServers = state.customClubServers.filter(
+          (server) => server._id !== action.payload._id
+        );
+        toast.success(`Left ${action.payload.serverName}!`);
+      })
+      .addCase(leaveClubServer.rejected, (state, action) => {
+        state.clubChatLoading = false;
         toast.error(action.payload, { id: 'club-custom-err' });
       });
   },

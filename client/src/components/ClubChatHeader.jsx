@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  leaveClubServer,
   resetClubChatMessages,
   selectClubChat,
 } from '../app/features/clubChat/clubChatSlice';
@@ -21,6 +22,12 @@ const ClubChatHeader = () => {
     navigate('/clubchat');
   };
 
+  const leaveserver = () => {
+    dispatch(leaveClubServer()).then((res) => {
+      if (!res.meta.rejectedWithValue) navigate('/clubserverinfo');
+    });
+  };
+
   return (
     <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white px-4 py-3 shadow-md flex justify-center items-center h-14">
       <IoIosArrowBack
@@ -37,7 +44,12 @@ const ClubChatHeader = () => {
         </span>
       </h2>
       <div className="hover:bg-slate-700 transition-colors duration-500 h-9 w-9 rounded-full flex items-center justify-center cursor-pointer">
-        <RxExit size={20} fill="#cbd5e1" cursor="pointer" />
+        <RxExit
+          size={20}
+          fill="#cbd5e1"
+          cursor="pointer"
+          onClick={leaveserver}
+        />
       </div>
     </div>
   );

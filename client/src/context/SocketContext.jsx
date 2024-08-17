@@ -56,13 +56,13 @@ export const SocketContextProvider = ({ children }) => {
         toast('New server invite');
       });
 
-      socketVal.on('serverMemberChange', (clubServer, user) => {
+      socketVal.on('serverMemberChange', (clubServer, user, action) => {
         if (!clubServer.custom) {
           dispatch(setClubChatMembers(clubServer.members));
         } else {
           dispatch(setCustomServerMembers(clubServer));
           toast(
-            `${user.firstName} ${user.lastName} joined ${clubServer.serverName}`
+            `${user.firstName} ${user.lastName} ${action} ${clubServer.serverName}`
           );
         }
       });

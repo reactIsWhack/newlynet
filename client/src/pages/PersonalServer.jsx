@@ -47,7 +47,10 @@ const PersonalServer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!customServer.serverId || !customServer.owner) {
+    if (
+      (!customServer.serverId || !customServer.owner) &&
+      customClubServers.length
+    ) {
       setIsLoading(true);
       const server = customClubServers.find((item) => item._id === serverId);
 

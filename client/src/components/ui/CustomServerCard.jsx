@@ -53,6 +53,7 @@ const CustomServerCard = ({
         serverId: _id,
         owner,
         admins,
+        leaving: false,
       })
     );
     navigate(`/personalserver/${_id}/${chats[0]._id}`);

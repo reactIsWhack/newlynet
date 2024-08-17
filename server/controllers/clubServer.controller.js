@@ -67,7 +67,7 @@ const joinClubServer = asyncHandler(async (req, res) => {
   for (const member of clubServer.members) {
     if (member._id.toString() !== req.userId.toString()) {
       const socketId = getSocketId(String(member._id));
-      io.to(socketId).emit('serverMemberChange', clubServer, user);
+      io.to(socketId).emit('serverMemberChange', clubServer, user, 'joined');
     }
   }
 
@@ -255,7 +255,7 @@ const leaveClubServer = asyncHandler(async (req, res) => {
   for (let i = 0; i < server.members.length; i++) {
     const member = server.members[i];
     const socketId = getSocketId(member._id.toString());
-    io.to(socketId).emit('serverMemberChange', server, user);
+    io.to(socketId).emit('serverMemberChange', server, user, 'left');
   }
 
   res.status(200).json(server);
