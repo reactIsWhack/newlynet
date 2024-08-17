@@ -68,16 +68,20 @@ function App() {
   const [renderLoadingScreen, setRenderLoadingScreen] = useState(false);
 
   const getData = async () => {
-    if (isLoggedIn) setRenderLoadingScreen(true);
-    await dispatch(getUserProfile()).then(() => setRenderLoadingScreen(false));
-    await Promise.all([
-      dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' })),
+    if (isLoggedIn) {
+      setRenderLoadingScreen(true);
+      await dispatch(getUserProfile()).then(() =>
+        setRenderLoadingScreen(false)
+      );
+      await Promise.all([
+        dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' })),
 
-      dispatch(getConversations(chatFilter)),
-      dispatch(getClubServer()),
-      dispatch(getCustomClubServers()),
-      dispatch(getSuggestedClubServers()),
-    ]);
+        dispatch(getConversations(chatFilter)),
+        dispatch(getClubServer()),
+        dispatch(getCustomClubServers()),
+        dispatch(getSuggestedClubServers()),
+      ]);
+    }
   };
 
   useEffect(() => {
