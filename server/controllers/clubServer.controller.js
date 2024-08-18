@@ -261,6 +261,24 @@ const leaveClubServer = asyncHandler(async (req, res) => {
   res.status(200).json(server);
 });
 
+const getCustomServer = asyncHandler(async (req, res) => {
+  const { serverId } = req.params;
+
+  const server = await ClubServer.findById(serverId).populate([
+    { path: 'members', select: '-password', populate: 'chats' },
+    { path: 'owner', select: '-password', populate: 'chats' },
+    { path: 'chats' },
+    { path: 'admins', select: '-password', populate: 'chats' },
+  ]);
+
+  if (!server) {
+    res.status(404);
+    throw new Error('Server not found');
+  }
+
+  res.status(200).json(server);
+});
+
 module.exports = {
   getClubServer,
   joinClubServer,
@@ -271,4 +289,5 @@ module.exports = {
   createServerChannel,
   addServerAdmin,
   leaveClubServer,
+  getCustomServer,
 };
