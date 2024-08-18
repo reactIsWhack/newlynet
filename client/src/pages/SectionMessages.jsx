@@ -27,7 +27,7 @@ const SectionMessages = () => {
   const [filePreview, setFilePreview] = useState('');
   const lastMessageRef = useRef(null);
   const dispatch = useDispatch();
-  const { sectionId } = useParams();
+  const { sectionId, chatId } = useParams();
 
   const chat = unreadClubChats.find(
     (chatItem) => chatItem.chat._id === selectedClubChat?._id
@@ -52,6 +52,7 @@ const SectionMessages = () => {
       </div>
     );
   });
+  console.log(sectionId, selectedClubChat);
 
   useEffect(() => {
     if (initialMessage) {
@@ -65,6 +66,7 @@ const SectionMessages = () => {
       }, 200);
     } else {
       !paginating &&
+        !chat &&
         setTimeout(() => {
           lastMessageRef.current?.scrollIntoView({
             block: 'nearest',
@@ -77,9 +79,11 @@ const SectionMessages = () => {
   }, [selectedClubChat, sectionId, initialMessage, messages]);
 
   const handleScroll = (e) => {
-    if (dateQuery === '') return;
+    if (dateQuery === '' || chatMessages[0]?._id === initialMessage?._id)
+      return;
 
     if (e.target.scrollTop === 0) {
+      console.log('scroll top query');
       dispatch(getClubChatMessages(selectedClubChat._id)).then((res) => {
         if (res.payload.data.length) {
           const lastMessageLoaded =

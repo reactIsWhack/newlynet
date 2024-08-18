@@ -5,7 +5,7 @@ const UnreadMessageHeadline = () => {
     <div className="flex items-center mb-4">
       <div className="flex-grow border-t border-red-500"></div>
       <span className="mx-4 text-red-500 font-medium textsm">
-        Latest Messages
+        Unread Messages
       </span>
       <div className="flex-grow border-t border-red-500"></div>
     </div>

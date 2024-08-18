@@ -15,8 +15,12 @@ const useListenClubServerMsg = () => {
 
   useEffect(() => {
     socket?.on('newClubServerMsg', (clubChat, msg) => {
-      console.log(msg.author._id !== userId);
-      if (msg.author._id !== userId) dispatch(setclubChatMessages(msg));
+      if (
+        msg.author._id !== userId &&
+        selectedClubChat &&
+        clubChat._id === selectedClubChat?._id
+      )
+        dispatch(setclubChatMessages(msg));
     });
 
     return () => socket?.off('newClubServerMSg');

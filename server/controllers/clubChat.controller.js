@@ -83,7 +83,7 @@ const getClubChatMessages = asyncHandler(async (req, res) => {
     _id: { $in: clubChat.messages },
     createdAt: { $lt: dateQuery },
   })
-    .limit(process.env.NODE_ENV === 'test' ? 2 : 30)
+    .limit(process.env.NODE_ENV === 'test' ? 2 : 8)
     .sort('-createdAt')
     .populate([
       { path: 'author', select: '-password' },
