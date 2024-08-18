@@ -36,6 +36,7 @@ import PersonalServer from './pages/PersonalServer';
 import PersonalServerIntro from './pages/PersonalServerIntro';
 import ForgetPassword from './pages/ForgetPassword';
 import ResetPassword from './pages/ResetPassword';
+import About from './pages/About';
 
 axios.defaults.withCredentials = true;
 
@@ -172,6 +173,7 @@ function App() {
             path="/reset-password/:token"
             element={<ResetPassword />}
           ></Route>
+          <Route path="/about" element={<About />}></Route>
         </Routes>
       )}
       <Toaster />

@@ -107,7 +107,6 @@ const Contact = ({
   }
   const streakArr = chats.map((chat) => chat.highestStreak);
   const highestStreak = Math.max(...streakArr);
-  console.log(socialMediaUsernames);
 
   return (
     <div className={`card shadow-xl w-full ${bg} relative`}>
