@@ -77,7 +77,7 @@ const ClubServerInfo = () => {
           <span className="loading loading-spinner loading-lg"></span>
         </div>
       ) : (
-        <div className="w-full flex flex-col items-center overflow-auto max-h-[380px] 2xl:pb-4">
+        <div className="w-full flex flex-col items-center overflow-auto max-h-[380px] 2xl:pb-4 2xl:max-h-[550px]">
           <div className="flex  items-center mb-3 gap-3 mt-5">
             <ClubServerMenu />
             <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />

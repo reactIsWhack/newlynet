@@ -13,7 +13,7 @@ const UserTable = ({ filter }) => {
   const { commonNewStudents, isLoading } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [requestPending, setRequestPending] = useState(false);
-  const { onlineUsers } = useSocket();
+  const largeScreen = window.screen.width > 1500;
 
   const userTableCard = commonNewStudents.map((student) => {
     return (
@@ -62,7 +62,9 @@ const UserTable = ({ filter }) => {
         <thead>
           <tr>
             <th>Name</th>
-            {!mobile && <th>One Interest</th>}
+            {!mobile && (
+              <th>{largeScreen ? 'Two Interests' : 'One Interest'}</th>
+            )}
             <th>Connect</th>
             <th></th>
           </tr>

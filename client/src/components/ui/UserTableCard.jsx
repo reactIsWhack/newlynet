@@ -38,6 +38,7 @@ const UserTableCard = ({
   const { onlineUsers } = useSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const largeScreen = window.screen.width > 1500;
 
   let interest = similarInterest ? similarInterest : interests[0];
 
@@ -96,7 +97,19 @@ const UserTableCard = ({
       </td>
       {!mobile && (
         <td className="w-2/5">
-          <InterestDisplayBtn interest={truncateInterest(interest, 16)} />
+          {largeScreen ? (
+            interests.slice(0, 2).map((interestItem, index) => {
+              return (
+                <InterestDisplayBtn
+                  interest={interestItem}
+                  key={index}
+                  includeMargin={true}
+                />
+              );
+            })
+          ) : (
+            <InterestDisplayBtn interest={truncateInterest(interest, 16)} />
+          )}
         </td>
       )}
       <td>

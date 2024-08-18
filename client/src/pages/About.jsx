@@ -20,9 +20,9 @@ const About = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col h-full">
       <Navbar />
-      <div className="hero bg-base-200">
+      <div className="hero bg-base-200 flex-1">
         <div className="hero-content text-center">
           <div className="max-w-xl ">
             <h1 className="text-xl font-bold">To fellow new students</h1>
@@ -65,7 +65,7 @@ const About = () => {
               </p>
             </div>
 
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-4 max-[550px]:my-3">
               <button className="btn btn-primary" onClick={() => navigate('/')}>
                 Get started
               </button>
