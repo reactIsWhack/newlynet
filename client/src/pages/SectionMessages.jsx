@@ -79,11 +79,9 @@ const SectionMessages = () => {
   }, [selectedClubChat, sectionId, initialMessage, messages]);
 
   const handleScroll = (e) => {
-    if (dateQuery === '' || chatMessages[0]?._id === initialMessage?._id)
-      return;
+    if (dateQuery === '') return;
 
     if (e.target.scrollTop === 0) {
-      console.log('scroll top query');
       dispatch(getClubChatMessages(selectedClubChat._id)).then((res) => {
         if (res.payload.data.length) {
           const lastMessageLoaded =

@@ -253,8 +253,33 @@ const leaveClubServer = asyncHandler(async (req, res) => {
   );
   server.members = updatedMembers;
   server.admins = updatedAdmins;
+  const hasUnreadMessages = user.unreadClubChatMessages.some(
+    (unreadChat) => unreadChat.server.toString() === server._id.toString()
+  );
 
-  await server.save().then((item) => item.populate('members'));
+  if (hasUnreadMessages) {
+    user.unreadClubChatMessages = user.unreadClubChatMessages.filter(
+      (unreadChat) => unreadChat.server._id.toString() !== server._id.toString()
+    );
+  }
+
+  if (hasUnreadMessages) {
+    await Promise.all([
+      server.save().then((item) => item.populate('members')),
+      user.save().then((item) =>
+        item.populate({
+          path: 'unreadClubChatMessages',
+          populate: [
+            { path: 'chat' },
+            { path: 'messages' },
+            { path: 'server' },
+          ],
+        })
+      ),
+    ]);
+    const socketId = getSocketId(req.userId.toString());
+    io.to(socketId).emit('clubChatNotif', user.unreadClubChatMessages);
+  } else await server.save().then((item) => item.populate('members'));
 
   for (let i = 0; i < server.members.length; i++) {
     const member = server.members[i];
