@@ -248,7 +248,11 @@ const leaveClubServer = asyncHandler(async (req, res) => {
   const updatedMembers = server.members.filter(
     (memberId) => String(memberId) !== String(req.userId)
   );
+  const updatedAdmins = server.admins.filter(
+    (adminId) => String(adminId) !== String(req.userId)
+  );
   server.members = updatedMembers;
+  server.admins = updatedAdmins;
 
   await server.save().then((item) => item.populate('members'));
 

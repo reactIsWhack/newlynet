@@ -281,8 +281,10 @@ const clubChatSlice = createSlice({
         (server) => server._id === action.payload._id
       );
       server.members = action.payload.members;
+      server.admins = action.payload.admins;
       if (state.customServer.serverId === action.payload._id) {
         state.customServer.members = action.payload.members;
+        state.customServer.admins = action.payload.admins;
       }
     },
   },
