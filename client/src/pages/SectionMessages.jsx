@@ -56,14 +56,15 @@ const SectionMessages = () => {
 
   useEffect(() => {
     if (initialMessage) {
-      setTimeout(() => {
-        document.getElementById(initialMessage._id)?.scrollIntoView({
-          block: 'nearest',
-          inline: 'center',
-          behavior: 'smooth',
-          alignToTop: false,
-        });
-      }, 200);
+      !paginating &&
+        setTimeout(() => {
+          document.getElementById(initialMessage._id)?.scrollIntoView({
+            block: 'nearest',
+            inline: 'center',
+            behavior: 'smooth',
+            alignToTop: false,
+          });
+        }, 200);
     } else {
       !paginating &&
         !chat &&
@@ -79,9 +80,14 @@ const SectionMessages = () => {
   }, [selectedClubChat, sectionId, initialMessage, messages]);
 
   const handleScroll = (e) => {
-    if (dateQuery === '') return;
+    if (
+      dateQuery === '' ||
+      (chat && chatMessages[0]?._id === initialMessage?._id)
+    )
+      return;
 
     if (e.target.scrollTop === 0) {
+      console.log('scroll top query');
       dispatch(getClubChatMessages(selectedClubChat._id)).then((res) => {
         if (res.payload.data.length) {
           const lastMessageLoaded =
