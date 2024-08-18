@@ -59,7 +59,7 @@ const PrimaryUserCard = () => {
         <div className="flex flex-col items-center gap-3 -my-1">
           <h3 className="text-base">Social Media Info</h3>
           {hasSocialMedia ? (
-            <div className="flex gap-2 items-center flex-wrap">
+            <div className="flex gap-2 items-center flex-wrap justify-center">
               {socialMediaTag}
             </div>
           ) : (
@@ -77,9 +77,6 @@ const PrimaryUserCard = () => {
           />
           {interestDisplayBtn}
         </div>
-        {/* <div className="card-actions justify-end mt-1">
-          <button className="btn btn-primary">Some Btn</button>
-        </div> */}
       </div>
     </div>
   );

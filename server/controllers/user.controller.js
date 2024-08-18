@@ -179,14 +179,10 @@ const addSocialMediaInfo = asyncHandler(async (req, res) => {
     throw new Error('Please change your username(s) to update it');
   }
 
-  user.socialMediaUsernames.snapchat =
-    snapchat || user.socialMediaUsernames.snapchat;
-  user.socialMediaUsernames.instagram =
-    instagram || user.socialMediaUsernames.instagram;
+  user.socialMediaUsernames.snapchat = snapchat;
+  user.socialMediaUsernames.instagram = instagram;
 
   await user.save();
-
-  console.log(user);
 
   res.status(200).json(user);
 });
