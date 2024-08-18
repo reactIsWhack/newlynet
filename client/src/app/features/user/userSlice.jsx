@@ -201,6 +201,20 @@ export const resetPassword = createAsyncThunk(
   }
 );
 
+export const rejectServerInvite = createAsyncThunk(
+  'clubServer/rejectInvite',
+  async (serverId, thunkAPI) => {
+    try {
+      const response = await axios.patch(
+        `${baseUrl}/api/clubserver/rejectinvite/${serverId}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
@@ -414,6 +428,17 @@ const userSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.isLoading = false;
         toast.error(action.payload, { id: '/reset-err' });
+      })
+      .addCase(rejectServerInvite.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(rejectServerInvite.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.serverInvites = action.payload.serverInvites;
+      })
+      .addCase(rejectServerInvite.rejected, (state, action) => {
+        state.isLoading = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
       });
   },
 });

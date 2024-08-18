@@ -11,6 +11,7 @@ const {
   addServerAdmin,
   leaveClubServer,
   getCustomServer,
+  rejectServerInvite,
 } = require('../controllers/clubServer.controller');
 
 const router = Router();
@@ -25,5 +26,6 @@ router.patch('/newchannel/:serverId', routeProtector, createServerChannel);
 router.patch('/addadmin/:serverId/:userId', routeProtector, addServerAdmin);
 router.patch('/leaveserver/:serverId', routeProtector, leaveClubServer);
 router.get('/customserver/:serverId', routeProtector, getCustomServer);
+router.patch('/rejectinvite/:serverId', routeProtector, rejectServerInvite);
 
 module.exports = router;

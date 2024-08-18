@@ -308,6 +308,28 @@ const getCustomServer = asyncHandler(async (req, res) => {
   res.status(200).json(server);
 });
 
+const rejectServerInvite = asyncHandler(async (req, res) => {
+  const { serverId } = req.params;
+
+  const user = await User.findById(req.userId);
+
+  const updatedServerInvites = user.serverInvites.filter(
+    (serverInvite) => serverInvite.server.toString() !== serverId.toString()
+  );
+  user.serverInvites = updatedServerInvites;
+
+  await user
+    .save()
+    .then((item) =>
+      item.populate({
+        path: 'serverInvites',
+        populate: [{ path: 'server' }, { path: 'sender', populate: 'chats' }],
+      })
+    );
+
+  res.status(200).json(user);
+});
+
 module.exports = {
   getClubServer,
   joinClubServer,
@@ -319,4 +341,5 @@ module.exports = {
   addServerAdmin,
   leaveClubServer,
   getCustomServer,
+  rejectServerInvite,
 };

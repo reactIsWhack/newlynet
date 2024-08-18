@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  rejectServerInvite,
   removeServerInvite,
   selectUser,
 } from '../../app/features/user/userSlice';
@@ -77,6 +78,13 @@ const CustomServerCard = ({
     document.getElementById('my_modal_3').showModal();
   };
 
+  const rejectServer = async (e) => {
+    e.target.classList.add('disabled');
+    e.target.disabled = true;
+
+    dispatch(rejectServerInvite(_id));
+  };
+
   return (
     <div className="bg-base-100 text-white shadow-lg rounded-lg p-4 max-w-[340px] w-full mb-3 xl:max-w-[390px] flex flex-col">
       <div className="flex items-center mb-3 justify-between">
@@ -131,7 +139,10 @@ const CustomServerCard = ({
               Join
             </button>
             {isServerInvite && (
-              <button className="btn btn-outline btn-warning min-h-11 h-11">
+              <button
+                className="btn btn-outline btn-warning min-h-11 h-11"
+                onClick={rejectServer}
+              >
                 Reject
               </button>
             )}
