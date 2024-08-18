@@ -26,7 +26,7 @@ const ServerLinkItem = ({ chat, isActive }) => {
   );
 
   const handleClick = async (e) => {
-    if (e.target.id === chatId) return;
+    if (e.target.id === chatId || e.target.id !== chat._id) return;
     if (customServer.serverId) {
       await dispatch(setSelectedClubChat({ ...chat, isCustom: true }));
     } else {

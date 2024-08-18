@@ -29,9 +29,7 @@ const ClubChatSidebar = ({ chats, members, serverName, owner, admins }) => {
   const memberCard = members
     .filter(
       (m) =>
-        m._id !== userId &&
-        m._id !== owner?._id &&
-        !admins.some((admin) => admin._id === m._id)
+        m._id !== owner?._id && !admins.some((admin) => admin._id === m._id)
     )
     .map((user) => {
       return (
