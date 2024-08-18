@@ -2,12 +2,22 @@ import React, { useState } from 'react';
 import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import useRedirectUser from '../hooks/useRedirectUser';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectPopup, setRenderModal } from '../app/features/popup/popupSlice';
+import SiteFeatures from '../components/SiteFeatures';
 
 const About = () => {
   useRedirectUser();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {
+    renderModal: { render, name },
+  } = useSelector(selectPopup);
 
-  // Define the portions of the text
+  const openSiteFeatures = async () => {
+    await dispatch(setRenderModal({ render: true, name: 'site-features' }));
+    document.getElementById('my_modal_3').showModal();
+  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -54,14 +64,18 @@ const About = () => {
               </p>
             </div>
 
-            <div>
+            <div className="flex justify-center gap-4">
               <button className="btn btn-primary" onClick={() => navigate('/')}>
                 Get started
+              </button>
+              <button className="btn btn-neutral" onClick={openSiteFeatures}>
+                Site Features
               </button>
             </div>
           </div>
         </div>
       </div>
+      {render && name === 'site-features' && <SiteFeatures />}
     </div>
   );
 };
