@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   getClubChatMessages,
+  getCustomServer,
   resetClubChatMessages,
   resetCustomServer,
   selectClubChat,
@@ -29,16 +30,10 @@ const PersonalServer = () => {
   useListenNotifications();
   useListenNewChannel();
 
-  const {
-    customServer,
-    customClubServers,
-    dateQuery,
-    selectedClubChat,
-    messages,
-  } = useSelector(selectClubChat);
+  const { customServer, customClubServers, dateQuery, selectedClubChat } =
+    useSelector(selectClubChat);
   const { serverId, chatId } = useParams();
   const dispatch = useDispatch();
-  const [isLoading, setIsLoading] = useState(false);
   const { socket } = useSocket();
   const {
     renderModal: { name, render },
@@ -47,37 +42,12 @@ const PersonalServer = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (
-      (!customServer.serverId || !customServer.owner) &&
-      customClubServers.length
-    ) {
-      setIsLoading(true);
-      const server = customClubServers.find((item) => item._id === serverId);
-
-      if (!server) {
-        navigate('/clubserverinfo');
-        toast.error('No server found', { id: 'no-server' });
-      }
-
-      if (customClubServers.length) {
-        dispatch(
-          setCustomServer({
-            members: server.members,
-            chats: server.chats,
-            serverId: server._id,
-            serverName: server.serverName,
-            owner: server.owner,
-            admins: server.admins,
-          })
-        );
-        setIsLoading(false);
-      }
-    }
-
     if (chatId && serverId && customClubServers.length) {
       const server = customClubServers.find((item) => item._id === serverId);
-      const chat = server.chats.find((item) => item._id === chatId);
-      dispatch(setSelectedClubChat({ ...chat, isCustom: true }));
+      if (server) {
+        const chat = server.chats.find((item) => item._id === chatId);
+        dispatch(setSelectedClubChat({ ...chat, isCustom: true }));
+      }
     }
   }, [customClubServers]);
 
@@ -102,6 +72,8 @@ const PersonalServer = () => {
   }, [chatId, serverId]);
 
   useEffect(() => {
+    dispatch(getCustomServer(serverId));
+
     if (chatId && serverId && !dateQuery) {
       dispatch(getClubChatMessages(chatId));
     }
@@ -117,7 +89,6 @@ const PersonalServer = () => {
               members={customServer.members}
               chats={customServer.chats}
               serverName={customServer.serverName}
-              isLoading={isLoading}
               owner={customServer.owner}
               admins={customServer.admins}
             />

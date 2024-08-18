@@ -31,7 +31,7 @@ const initialState = {
   },
   invitePending: false,
   createChannelLoading: false,
-  promotionPending: false,
+  serverPending: false,
 };
 
 export const getClubServer = createAsyncThunk(
@@ -200,6 +200,20 @@ export const leaveClubServer = createAsyncThunk(
       } = thunkAPI.getState();
       const response = await axios.patch(
         `${baseURL}/api/clubserver/leaveserver/${customServer.serverId}`
+      );
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const getCustomServer = createAsyncThunk(
+  'clubServer/getServer',
+  async (serverId, thunkAPI) => {
+    try {
+      const response = await axios.get(
+        `${baseURL}/api/clubserver/customserver/${serverId}`
       );
       return response.data;
     } catch (error) {
@@ -458,6 +472,22 @@ const clubChatSlice = createSlice({
       })
       .addCase(leaveClubServer.rejected, (state, action) => {
         state.clubChatLoading = false;
+        toast.error(action.payload, { id: 'club-custom-err' });
+      })
+      .addCase(getCustomServer.pending, (state) => {
+        state.serverPending = true;
+      })
+      .addCase(getCustomServer.fulfilled, (state, action) => {
+        state.serverPending = false;
+        state.customServer.admins = action.payload.admins;
+        state.customServer.chats = action.payload.chats;
+        state.customServer.members = action.payload.members;
+        state.customServer.owner = action.payload.owner;
+        state.customServer.serverId = action.payload._id;
+        state.customServer.serverName = action.payload.serverName;
+      })
+      .addCase(getCustomServer.rejected, (state, action) => {
+        state.serverPending = false;
         toast.error(action.payload, { id: 'club-custom-err' });
       });
   },

@@ -9,17 +9,10 @@ import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
 import { setRenderModal } from '../app/features/popup/popupSlice';
 import { useSocket } from '../context/SocketContext';
 
-const ClubChatSidebar = ({
-  chats,
-  members,
-  serverName,
-  isLoading,
-  owner,
-  admins,
-}) => {
+const ClubChatSidebar = ({ chats, members, serverName, owner, admins }) => {
   const { userId } = useSelector(selectUser);
   const location = useLocation();
-  const { customServer } = useSelector(selectClubChat);
+  const { customServer, serverPending, messages } = useSelector(selectClubChat);
   const dispatch = useDispatch();
   const userIsOwner = userId === owner?._id;
   const isAdmin = admins.some((admin) => admin._id === userId);
@@ -68,7 +61,7 @@ const ClubChatSidebar = ({
 
   return (
     <div className="sidebar border-r border-slate-500 flex flex-col w-1/4 max-[550px]:border-none max-[550px]:w-full relative bg-base-200">
-      {isLoading ? (
+      {serverPending ? (
         <div className="flex justify-center my-4">
           <span className="loading loading-spinner loading-lg"></span>
         </div>
@@ -91,29 +84,37 @@ const ClubChatSidebar = ({
       )}
       <div className="divider m-0 mt-2"></div>
       <div className="mt-1 overflow-auto max-h-full flex-1">
-        {owner && (
-          <div>
-            <span className="ml-4 text-base">Owner</span>
-            <OnlineUserCard
-              key={owner._id}
-              {...owner}
-              userData={owner}
-              advancedPermission={userIsOwner || isAdmin || false}
-            />
+        {serverPending ? (
+          <div className="flex justify-center mt-3">
+            <span className="loading loading-dots loading-lg"></span>
           </div>
+        ) : (
+          <>
+            {owner && (
+              <div>
+                <span className="ml-4 text-base">Owner</span>
+                <OnlineUserCard
+                  key={owner._id}
+                  {...owner}
+                  userData={owner}
+                  advancedPermission={userIsOwner || isAdmin || false}
+                />
+              </div>
+            )}
+            {customServer.serverId && (
+              <div className="flex-1 mb-3">
+                <span className="ml-4 text-base">
+                  Admins {admins.length === 0 ? '(none)' : ''}
+                </span>
+                <div className="mt-2">{adminCard}</div>
+              </div>
+            )}
+            <div className="flex-1">
+              <span className="ml-4 text-base">Members</span>
+              <div className=" overflow-auto">{memberCard}</div>
+            </div>
+          </>
         )}
-        {customServer.serverId && (
-          <div className="flex-1 mb-3">
-            <span className="ml-4 text-base">
-              Admins {admins.length === 0 ? '(none)' : ''}
-            </span>
-            <div className="mt-2">{adminCard}</div>
-          </div>
-        )}
-        <div className="flex-1">
-          <span className="ml-4 text-base">Members</span>
-          <div className=" overflow-auto">{memberCard}</div>
-        </div>
       </div>
     </div>
   );

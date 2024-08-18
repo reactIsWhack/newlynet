@@ -11,6 +11,7 @@ import {
   promoteToAdmin,
   selectClubChat,
 } from '../../app/features/clubChat/clubChatSlice';
+import { selectUser } from '../../app/features/user/userSlice';
 
 const OnlineUserCard = ({
   profilePicture,
@@ -25,6 +26,7 @@ const OnlineUserCard = ({
   const { customServer } = useSelector(selectClubChat);
   const isOwner = customServer.owner?._id === _id;
   const isAdmin = customServer.admins?.some((admin) => admin?._id === _id);
+  const { userId } = useSelector(selectUser);
 
   const openDetails = async () => {
     await dispatch(setViewingUserData(userData));
@@ -67,12 +69,18 @@ const OnlineUserCard = ({
             <TiUserAdd size={20} cursor="pointer" />
           </button>
         )}
-        <button
-          className="btn btn-ghost btn-xs max-[550px]:pr-0"
-          onClick={openDetails}
-        >
-          Details
-        </button>
+        {userId !== _id ? (
+          <button
+            className="btn btn-ghost btn-xs max-[550px]:pr-0"
+            onClick={openDetails}
+          >
+            Details
+          </button>
+        ) : (
+          <span className="text-[13px] px-2 font-medium cursor-default">
+            You
+          </span>
+        )}
       </div>
     </div>
   );
