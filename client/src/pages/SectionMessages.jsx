@@ -52,7 +52,6 @@ const SectionMessages = () => {
       </div>
     );
   });
-  console.log(sectionId, selectedClubChat);
 
   useEffect(() => {
     if (initialMessage) {
@@ -66,8 +65,11 @@ const SectionMessages = () => {
           });
         }, 200);
     } else {
-      !paginating &&
+      if (
+        !paginating &&
         !chat &&
+        !unreadClubChats.some((clubChat) => clubChat.chat._id === sectionId)
+      ) {
         setTimeout(() => {
           lastMessageRef.current?.scrollIntoView({
             block: 'nearest',
@@ -76,6 +78,7 @@ const SectionMessages = () => {
             alignToTop: false,
           });
         }, 200);
+      }
     }
   }, [selectedClubChat, sectionId, initialMessage, messages]);
 

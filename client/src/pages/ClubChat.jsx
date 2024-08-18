@@ -28,9 +28,7 @@ const ClubChat = () => {
   const { school } = useSelector(selectUser);
 
   useEffect(() => {
-    console.log(chats);
     const chat = chats.find((chat) => chat._id === sectionId);
-    console.log(chat);
     dispatch(setSelectedClubChat(chat));
     if (chat) {
       socket?.emit(
