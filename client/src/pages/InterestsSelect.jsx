@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import interestOptions from '../../data';
+import { interestOptions } from '../../data.jsx';
 import InterestBtn from '../components/ui/InterestBtn';
 import '../styles/InterestBtn.css';
 import { useNavigate } from 'react-router-dom';

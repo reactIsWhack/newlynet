@@ -25,16 +25,16 @@ const About = () => {
       <div className="hero bg-base-200">
         <div className="hero-content text-center">
           <div className="max-w-xl ">
-            <h1 className="text-4xl font-bold">To fellow new students</h1>
+            <h1 className="text-xl font-bold">To fellow new students</h1>
 
             <div>
-              <br />
+              <p className="text-left my-2">Hey there! </p>
               <p className="text-left">
-                Hey there! If you&#8217;ve found your way to NewlyNet, chances
-                are you&#8217;re a new student—just like I was when I first
-                started. I&#8217;m Ryan, the founder of this site, and I know
-                firsthand how overwhelming it can be to step into a new school
-                where everything and everyone is unfamiliar.
+                If you&#8217;ve found your way to NewlyNet, chances are
+                you&#8217;re a new student—just like I once was. I&#8217;m Ryan,
+                the founder of this site, and I know firsthand how overwhelming
+                it can be to step into a new school where everything and
+                everyone is unfamiliar.
               </p>
               <br />
               <p className="text-left">
@@ -48,7 +48,8 @@ const About = () => {
                 where new students like you can connect with other new students
                 or existing students, whether through club servers, school
                 servers, or group chats. Here, you&#8217;ll find others who are
-                in the same boat, getting ready to start fresh at a new school.
+                in a similar situation as you, getting ready to start fresh at a
+                new school.
               </p>
               <br />
               <p className="text-left">

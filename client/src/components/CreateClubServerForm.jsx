@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Modal from './ui/Modal';
 import CloseModal from './ui/CloseModal';
-import interestOptions from '../../data';
+import { interestOptions } from '../../data.jsx';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createCustomClubServer,
