@@ -65,6 +65,10 @@ const Contact = ({
     const conversation = contactConversations.find((chat) =>
       chat.members.some((member) => member._id === _id)
     );
+    if (chatFilter === 'group') {
+      await dispatch(setChatFilter(''));
+      await dispatch(overideChats(contactConversations));
+    }
     await dispatch(resetMessages());
     await dispatch(resetDateQuery());
     await dispatch(setSelectedChat(conversation));
