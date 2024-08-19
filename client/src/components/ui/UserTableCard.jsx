@@ -38,7 +38,9 @@ const UserTableCard = ({
   const { onlineUsers } = useSocket();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const largeScreen = window.screen.width > 1500;
+  const largeScreen =
+    window.screen.width > 1500 ||
+    (window.screen.width > 700 && window.screen.width < 850);
 
   let interest = similarInterest ? similarInterest : interests[0];
 

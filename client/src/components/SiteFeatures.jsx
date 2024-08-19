@@ -36,7 +36,7 @@ const SiteFeatures = () => {
         </button>
         <button className="btn btn-secondary min-h-9 h-9" onClick={nextFeature}>
           {' '}
-          Next <span class="ml-2">→</span>
+          Next <span className="ml-2">→</span>
         </button>
       </div>
     </Modal>

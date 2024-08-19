@@ -13,7 +13,9 @@ const UserTable = ({ filter }) => {
   const { commonNewStudents, isLoading } = useSelector(selectUser);
   const dispatch = useDispatch();
   const [requestPending, setRequestPending] = useState(false);
-  const largeScreen = window.screen.width > 1500;
+  const largeScreen =
+    window.screen.width > 1500 ||
+    (window.screen.width > 700 && window.screen.width < 850);
 
   const userTableCard = commonNewStudents.map((student) => {
     return (

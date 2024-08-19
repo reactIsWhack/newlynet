@@ -75,7 +75,7 @@ const ClubServerInfo = () => {
             )}
           </div>
           {serverInvites.length > 0 ? (
-            <div className="grid grid-cols-3 gap-4 max-[550px]:grid-cols-1 2xl:grid-cols-4">
+            <div className="grid grid-cols-3 gap-4 max-[1100px]:grid-cols-2 max-[900px]:grid-cols-1 2xl:grid-cols-4">
               {serverInviteCard}
             </div>
           ) : (
@@ -84,7 +84,7 @@ const ClubServerInfo = () => {
           <div className="divider"></div>
           <div className="mt-4">
             <h4 className="text-lg font-medium">Suggested Servers For You</h4>
-            <div className="grid grid-cols-3 mt-4 gap-4 max-[550px]:grid-cols-1 2xl:grid-cols-4">
+            <div className="grid grid-cols-3 mt-4 gap-4 max-[1100px]:grid-cols-2 max-[900px]:grid-cols-1 2xl:grid-cols-4">
               {filteredSuggestions.length > 0 ? (
                 customServerCard
               ) : (

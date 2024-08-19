@@ -27,7 +27,7 @@ const ClubServerSidebar = ({ setRenderSidebar }) => {
   };
 
   return (
-    <div className="border-r border-slate-400 p-6">
+    <div className="border-r border-slate-400 p-6 max-w-[380px]">
       <div className="flex-col flex">
         <h3 className="text-center mb-4 font-semi-bold text-[17px]">
           Club Server of {school?.formattedName}

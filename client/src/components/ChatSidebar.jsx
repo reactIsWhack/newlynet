@@ -14,7 +14,7 @@ const ChatSidebar = () => {
 
   console.log(conversationsToRender);
   return (
-    <div className="sidebar border-r border-slate-500 p-4 flex flex-col w-1/4 py-5 max-[550px]:border-none max-[550px]:w-full relative">
+    <div className="sidebar border-r border-slate-500 p-4 flex flex-col w-1/4 max-[1080px]:w-1/3 py-5 max-[550px]:border-none max-[550px]:w-full relative">
       <SearchChat
         setConversationsToRender={setConversationsToRender}
         conversationsToRender={conversationsToRender}

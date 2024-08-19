@@ -58,7 +58,7 @@ const ClubChatSidebar = ({ chats, members, serverName, owner, admins }) => {
   };
 
   return (
-    <div className="sidebar border-r border-slate-500 flex flex-col w-1/4 max-[550px]:border-none max-[550px]:w-full relative bg-base-200">
+    <div className="sidebar border-r border-slate-500 flex flex-col w-1/4 max-[550px]:border-none max-[1050px]:w-1/3 max-[550px]:w-full relative bg-base-200">
       {serverPending ? (
         <div className="flex justify-center my-4">
           <span className="loading loading-spinner loading-lg"></span>

@@ -32,7 +32,7 @@ const Contacts = ({ filter }) => {
       <Navbar />
       <div className="p-8 max-[550px]:p-3">
         <h2 className="text-xl mb-6">Contacts</h2>
-        <div className="grid grid-cols-3 gap-x-8 gap-y-8 max-[550px]:grid-cols-1 2xl:grid-cols-4">
+        <div className="grid grid-cols-3 gap-x-8 gap-y-8 max-[1100px]:grid-cols-2 max-[550px]:grid-cols-1 2xl:grid-cols-4">
           {contactCard}
         </div>
       </div>

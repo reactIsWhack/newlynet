@@ -78,7 +78,7 @@ const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
   return (
     <>
       <Navbar />
-      <div className="flex gap-12 items-center justify-center py-20 max-[550px]:flex-col">
+      <div className="flex gap-12 items-center justify-center py-20 max-[550px]:flex-col max-[550px]:py-10">
         <div className="flex-1 max-w-[500px] bg-base-200 min-h-40 rounded-lg shadow-xl pt-6 pb-8 ">
           <h1 className="text-xl font-semibold text-center mb-3">
             Personal Information

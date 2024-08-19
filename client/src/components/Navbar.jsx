@@ -67,7 +67,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-50">
+    <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-50 max-[950px]:gap-4 max-[550px]:gap-0">
       {!mobile && (
         <div className="flex-1 max-[550px]:-ml-2">
           <Link to="/" className="btn btn-ghost text-xl text-white">
