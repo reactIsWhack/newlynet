@@ -74,7 +74,7 @@ const ClubChatSidebar = ({ chats, members, serverName, owner, admins }) => {
               {(userIsOwner || isAdmin) && <IoIosAdd size={24} />}
             </div>
           </div>
-          <ul className="text-base-content p-4 max-h-[370px] flex flex-col overflow-auto max-[550px]:max-h-[520px]">
+          <ul className="text-base-content p-4 max-h-[370px] flex flex-col overflow-auto max-[550px]:max-h-[320px]">
             {/* Sidebar content here */}
             {listItem}
           </ul>

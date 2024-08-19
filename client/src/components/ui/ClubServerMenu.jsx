@@ -16,7 +16,7 @@ const ClubServerMenu = () => {
 
   return (
     <>
-      <div className="join mb-3">
+      <div className="join">
         <input
           className="join-item btn"
           type="radio"

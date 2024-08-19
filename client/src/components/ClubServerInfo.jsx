@@ -78,7 +78,7 @@ const ClubServerInfo = () => {
         </div>
       ) : (
         <div className="w-full flex flex-col items-center overflow-auto max-h-[380px] max-[1100px]:max-h-[900px] 2xl:pb-4 2xl:max-h-[550px]">
-          <div className="flex  items-center mb-3 gap-3 mt-5">
+          <div className="flex items-center gap-3 mt-5 mb-4">
             <ClubServerMenu />
             <IoIosCreate size={23} cursor="pointer" onClick={handleClick} />
           </div>
