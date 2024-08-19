@@ -91,14 +91,21 @@ const getChats = asyncHandler(async (req, res) => {
     { path: 'messages', model: 'message' },
   ]);
 
-  const oneDayAgo = new Date();
-  oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+  const now = new Date();
 
   for (const chat of chats) {
-    if (new Date(chat.accomplishedDailyStreak.date) < oneDayAgo) {
-      chat.streak = 0;
-      chat.accomplishedDailyStreak = { accomplished: false, date: null };
-      await chat.save();
+    if (chat.accomplishedDailyStreak.date) {
+      // Create a date for the end of the next day after the streak was accomplished
+      const accomplishedDate = new Date(chat.accomplishedDailyStreak.date);
+      accomplishedDate.setDate(accomplishedDate.getDate() + 2);
+      accomplishedDate.setHours(0, 0, 0, -1); // Set to the end of the next day
+
+      // Check if the current date is past the end of the next day
+      if (now > accomplishedDate) {
+        chat.streak = 0;
+        chat.accomplishedDailyStreak = { accomplished: false, date: null };
+        await chat.save();
+      }
     }
   }
 

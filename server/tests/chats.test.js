@@ -22,7 +22,7 @@ beforeAll(async () => {
 
   const school = await getSchool('PrincetonHighSchool');
   await createTestUser(['art'], school); // create a test user and log them in
-  const { token, user } = await loginUser('test', 'test123');
+  const { token, user } = await loginUser('test@gmail.com', 'test123');
   jwt = token;
   userInfo = user;
   clientSocket = ioc(`http://localhost:${process.env.PORT}`, {
