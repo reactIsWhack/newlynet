@@ -52,7 +52,7 @@ const ClubChatStats = () => {
 
   return (
     <>
-      <div className="stats shadow h-28 w-full overflow-hidden flex max-w-[430px]">
+      <div className="stats shadow h-28 w-full overflow-hidden flex max-w-[430px] xl:max-w-[460px]">
         <div className="stat max-w-32 px-4 flex-1 xl:max-w-40">
           <div className="stat-title">Members</div>
           <div className="stat-value text-3xl">{members.length}</div>

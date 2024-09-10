@@ -86,7 +86,7 @@ const CustomServerCard = ({
   };
 
   return (
-    <div className="bg-base-100 text-white shadow-lg rounded-lg p-4 max-w-[340px] w-full mb-3 xl:max-w-[390px] flex flex-col">
+    <div className="bg-base-100 text-white shadow-lg rounded-2xl p-4 max-w-[340px] w-full mb-3 xl:max-w-[460px] flex flex-col">
       <div className="flex items-center mb-3 justify-between">
         <div className="text-lg font-bold">{serverName}</div>
         <div className="text-left flex items-center gap-2">
