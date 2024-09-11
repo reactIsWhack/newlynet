@@ -23,6 +23,7 @@ const Navbar = () => {
   const [isFocused, setIsFocused] = useState(false);
   const [windowMounted, setWindowMounted] = useState(false);
   const windowRef = useRef();
+  let delay;
 
   const handleLogout = () => {
     dispatch(resetUserState());
@@ -31,15 +32,28 @@ const Navbar = () => {
     dispatch(logoutUser());
   };
 
-  // Simulated fetch for search results based on query
   useEffect(() => {
-    if (searchQuery) {
-      // Simulate fetching results
-      const trimmedQuery = searchQuery.split(' ').join('');
-      dispatch(resetSearchResults());
-      setTimeout(() => dispatch(searchUsers(trimmedQuery)), 100);
-    }
+    delay = setTimeout(() => {
+      if (searchQuery) {
+        // Simulate fetching results
+        const trimmedQuery = searchQuery.split(' ').join('');
+        setTimeout(() => dispatch(searchUsers(trimmedQuery)), 1000);
+      }
+    }, 1000);
+
+    if (!searchQuery) dispatch(resetSearchResults());
+
+    return () => clearTimeout(delay);
   }, [searchQuery]);
+
+  const keyDown = (e) => {
+    if (e.key === 'Enter') {
+      clearTimeout(delay);
+      dispatch(resetSearchResults());
+      const trimmedQuery = searchQuery.split(' ').join('');
+      dispatch(searchUsers(trimmedQuery));
+    }
+  };
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -84,8 +98,11 @@ const Navbar = () => {
             placeholder="Search"
             className="input input-bordered bg-gray-800 text-gray-200 max-[550px]:-ml-4 search-input"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
             onFocus={handleFocus}
+            onKeyDown={keyDown}
             id="search-input"
             autoComplete="off"
           />
