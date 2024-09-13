@@ -59,7 +59,7 @@ const Messages = () => {
   return (
     <>
       {selectedConversation && (
-        <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20 pt-[4.5rem]">
+        <div className="flex-1 relative overflow-hidden h-full flex flex-col z-20">
           {selectedConversation && <ChatHeader />}
           <div
             className="message-container overflow-auto pt-4 px-8 flex-1 max-[550px]:px-4 w-full"

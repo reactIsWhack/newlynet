@@ -87,7 +87,7 @@ const Conversation = ({
         >
           {chatType === 'individual' ? (
             <div className="w-12 h-12 rounded-full object-cover">
-              <img src={receivingMember.profilePicture} alt="user avatar" />
+              <img src={receivingMember?.profilePicture} alt="user avatar" />
             </div>
           ) : !chatPic ? (
             <div className="w-12 h-12 rounded-full overflow-hidden ">
@@ -103,7 +103,7 @@ const Conversation = ({
             <p className="font-bold text-gray-200 capitalize">
               {chatType === 'group'
                 ? getChatName(chatName, members, userId)
-                : receivingMember.firstName + ' ' + receivingMember.lastName}
+                : receivingMember?.firstName + ' ' + receivingMember?.lastName}
             </p>
           </div>
         </div>

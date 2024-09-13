@@ -81,7 +81,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-50 max-[950px]:gap-4 max-[550px]:gap-0">
+    <div className="navbar bg-gray-800 shadow-lg sticky top-0 z-50 max-[910px]:gap-4 max-[550px]:gap-0">
       {!mobile && (
         <div className="flex-1 max-[550px]:-ml-2">
           <Link to="/" className="btn btn-ghost text-xl text-white">
@@ -96,7 +96,7 @@ const Navbar = () => {
           <input
             type="text"
             placeholder="Search"
-            className="input input-bordered bg-gray-800 text-gray-200 max-[550px]:-ml-4 search-input"
+            className="input input-bordered bg-gray-800 text-gray-200 max-[550px]:-ml-4 search-input max-[900px]:w-20"
             value={searchQuery}
             onChange={(e) => {
               setSearchQuery(e.target.value);

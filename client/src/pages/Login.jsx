@@ -104,7 +104,7 @@ const Login = ({ setFormData }) => {
             </fieldset>
           </form>
         </div>
-        <img src={landingImage} className="h-72 mr-9 max-[550px]:hidden" />
+        <img src={landingImage} className="h-72 mr-9 max-[800px]:hidden" />
       </div>
     </div>
   );

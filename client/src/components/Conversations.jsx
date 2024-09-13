@@ -32,6 +32,7 @@ const Conversations = ({ conversationsToRender }) => {
     navigate('/chats');
   };
 
+  console.log(conversations);
   return (
     <>
       <div className="mb-4 mt-2">

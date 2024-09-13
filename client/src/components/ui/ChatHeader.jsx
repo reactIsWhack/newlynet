@@ -86,14 +86,14 @@ const ChatHeader = () => {
   );
 
   return (
-    <div className="h-20 fixed top-16 bg-gray-900 w-3/4 shadow-xl flex items-center px-3 max-[550px]:w-full z-50">
+    <div className=" bg-gray-900 shadow-xl flex items-center px-3 max-[550px]:w-full z-50 justify-between py-3 w-full">
       <IoIosArrowBack
         size={30}
-        className="absolute fill-blue-500"
+        className=" fill-blue-500"
         cursor="pointer"
         onClick={handleClick}
       />
-      <div className="flex flex-col items-center mx-auto">
+      <div className="flex flex-col items-center">
         {selectedConversation.chatType === 'group' && !headerPic ? (
           <div className="flex items-center h-10">{profilePicturesHead}</div>
         ) : (
@@ -103,9 +103,11 @@ const ChatHeader = () => {
           To: {receiverName || 'Loading...'}
         </div>
       </div>
-      {!isInContacts && selectedConversation.chatType === 'individual' && (
-        <IoPersonAdd size={25} onClick={addAsContact} cursor="pointer" />
-      )}
+      <div>
+        {!isInContacts && selectedConversation.chatType === 'individual' && (
+          <IoPersonAdd size={25} onClick={addAsContact} cursor="pointer" />
+        )}
+      </div>
     </div>
   );
 };

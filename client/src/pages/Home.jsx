@@ -39,13 +39,13 @@ const Home = ({ filter, setFilter }) => {
           !mobile ? 'px-6' : 'overflow-x-hidden'
         } flex gap-12 items-start max-[550px]:pt-2 max-[1100px]:px-3 max-[550px]:px-0`}
       >
-        {!mobile && window.screen.width > 1100 && (
+        {!mobile && window.innerWidth > 1000 && (
           <div className="sticky primary-user-card">
             <PrimaryUserCard />
           </div>
         )}
         <HomeMainContent filter={filter} setFilter={setFilter} />
-        {!mobile && renderClubServerInfo && (
+        {!mobile && window.innerWidth > 1000 && renderClubServerInfo && (
           <div className="home-right w-1/3 -ml-4 sticky py-4">
             <h2 className="mb-3 text-lg text-center my-0">
               Main Club Server at {school?.formattedName}
