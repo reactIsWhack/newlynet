@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import InterestDisplayBtn from './InterestDisplayBtn';
 import { useDispatch, useSelector } from 'react-redux';
 import {
@@ -43,6 +43,7 @@ const UserTableCard = ({
     (window.screen.width > 700 && window.screen.width < 850);
 
   let interest = similarInterest ? similarInterest : interests[0];
+  const contactBtnRef = useRef(null);
 
   const isOnline = checkOnlineStatus(onlineUsers, _id);
   const mobile = useDetectMobile();
@@ -65,7 +66,7 @@ const UserTableCard = ({
   };
 
   const contactAdd = async (e) => {
-    e.target.classList.add('disabled');
+    if (contactBtnRef.current) contactBtnRef.current.disabled = true;
     await dispatch(addContact(_id));
   };
   const isInContacts = user.contacts.find((c) => c._id === _id);
@@ -124,7 +125,9 @@ const UserTableCard = ({
             Chat
           </button>
           {!isInContacts ? (
-            <IoPersonAdd size={20} cursor="pointer" onClick={contactAdd} />
+            <button ref={contactBtnRef}>
+              <IoPersonAdd size={20} cursor="pointer" onClick={contactAdd} />
+            </button>
           ) : (
             <FaCheck fill="green" size={18} />
           )}

@@ -20,11 +20,11 @@ const ChatBubble = ({ message, author, createdAt, media }) => {
     <div className={`chat ${myMessage ? 'chat-end' : 'chat-start'}`}>
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
-          <img alt="Profile" src={author.profilePicture} />
+          <img alt="Profile" src={author?.profilePicture} />
         </div>
       </div>
       <div className="chat-header capitalize">
-        {author.firstName + ' ' + author.lastName}
+        {author?.firstName + ' ' + author?.lastName}
       </div>
 
       <div className="max-w-96 max-[550px]:max-w-36 flex flex-col">
