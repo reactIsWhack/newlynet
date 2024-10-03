@@ -1,6 +1,7 @@
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  getSuggestedClubServers,
   leaveClubServer,
   resetClubChatMessages,
   resetServerId,
@@ -26,6 +27,7 @@ const ClubChatHeader = () => {
   const leaveserver = () => {
     dispatch(leaveClubServer()).then((res) => {
       if (!res.meta.rejectedWithValue) {
+        dispatch(getSuggestedClubServers());
         navigate('/clubserverinfo');
       }
     });
