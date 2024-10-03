@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   leaveClubServer,
   resetClubChatMessages,
+  resetServerId,
   selectClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import { IoIosArrowBack } from 'react-icons/io';
@@ -24,7 +25,9 @@ const ClubChatHeader = () => {
 
   const leaveserver = () => {
     dispatch(leaveClubServer()).then((res) => {
-      if (!res.meta.rejectedWithValue) navigate('/clubserverinfo');
+      if (!res.meta.rejectedWithValue) {
+        navigate('/clubserverinfo');
+      }
     });
   };
 

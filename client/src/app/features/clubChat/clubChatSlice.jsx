@@ -166,7 +166,6 @@ export const createServerChannel = createAsyncThunk(
         `${baseURL}/api/clubserver/newchannel/${customServer.serverId}`,
         { channelName }
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -286,6 +285,9 @@ const clubChatSlice = createSlice({
         state.customServer.members = action.payload.members;
         state.customServer.admins = action.payload.admins;
       }
+    },
+    resetServerId(state) {
+      state.serverId = '';
     },
   },
   extraReducers: (builder) => {
@@ -515,6 +517,7 @@ export const {
   removeSuggestedServer,
   setServerChannels,
   setServerAdmins,
+  resetServerId,
 } = clubChatSlice.actions;
 
 export const selectClubChat = (state) => state.clubChat;

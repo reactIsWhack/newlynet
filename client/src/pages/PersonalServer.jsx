@@ -4,10 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {
   getClubChatMessages,
   getCustomServer,
-  resetClubChatMessages,
-  resetCustomServer,
   selectClubChat,
-  setCustomServer,
   setSelectedClubChat,
 } from '../app/features/clubChat/clubChatSlice';
 import ClubChatSidebar from '../components/ClubChatSidebar';
@@ -84,7 +81,7 @@ const PersonalServer = () => {
       <div className="h-screen flex flex-col overflow-hidden">
         <Navbar />
         <div className="flex flex-1 overflow-hidden">
-          {(!mobile || (mobile && !chatId)) && (
+          {(!mobile || (mobile && !chatId)) && customServer.serverId && (
             <ClubChatSidebar
               members={customServer.members}
               chats={customServer.chats}

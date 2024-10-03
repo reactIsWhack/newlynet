@@ -10,6 +10,7 @@ import {
   joinClubServer,
   removeSuggestedServer,
   resetClubChatMessages,
+  selectClubChat,
   setCustomServer,
 } from '../../app/features/clubChat/clubChatSlice';
 import { useNavigate } from 'react-router-dom';
@@ -61,11 +62,12 @@ const CustomServerCard = ({
   };
 
   const joinServer = async () => {
-    dispatch(joinClubServer(_id)).then((res) => {
+    dispatch(joinClubServer(_id)).then(async (res) => {
       if (!res.meta.rejectedWithValue) {
         if (isServerInvite) {
           dispatch(removeServerInvite(_id));
         }
+
         dispatch(removeSuggestedServer(_id));
         navigate(`/personalserver/${_id}`);
       }
