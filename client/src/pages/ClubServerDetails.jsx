@@ -40,7 +40,7 @@ const ClubServerInfo = () => {
     serverInviteCard = serverInvites.map((serverInvite) => {
       return (
         <CustomServerCard
-          key={serverInvite.server._id}
+          key={serverInvite.server?._id}
           {...serverInvite.server}
           sender={serverInvite.sender}
         />

@@ -424,7 +424,7 @@ const clubChatSlice = createSlice({
       })
       .addCase(sendServerInvite.fulfilled, (state, action) => {
         state.invitePending = false;
-        toast.success('Server invite sent!');
+        toast.success('Server invite sent!', { id: 'invite-sent' });
       })
       .addCase(sendServerInvite.rejected, (state, action) => {
         state.invitePending = false;
