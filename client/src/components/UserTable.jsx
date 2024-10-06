@@ -12,7 +12,6 @@ import useDetectMobile from '../hooks/useDetectMobile';
 const UserTable = ({ filter }) => {
   const { commonNewStudents, isLoading } = useSelector(selectUser);
   const dispatch = useDispatch();
-  const [requestPending, setRequestPending] = useState(false);
   const largeScreen =
     window.screen.width > 1500 ||
     (window.screen.width > 700 && window.screen.width < 850);
@@ -33,24 +32,19 @@ const UserTable = ({ filter }) => {
     const bottom =
       Math.ceil(window.innerHeight + window.scrollY) >=
       document.documentElement.scrollHeight;
-    if (bottom) {
+    if (bottom && commonNewStudents.length < 100) {
       window.removeEventListener('scroll', handleScroll);
-      await setRequestPending(true);
       const cursor = commonNewStudents[commonNewStudents.length - 1]._id;
       if (!cursor) return;
-      await dispatch(
+      dispatch(
         getCommonNewStudents({
           filter,
           cursor,
         })
       );
-      setRequestPending(false);
     }
   };
   useEffect(() => {
-    if (requestPending) {
-      return window.removeEventListener('scroll', handleScroll);
-    }
     window.addEventListener('scroll', handleScroll);
     return () => {
       window.removeEventListener('scroll', handleScroll);
