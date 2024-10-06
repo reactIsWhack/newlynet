@@ -5,25 +5,37 @@ const { loginUser, createTestUser } = require('./userHelper');
 const request = require('supertest');
 const app = require('../index');
 const getSchool = require('../services/schoolService');
+const ioc = require('socket.io-client');
 
 let token;
 let userInfo;
 let fakeUsers;
 let userWithCommonInterests;
 let school;
+let contactSocket;
+
+const getSocialMediaUsernames = (socket, event) => {
+  return new Promise((resolve, reject) => {
+    socket.on(event, (userId, snapchat, instagram) => {
+      resolve({ userId, snapchat, instagram });
+    });
+  });
+};
 
 beforeAll(async () => {
   await initializeMongoDB();
   fakeUsers = await generateFakeUsers();
   userWithCommonInterests = fakeUsers[1];
-  console.log(userWithCommonInterests, 'common interests user');
 
   school = await getSchool('PrincetonHighSchool');
   await createTestUser(
     [...userWithCommonInterests.interests.slice(0, 2), 'Tennis'],
     school
   );
-  const loginInfo = await loginUser('test', 'test123');
+  contactSocket = ioc(`http://localhost:${process.env.PORT}`, {
+    query: { userId: fakeUsers[0]._id },
+  });
+  const loginInfo = await loginUser('test@gmail.com', 'test123');
   token = loginInfo.token;
   userInfo = loginInfo.user;
 }, 9000);
@@ -69,8 +81,6 @@ describe('GET /users', () => {
       .set('Cookie', [...token])
       .expect(200)
       .expect('Content-Type', /application\/json/);
-
-    console.log(response.body);
   });
 
   it('Should get users in the same school based off common interests', async () => {
@@ -97,7 +107,6 @@ describe('GET /users', () => {
 
     expect(response.body.firstName).toBe('test');
     expect(response.body.lastName).toBe('jest');
-    expect(response.body.username).toBe('test');
     expect(response.body.grade).toBe(9);
     expect(response.body.contacts.length).toBe(1);
     expect(response.body.contacts[0]._id.toString()).toBe(
@@ -120,7 +129,6 @@ describe('UPDATE /users', () => {
       .expect(200)
       .expect('Content-Type', /application\/json/);
 
-    console.log(response.body);
     expect(response.body.grade).toBe(10);
     expect(response.body.interests).toEqual(
       expect.arrayContaining(['Computer Science', 'Golf', 'Tennis'])
@@ -129,6 +137,11 @@ describe('UPDATE /users', () => {
   });
 
   it('Should add social media info to the test user', async () => {
+    const usernamePromise = getSocialMediaUsernames(
+      contactSocket,
+      'socialMediaUsername'
+    );
+
     const response = await request(app)
       .patch('/api/users/addsocialmedia')
       .set('Cookie', [...token])
@@ -138,6 +151,10 @@ describe('UPDATE /users', () => {
 
     expect(response.body.socialMediaUsernames.snapchat).toBe('rnaini');
     expect(response.body.socialMediaUsernames.instagram).toBe('codernaini');
+    const usernames = await usernamePromise;
+    expect(usernames.userId).toBe(userInfo._id);
+    expect(usernames.snapchat).toBe('rnaini');
+    expect(usernames.instagram).toBe('codernaini');
   });
 });
 

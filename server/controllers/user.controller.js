@@ -1,5 +1,6 @@
 const asyncHandler = require('express-async-handler');
 const User = require('../models/user.model');
+const { getSocketId, io } = require('../socket/socket');
 const cloudinary = require('cloudinary').v2;
 
 const addContact = asyncHandler(async (req, res) => {
@@ -183,6 +184,19 @@ const addSocialMediaInfo = asyncHandler(async (req, res) => {
   user.socialMediaUsernames.instagram = instagram;
 
   await user.save();
+
+  for (let i = 0; i < user.contacts.length; i++) {
+    const contact = user.contacts[i];
+    const socketId = getSocketId(String(contact));
+    if (socketId) {
+      io.to(socketId).emit(
+        'socialMediaUsername',
+        String(user._id),
+        user.socialMediaUsernames.snapchat,
+        user.socialMediaUsernames.instagram
+      );
+    }
+  }
 
   res.status(200).json(user);
 });
