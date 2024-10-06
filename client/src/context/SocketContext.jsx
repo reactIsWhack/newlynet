@@ -6,6 +6,7 @@ import {
   setServerInvites,
   setUnreadChats,
   setUnreadClubChatMessages,
+  updateContactSocialMedia,
 } from '../app/features/user/userSlice';
 import { io } from 'socket.io-client';
 import {
@@ -66,6 +67,10 @@ export const SocketContextProvider = ({ children }) => {
           );
         }
       });
+
+      socketVal.on('socialMediaUsername', (userId, snapchat, instagram) =>
+        dispatch(updateContactSocialMedia({ userId, snapchat, instagram }))
+      );
 
       socketVal.on('newChat', (chat, updatedNotifications) => {
         if (

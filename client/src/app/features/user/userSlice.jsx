@@ -261,6 +261,15 @@ const userSlice = createSlice({
     resetSearchResults(state, action) {
       state.searchResults = [];
     },
+    updateContactSocialMedia(state, action) {
+      const user = state.contacts.find(
+        (contact) => contact._id == action.payload.userId
+      );
+      if (user) {
+        user.socialMediaUsernames.snapchat = action.payload.snapchat;
+        user.socialMediaUsernames.instagram = action.payload.instagram;
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -457,6 +466,7 @@ export const {
   setContactInvites,
   resetSearchResults,
   removeServerInvite,
+  updateContactSocialMedia,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;
