@@ -29,7 +29,13 @@ const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
   }, [school]);
 
   const interestDisplayBtn = formData.interests.map((interest, index) => {
-    return <InterestDisplayBtn interest={interest} key={index} />;
+    return (
+      <InterestDisplayBtn
+        interest={interest}
+        key={index}
+        preventDefault={true}
+      />
+    );
   });
 
   const handleClick = async () => {

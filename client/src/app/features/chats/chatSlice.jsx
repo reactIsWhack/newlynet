@@ -194,6 +194,7 @@ const chatsSlice = createSlice({
       .addCase(sendMessage.fulfilled, (state, action) => {
         state.createMsgLoading = false;
         const audio = new Audio(sendMessageSound);
+        audio.volume = 0.2;
         audio.play();
         state.messages = [...state.messages, action.payload];
         state.selectedConversation.messages.push(action.payload);
