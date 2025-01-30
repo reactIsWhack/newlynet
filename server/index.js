@@ -23,7 +23,16 @@ app.get('/', (req, res) => {
 });
 
 app.use(express.json());
-app.use(cors({ origin: [process.env.CLIENT_URL], credentials: true }));
+app.use(
+  cors({
+    origin: [
+      process.env.CLIENT_URL,
+      'https://newlynet.onrender.com',
+      'http://localhost:5173',
+    ],
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 
 app.use('/api/auth', authRouter, userErrorHandler);

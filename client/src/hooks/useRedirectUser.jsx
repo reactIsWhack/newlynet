@@ -13,9 +13,8 @@ const useRedirectUser = (blockInterstsPage) => {
   const dispatch = useDispatch();
 
   const getLoggedInStatus = async () => {
-    const response = await axios.get(
-      `http://localhost:4000/api/auth/loginstatus`
-    );
+    const response = await axios.get(`${baseUrl}/api/auth/loginstatus`);
+    console.log(response.headers['set-cookie']);
 
     dispatch(setIsLoggedIn(response.data));
 

@@ -47,6 +47,8 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post(`${baseUrl}/api/auth/login`, formData);
       if (response.status === 200) navigate('/');
+      console.log(`Login Data:`);
+      console.log(response.data);
       toast.success('Logged in successfully!');
       return response.data;
     } catch (error) {

@@ -31,31 +31,18 @@ const About = () => {
               <p className="text-left my-2">Hey there! </p>
               <p className="text-left">
                 If you&#8217;ve found your way to NewlyNet, chances are
-                you&#8217;re a new student—just like I once was. I&#8217;m Ryan,
-                the founder of this site, and I know firsthand how overwhelming
-                it can be to step into a new school where everything and
-                everyone is unfamiliar.
+                you&#8217;re a new student—just like I once was.
               </p>
               <br />
               <p className="text-left">
-                Before creating NewlyNet, I was the new kid at Princeton High
-                School. The thought of making friends and finding my place felt
-                daunting, and I worried high school would be a tough ride.
-              </p>
-              <br />
-              <p className="text-left">
-                That&#8217;s exactly why I started NewlyNet. It&#8217;s a place
-                where new students like you can connect with other new students
-                or existing students, whether through club servers, school
-                servers, or group chats. Here, you&#8217;ll find others who are
-                in a similar situation as you, getting ready to start fresh at a
-                new school.
+                NewlyNet is a place where students can find others just like
+                them at their school through club servers, school servers, or
+                group chats.
               </p>
               <br />
               <p className="text-left">
                 I hope that after using NewlyNet, you&#8217;ll feel more at ease
-                and excited about your high school journey. Remember, school is
-                meant to be a place where you thrive, not just survive.
+                and excited about your high school journey!
               </p>
               <br />
               <p className="text-left">
