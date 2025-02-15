@@ -76,9 +76,10 @@ const registerUser = asyncHandler(async (req, res) => {
 
   if (user) {
     res.cookie('token', token, {
+      path: '/',
       secure: true,
       httpOnly: true,
-      sameSite: 'strict',
+      sameSite: 'none',
       expires: new Date(new Date().getTime() + 168 * 60 * 60 * 1000), // 7days
     });
     res.status(201).json({
@@ -119,9 +120,10 @@ const loginUser = asyncHandler(async (req, res) => {
 
   const token = generateToken(user._id);
   res.cookie('token', token, {
+    path: '/',
     secure: true,
     httpOnly: true,
-    sameSite: 'strict',
+    sameSite: 'none',
     expires: new Date(new Date().getTime() + 168 * 60 * 60 * 1000), // 7days
   });
 
@@ -142,6 +144,10 @@ const loginUser = asyncHandler(async (req, res) => {
 const logoutUser = asyncHandler(async (req, res) => {
   res.cookie('token', '', {
     expires: new Date(0),
+    sameSite: 'none',
+    httpOnly: true,
+    secure: true,
+    path: '/',
   });
   res.status(200).json({ message: 'Logged out successfully!' });
 });

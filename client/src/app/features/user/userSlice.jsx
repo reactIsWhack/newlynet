@@ -47,8 +47,6 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await axios.post(`${baseUrl}/api/auth/login`, formData);
       if (response.status === 200) navigate('/');
-      console.log(`Login Data:`);
-      console.log(response.data);
       toast.success('Logged in successfully!');
       return response.data;
     } catch (error) {
@@ -74,6 +72,8 @@ export const logoutUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(`${baseUrl}/api/auth/logout`);
+      console.log('logout data: ');
+      console.log(response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -120,7 +120,6 @@ export const addSocialMediaInfo = createAsyncThunk(
         `${baseUrl}/api/users/addsocialmedia`,
         data
       );
-      console.log(response, 'social media data');
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -136,7 +135,6 @@ export const updateProfile = createAsyncThunk(
         `${baseUrl}/api/users/updateprofile`,
         data
       );
-      console.log(response);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -253,7 +251,6 @@ const userSlice = createSlice({
         (contact) => contact._id === action.payload._id
       );
       contact.serverInvites = action.payload.invites;
-      console.log(contact);
     },
     removeServerInvite(state, action) {
       state.serverInvites = state.serverInvites.filter(
@@ -335,7 +332,6 @@ const userSlice = createSlice({
         state.socialMediaInfo = action.payload.socialMediaUsernames;
         state.username = action.payload.username;
         state.unreadClubChats = action.payload.unreadClubChatMessages;
-        console.log(action.payload.serverInvites);
         state.serverInvites = action.payload.serverInvites;
       })
       .addCase(getUserProfile.rejected, (state, action) => {
