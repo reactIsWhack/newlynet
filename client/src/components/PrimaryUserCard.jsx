@@ -5,6 +5,7 @@ import InterestDisplayBtn from './ui/InterestDisplayBtn';
 import editIcon from '../assets/editIcon.svg';
 import Badge from './ui/Badge';
 import { useNavigate } from 'react-router-dom';
+import { BsPersonCircle } from 'react-icons/bs';
 
 const PrimaryUserCard = () => {
   const {
@@ -47,10 +48,17 @@ const PrimaryUserCard = () => {
         />
       </figure>
       <div className="card-body items-center py-6 px-8 relative">
-        <img
-          src={profilePicture}
-          className="h-20 w-20 -mt-14 object-cover rounded-full border-2 border-gray-300"
-        />
+        {profilePicture ? (
+          <img
+            src={profilePicture}
+            className="h-20 w-20 -mt-14 object-cover rounded-full border-2 border-gray-300"
+          />
+        ) : (
+          <BsPersonCircle
+            className="h-20 w-20 -mt-14 object-cover rounded-full"
+            fill="rgb(209 213 219)"
+          />
+        )}
         <h2 className="card-title capitalize">{firstName + ' ' + lastName}</h2>
         {school && school.formattedName && (
           <p className="text-center">{`${school.formattedName} - ${grade}`}</p>

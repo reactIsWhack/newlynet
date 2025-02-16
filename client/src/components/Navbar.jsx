@@ -14,6 +14,7 @@ import { resetChatState } from '../app/features/chats/chatSlice';
 import { resetClubChatState } from '../app/features/clubChat/clubChatSlice';
 import SearchWindow from './ui/SearchWindow';
 import toast from 'react-hot-toast';
+import { BsPersonCircle } from 'react-icons/bs';
 
 const Navbar = () => {
   const { profilePicture } = useSelector(selectUser);
@@ -25,7 +26,7 @@ const Navbar = () => {
   const windowRef = useRef();
   let delay;
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     dispatch(resetUserState());
     dispatch(resetChatState());
     dispatch(resetClubChatState());
@@ -123,7 +124,14 @@ const Navbar = () => {
             className="btn btn-ghost btn-circle avatar"
           >
             <div className="w-10 rounded-full">
-              <img alt="Tailwind CSS Navbar component" src={profilePicture} />
+              {profilePicture ? (
+                <img alt="Tailwind CSS Navbar component" src={profilePicture} />
+              ) : (
+                <BsPersonCircle
+                  fill="rgb(209 213 219)"
+                  className="w-full h-full"
+                />
+              )}
             </div>
           </div>
           <ul
