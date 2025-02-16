@@ -18,11 +18,14 @@ import toast from 'react-hot-toast';
 import useListenNotifications from '../hooks/useListenNotifications';
 import { selectPopup } from '../app/features/popup/popupSlice';
 import useUpdateStreak from '../hooks/useUpdateStreak';
+import useGetData from '../hooks/useGetData';
 
 const Chats = ({ filter }) => {
+  useGetData();
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
+  useGetData();
 
   const dispatch = useDispatch();
   const { conversations, selectedConversation, messages, chatFilter } =

@@ -16,8 +16,10 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import useDetectMobile from '../hooks/useDetectMobile';
 import { selectUser } from '../app/features/user/userSlice';
 import { resetDateQuery } from '../app/features/chats/chatSlice';
+import useGetData from '../hooks/useGetData';
 
 const ClubChat = () => {
+  useGetData();
   useRedirectUser();
   const { socket } = useSocket();
   const { members, serverId, selectedClubChat, chats, dateQuery } =

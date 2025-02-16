@@ -14,11 +14,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import SocialMediaForm from '../components/ui/SocialMediaForm';
 import useListenNotifications from '../hooks/useListenNotifications';
 import useUpdateStreak from '../hooks/useUpdateStreak';
+import useGetData from '../hooks/useGetData';
 
 const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
+  useGetData();
+
   const { grade, school, interests, updateLoading } = useSelector(selectUser);
   const [schoolQuery, setSchoolQuery] = useState('');
   const navigate = useNavigate();

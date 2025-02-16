@@ -10,7 +10,6 @@ const useUpdateClubServer = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(school);
     socket?.on('onlineClubUsers', (users, userData) => {
       const onlineUsers = users.filter(
         (user) => user.userData.school.schoolId === school?.schoolId

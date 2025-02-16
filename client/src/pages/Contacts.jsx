@@ -7,8 +7,10 @@ import useRedirectUser from '../hooks/useRedirectUser';
 import useListenMessages from '../hooks/useListenMessages';
 import useListenNotifications from '../hooks/useListenNotifications';
 import useUpdateStreak from '../hooks/useUpdateStreak';
+import useGetData from '../hooks/useGetData';
 
 const Contacts = ({ filter }) => {
+  useGetData();
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();

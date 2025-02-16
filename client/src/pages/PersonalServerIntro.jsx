@@ -1,8 +1,10 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectClubChat } from '../app/features/clubChat/clubChatSlice';
+import useGetData from '../hooks/useGetData';
 
 const PersonalServerIntro = () => {
+  useGetData();
   const { customServer } = useSelector(selectClubChat);
 
   return (

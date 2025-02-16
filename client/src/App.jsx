@@ -7,17 +7,12 @@ import axios from 'axios';
 import InterestsSelect from './pages/InterestsSelect';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  getCommonNewStudents,
-  getUserProfile,
-  selectUser,
-} from './app/features/user/userSlice';
+import { useSelector } from 'react-redux';
+import { selectUser } from './app/features/user/userSlice';
 import Chats from './pages/Chats';
-import { useSocket } from './context/SocketContext';
 import NoChatSelected from './components/ui/NoChatSelected';
 import Messages from './components/Messages';
-import { getConversations, selectChats } from './app/features/chats/chatSlice';
+import { selectChats } from './app/features/chats/chatSlice';
 import Contacts from './pages/Contacts';
 import { selectPopup } from './app/features/popup/popupSlice';
 import UserDetails from './components/UserDetails';
@@ -25,11 +20,6 @@ import Settings from './pages/Settings';
 import LoadingScreen from './components/LoadingScreen';
 import ClubChat from './pages/ClubChat';
 import SectionMessages from './pages/SectionMessages';
-import {
-  getClubServer,
-  getCustomClubServers,
-  getSuggestedClubServers,
-} from './app/features/clubChat/clubChatSlice';
 import useUpdateClubServer from './hooks/useUpdateClubServer';
 import ClubChatGuide from './pages/ClubChatGuide';
 import PersonalServer from './pages/PersonalServer';
@@ -42,6 +32,7 @@ axios.defaults.withCredentials = true;
 
 function App() {
   useUpdateClubServer();
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -52,9 +43,9 @@ function App() {
     interests: [],
   });
   const [schoolQuery, setSchoolQuery] = useState('');
-  const { isLoggedIn, grade, interests, school } = useSelector(selectUser);
-  const { selectedConversation, chatFilter } = useSelector(selectChats);
-  const dispatch = useDispatch();
+  const { isLoggedIn, grade, interests, school, renderLoadingScreen } =
+    useSelector(selectUser);
+  const { selectedConversation } = useSelector(selectChats);
   const [filter, setFilter] = useState('grade');
   const {
     renderModal: { render, name },
@@ -65,30 +56,6 @@ function App() {
     interests: [],
     school: {},
   });
-  const [renderLoadingScreen, setRenderLoadingScreen] = useState(false);
-
-  const getData = async () => {
-    if (isLoggedIn) {
-      setRenderLoadingScreen(true);
-      await dispatch(getUserProfile()).then(() =>
-        setRenderLoadingScreen(false)
-      );
-      await Promise.all([
-        dispatch(getCommonNewStudents({ filter: 'grade', cursor: '' })),
-
-        dispatch(getConversations(chatFilter)),
-        dispatch(getClubServer()),
-        dispatch(getCustomClubServers()),
-        dispatch(getSuggestedClubServers()),
-      ]);
-    }
-  };
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      getData();
-    }
-  }, [isLoggedIn]);
 
   useEffect(() => {
     grade &&

@@ -15,11 +15,13 @@ import { selectPopup, setRenderModal } from '../app/features/popup/popupSlice';
 import CreateClubServerForm from '../components/CreateClubServerForm';
 import CustomServerCard from '../components/ui/CustomServerCard';
 import ClubServerInfo from '../components/ClubServerInfo';
+import useGetData from '../hooks/useGetData';
 
 const Home = ({ filter, setFilter }) => {
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
+  useGetData();
 
   const mobile = useDetectMobile();
   const { school } = useSelector(selectUser);

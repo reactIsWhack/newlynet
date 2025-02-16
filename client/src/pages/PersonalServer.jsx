@@ -20,8 +20,10 @@ import useListenNewChannel from '../hooks/useListenNewChannel';
 import useDetectMobile from '../hooks/useDetectMobile';
 import { selectUser } from '../app/features/user/userSlice';
 import toast from 'react-hot-toast';
+import useGetData from '../hooks/useGetData';
 
 const PersonalServer = () => {
+  useGetData();
   useRedirectUser();
   useListenMessages();
   useListenNotifications();
