@@ -22,6 +22,7 @@ import {
 } from '../app/features/clubChat/clubChatSlice';
 
 const SocketContext = createContext();
+const url = import.meta.env.VITE_SERVER_URL;
 
 export const useSocket = () => useContext(SocketContext);
 
@@ -35,7 +36,7 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (isLoggedIn) {
-      const socketVal = io('http://localhost:4000', {
+      const socketVal = io(url, {
         query: {
           userId,
         },
@@ -52,7 +53,6 @@ export const SocketContextProvider = ({ children }) => {
       });
 
       socketVal.on('serverInvite', (invites) => {
-        console.log(invites);
         dispatch(setServerInvites(invites));
         toast('New server invite');
       });
