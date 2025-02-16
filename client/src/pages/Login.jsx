@@ -7,9 +7,8 @@ import useRedirectUser from '../hooks/useRedirectUser';
 
 const Login = ({ setFormData }) => {
   useRedirectUser();
-
   const dispatch = useDispatch();
-  const { isLoading } = useSelector(selectUser);
+  const { isLoading, isLoggedIn } = useSelector(selectUser);
   const navigate = useNavigate();
   const [data, setData] = useState({ email: '', password: '' });
 

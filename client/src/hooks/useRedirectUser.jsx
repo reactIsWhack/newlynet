@@ -14,9 +14,6 @@ const useRedirectUser = (blockInterstsPage) => {
 
   const getLoggedInStatus = async () => {
     const response = await axios.get(`${baseUrl}/api/auth/loginstatus`);
-    console.log(response.headers['set-cookie']);
-
-    dispatch(setIsLoggedIn(response.data));
 
     if (
       !response.data &&
@@ -26,8 +23,14 @@ const useRedirectUser = (blockInterstsPage) => {
       navigate('/login');
     }
 
-    if ((pathname === '/login' || pathname === '/signup') && response.data)
+    if (
+      (pathname === '/login' || pathname === '/signup') &&
+      response.data &&
+      isLoggedIn
+    ) {
       navigate('/');
+    }
+    dispatch(setIsLoggedIn(response.data));
   };
 
   useEffect(() => {
