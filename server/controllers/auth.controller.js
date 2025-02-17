@@ -81,6 +81,7 @@ const registerUser = asyncHandler(async (req, res) => {
       httpOnly: true,
       sameSite: 'none',
       expires: new Date(new Date().getTime() + 168 * 60 * 60 * 1000), // 7days
+      domain: '.rncoding.com',
     });
     res.status(201).json({
       _id: user._id,
@@ -125,6 +126,7 @@ const loginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     sameSite: 'none',
     expires: new Date(new Date().getTime() + 168 * 60 * 60 * 1000), // 7days
+    domain: '.rncoding.com',
   });
 
   res.status(200).json({
@@ -148,6 +150,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: true,
     path: '/',
+    domain: '.rncoding.com',
   });
   res.status(200).json({ message: 'Logged out successfully!' });
 });

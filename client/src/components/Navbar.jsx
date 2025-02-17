@@ -86,7 +86,7 @@ const Navbar = () => {
       {!mobile && (
         <div className="flex-1 max-[550px]:-ml-2">
           <Link to="/" className="btn btn-ghost text-xl text-white">
-            {mobile ? 'N' : 'NewlyNet'}
+            {mobile ? 'FD' : 'FirstDay'}
           </Link>
         </div>
       )}
