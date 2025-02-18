@@ -21,7 +21,6 @@ import useUpdateStreak from '../hooks/useUpdateStreak';
 import useGetData from '../hooks/useGetData';
 
 const Chats = ({ filter }) => {
-  useGetData();
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();

@@ -16,7 +16,6 @@ import CreateClubServerForm from '../components/CreateClubServerForm';
 import useGetData from '../hooks/useGetData';
 
 const ClubServerInfo = () => {
-  useGetData();
   useRedirectUser();
   useListenMessages();
   useListenNotifications();

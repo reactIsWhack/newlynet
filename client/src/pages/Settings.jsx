@@ -20,7 +20,6 @@ const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
-  useGetData();
 
   const { grade, school, interests, updateLoading } = useSelector(selectUser);
   const [schoolQuery, setSchoolQuery] = useState('');

@@ -14,6 +14,7 @@ const useRedirectUser = (blockInterstsPage) => {
 
   const getLoggedInStatus = async () => {
     const response = await axios.get(`${baseUrl}/api/auth/loginstatus`);
+    console.log(`logged in: ${response.data}`);
 
     if (
       !response.data &&
@@ -35,7 +36,7 @@ const useRedirectUser = (blockInterstsPage) => {
 
   useEffect(() => {
     getLoggedInStatus();
-  }, [isLoggedIn, pathname]);
+  }, [isLoggedIn]);
 };
 
 export default useRedirectUser;

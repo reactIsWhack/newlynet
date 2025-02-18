@@ -20,7 +20,6 @@ import useCheckVisibility from '../hooks/useCheckVisibility';
 import useGetData from '../hooks/useGetData';
 
 const SectionMessages = () => {
-  useGetData();
   useListenClubServerMsg(); // listens for messages in real time
 
   const { selectedClubChat, clubChatLoading, messages, dateQuery, paginating } =

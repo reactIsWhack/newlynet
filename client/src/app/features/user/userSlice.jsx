@@ -25,6 +25,7 @@ const initialState = {
   serverInvites: [],
   searchResults: [],
   searchLoading: false,
+  initialDataFetched: false,
 };
 
 export const signup = createAsyncThunk(
@@ -85,6 +86,7 @@ export const getCommonNewStudents = createAsyncThunk(
   'user/commonStudents',
   async ({ filter, cursor }, thunkAPI) => {
     try {
+      const { user } = thunkAPI.getState();
       const response = await axios.get(
         `${baseUrl}/api/users/commonstudents/${filter}?cursor=${cursor}`
       );
@@ -269,6 +271,9 @@ const userSlice = createSlice({
         user.socialMediaUsernames.instagram = action.payload.instagram;
       }
     },
+    setFetchedInitialData(state, action) {
+      state.initialDataFetched = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -350,10 +355,10 @@ const userSlice = createSlice({
       })
       .addCase(getCommonNewStudents.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.commonNewStudents = [
-          ...state.commonNewStudents,
-          ...action.payload,
-        ];
+
+        console.log('Setting common students...');
+        const updatedList = [...state.commonNewStudents, ...action.payload];
+        state.commonNewStudents = updatedList;
       })
       .addCase(getCommonNewStudents.rejected, (state, action) => {
         state.isLoading = false;
@@ -465,6 +470,7 @@ export const {
   resetSearchResults,
   removeServerInvite,
   updateContactSocialMedia,
+  setFetchedInitialData,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;

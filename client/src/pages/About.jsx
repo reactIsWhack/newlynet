@@ -7,7 +7,6 @@ import { selectPopup, setRenderModal } from '../app/features/popup/popupSlice';
 import SiteFeatures from '../components/SiteFeatures';
 
 const About = () => {
-  useRedirectUser();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {

@@ -4,7 +4,6 @@ import { selectUser } from '../app/features/user/userSlice';
 import useGetData from '../hooks/useGetData';
 
 const ClubChatGuide = () => {
-  useGetData();
   const { school } = useSelector(selectUser);
 
   return (

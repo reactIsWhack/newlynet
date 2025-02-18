@@ -27,10 +27,13 @@ import PersonalServerIntro from './pages/PersonalServerIntro';
 import ForgetPassword from './pages/ForgetPassword';
 import ResetPassword from './pages/ResetPassword';
 import About from './pages/About';
+import useGetData from './hooks/useGetData';
+import useRedirectUser from './hooks/useRedirectUser';
 
 axios.defaults.withCredentials = true;
 
 function App() {
+  useGetData();
   useUpdateClubServer();
 
   const [formData, setFormData] = useState({

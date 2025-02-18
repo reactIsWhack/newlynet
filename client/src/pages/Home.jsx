@@ -21,7 +21,6 @@ const Home = ({ filter, setFilter }) => {
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
-  useGetData();
 
   const mobile = useDetectMobile();
   const { school } = useSelector(selectUser);

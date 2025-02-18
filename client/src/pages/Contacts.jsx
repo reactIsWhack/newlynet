@@ -10,7 +10,6 @@ import useUpdateStreak from '../hooks/useUpdateStreak';
 import useGetData from '../hooks/useGetData';
 
 const Contacts = ({ filter }) => {
-  useGetData();
   useRedirectUser();
   useListenNotifications();
   useUpdateStreak();

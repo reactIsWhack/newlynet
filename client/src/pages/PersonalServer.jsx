@@ -23,7 +23,6 @@ import toast from 'react-hot-toast';
 import useGetData from '../hooks/useGetData';
 
 const PersonalServer = () => {
-  useGetData();
   useRedirectUser();
   useListenMessages();
   useListenNotifications();

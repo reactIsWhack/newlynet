@@ -19,7 +19,6 @@ import { resetDateQuery } from '../app/features/chats/chatSlice';
 import useGetData from '../hooks/useGetData';
 
 const ClubChat = () => {
-  useGetData();
   useRedirectUser();
   const { socket } = useSocket();
   const { members, serverId, selectedClubChat, chats, dateQuery } =
