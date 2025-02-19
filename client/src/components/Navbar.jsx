@@ -38,9 +38,10 @@ const Navbar = () => {
       if (searchQuery) {
         // Simulate fetching results
         const trimmedQuery = searchQuery.split(' ').join('');
-        setTimeout(() => dispatch(searchUsers(trimmedQuery)), 1000);
+        dispatch(resetSearchResults());
+        dispatch(searchUsers(trimmedQuery));
       }
-    }, 1000);
+    }, 500);
 
     if (!searchQuery) dispatch(resetSearchResults());
 

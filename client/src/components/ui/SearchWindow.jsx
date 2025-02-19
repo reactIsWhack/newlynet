@@ -46,6 +46,8 @@ const SearchWindow = ({
               searchResultCard
             )}
           </ul>
+        ) : searchLoading ? (
+          <span className="flex justify-center mt-7">Loading...</span>
         ) : (
           <span className="flex justify-center mt-7">No users found</span>
         )
