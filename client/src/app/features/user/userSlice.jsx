@@ -26,6 +26,7 @@ const initialState = {
   searchResults: [],
   searchLoading: false,
   initialDataFetched: false,
+  renderLoadingScreen: { render: true, firstVisit: true },
 };
 
 export const signup = createAsyncThunk(
@@ -73,8 +74,6 @@ export const logoutUser = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       const response = await axios.get(`${baseUrl}/api/auth/logout`);
-      console.log('logout data: ');
-      console.log(response.data);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.message);
@@ -240,7 +239,10 @@ const userSlice = createSlice({
       state.chattingWith = Array.from(chattingWithSet);
     },
     resetUserState(state) {
-      return initialState;
+      return {
+        ...initialState,
+        renderLoadingScreen: { render: false, firstVisit: false },
+      };
     },
     setUnreadClubChatMessages(state, action) {
       state.unreadClubChats = action.payload;
@@ -273,6 +275,11 @@ const userSlice = createSlice({
     },
     setFetchedInitialData(state, action) {
       state.initialDataFetched = action.payload;
+    },
+    setRenderLoadingScreen(state, action) {
+      console.log('setting loading screen render...');
+      state.renderLoadingScreen.firstVisit = action.payload.firstVisit;
+      state.renderLoadingScreen.render = action.payload.render;
     },
   },
   extraReducers: (builder) => {
@@ -356,7 +363,6 @@ const userSlice = createSlice({
       .addCase(getCommonNewStudents.fulfilled, (state, action) => {
         state.isLoading = false;
 
-        console.log('Setting common students...');
         const updatedList = [...state.commonNewStudents, ...action.payload];
         state.commonNewStudents = updatedList;
       })
@@ -471,6 +477,7 @@ export const {
   removeServerInvite,
   updateContactSocialMedia,
   setFetchedInitialData,
+  setRenderLoadingScreen,
 } = userSlice.actions;
 
 export const selectUser = (state) => state.user;

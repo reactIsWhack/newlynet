@@ -89,6 +89,19 @@ body {
   font-weight: Arial Sans-Serif;
 }
 
+.loading-screen span,
+.loading-screen img {
+  animation: fade-in 2s ease;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 100;
+  }
+}
 .loading-screen::before {
   content: '';
   position: absolute;
@@ -99,6 +112,7 @@ body {
   filter: blur(22px);
   z-index: -1;
 }
+
 .club-server-menu {
   max-width: 300px;
 }
