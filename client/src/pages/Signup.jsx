@@ -12,8 +12,6 @@ const Signup = ({
   setSchoolQuery,
   setUpdatingInterests,
 }) => {
-  useRedirectUser();
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading } = useSelector(selectUser);

@@ -21,10 +21,8 @@ import useUpdateStreak from '../hooks/useUpdateStreak';
 import useGetData from '../hooks/useGetData';
 
 const Chats = ({ filter }) => {
-  useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
-  useGetData();
 
   const dispatch = useDispatch();
   const { conversations, selectedConversation, messages, chatFilter } =

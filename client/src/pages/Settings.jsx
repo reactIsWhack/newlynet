@@ -17,7 +17,6 @@ import useUpdateStreak from '../hooks/useUpdateStreak';
 import useGetData from '../hooks/useGetData';
 
 const Settings = ({ formData, setFormData, setUpdatingInterests, filter }) => {
-  useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
 

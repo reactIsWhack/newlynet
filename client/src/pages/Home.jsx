@@ -18,7 +18,6 @@ import ClubServerInfo from '../components/ClubServerInfo';
 import useGetData from '../hooks/useGetData';
 
 const Home = ({ filter, setFilter }) => {
-  useRedirectUser();
   useListenNotifications();
   useUpdateStreak();
 

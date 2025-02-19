@@ -2,11 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import landingImage from '../assets/landing-image.png';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginUser, selectUser } from '../app/features/user/userSlice';
+import {
+  loginUser,
+  selectUser,
+  setRenderLoadingScreen,
+} from '../app/features/user/userSlice';
 import useRedirectUser from '../hooks/useRedirectUser';
 
 const Login = ({ setFormData }) => {
-  useRedirectUser();
   const dispatch = useDispatch();
   const { isLoading, isLoggedIn } = useSelector(selectUser);
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ const Login = ({ setFormData }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    await dispatch(loginUser({ formData: data, navigate }));
+    dispatch(loginUser({ formData: data, navigate }));
   };
 
   useEffect(() => {

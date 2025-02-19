@@ -33,8 +33,9 @@ import useRedirectUser from './hooks/useRedirectUser';
 axios.defaults.withCredentials = true;
 
 function App() {
-  useGetData();
   useUpdateClubServer();
+  useRedirectUser();
+  useGetData();
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -72,7 +73,7 @@ function App() {
 
   return (
     <>
-      {renderLoadingScreen ? (
+      {renderLoadingScreen.render ? (
         <LoadingScreen />
       ) : (
         <Routes>
