@@ -31,10 +31,10 @@ export const siteFeaturesData = [
     feature: 'Student Locating',
     html: [
       <p>
-        On the home page, you will find a table with users who go to your
-        school. Here you can sort these users by same grade or same interests.
-        Adding users as contacts will save them to your contacts page where you
-        can resume or start chatting them at any time.
+        On the home page, you will find a table of users who go to your school.
+        Here you can sort these users by same grade or similar interests. Adding
+        users as contacts will save them to your contacts page where you can
+        resume or start chatting them at any time.
       </p>,
       <br />,
       <p>
@@ -45,7 +45,8 @@ export const siteFeaturesData = [
       <br />,
       <p>
         Lastly, the pick me button find and give you the details of a user from
-        the table who would be a good buddy for you based off your interests.
+        the table who the site thinks would be a good connection for you based
+        off your interests.
       </p>,
     ],
   },

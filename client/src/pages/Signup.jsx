@@ -40,7 +40,7 @@ const Signup = ({
         >
           <h1 className="text-3xl font-semibold text-center text-gray-300">
             Signup
-            <span className="text-blue-500"> NewlyNet</span>
+            <span className="text-blue-500"> FirstDay</span>
           </h1>
 
           <form

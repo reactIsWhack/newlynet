@@ -29,19 +29,19 @@ const About = () => {
             <div>
               <p className="text-left my-2">Hey there! </p>
               <p className="text-left">
-                If you&#8217;ve found your way to NewlyNet, chances are
+                If you&#8217;ve found your way to FirstDay, chances are
                 you&#8217;re a new student—just like I once was.
               </p>
               <br />
               <p className="text-left">
-                NewlyNet is a place where students can find others just like
+                FirstDay is a place where students can find others just like
                 them at their school through club servers, school servers, or
                 group chats.
               </p>
               <br />
               <p className="text-left">
-                I hope that after using NewlyNet, you&#8217;ll feel more at ease
-                and excited about your high school journey!
+                I hope that after using FirstDay, you&#8217;ll feel more excited
+                about your high school experience!
               </p>
               <br />
               <p className="text-left">
