@@ -11,7 +11,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 const baseUrl = import.meta.env.VITE_SERVER_URL;
 
 const useRedirectUser = (blockInterstsPage) => {
-  const { isLoggedIn, userId } = useSelector(selectUser);
+  const { isLoggedIn, initialDataFetched } = useSelector(selectUser);
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const dispatch = useDispatch();
